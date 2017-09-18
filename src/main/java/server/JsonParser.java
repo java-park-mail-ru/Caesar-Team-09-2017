@@ -1,4 +1,4 @@
-package server.controllers;
+package server;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +12,7 @@ public class JsonParser {
 
     @JsonCreator
     JsonParser(@JsonProperty("email") String email, @JsonProperty("username") String username,
-               @JsonProperty("password") String password,@JsonProperty("sessionId") Integer sessionId) {
+               @JsonProperty("password") String password) {
 
         this.email = email;
         this.username = username;
