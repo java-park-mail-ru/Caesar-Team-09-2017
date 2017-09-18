@@ -69,8 +69,8 @@ public class AccountService {
         }
 
         if (!usersProfile.containsKeyUsername(username)) {
-            response.put("Cause", " \"" + username + "\" not registrated :( " +
-                    "register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
+            response.put("Cause", " \"" + username + "\" not registrated :( "
+                    + "register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
             response.put("authorization", "ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // http response code 403
         } else if (!password.equals(usersProfile.getPassword(username))) {
