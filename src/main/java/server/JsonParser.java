@@ -19,14 +19,17 @@ public class JsonParser {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     public String getEmail() {
         return email;
     }
 
+    @SuppressWarnings("unused")
     public String getUsername() {
         return username;
     }
 
+    @SuppressWarnings("unused")
     public String getPassword() {
         return password;
     }

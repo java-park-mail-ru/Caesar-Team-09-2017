@@ -2,6 +2,7 @@ package server.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import server.JsonParser;
 import server.UsersProfile;
@@ -38,7 +39,7 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // http response code 400
         }
 
-        if (validation(email, username, password, response) == true) {
+        if (validation(email, username, password, response)) {
             usersProfile.setUsersMail(username, email);
             usersProfile.setMailUsername(username, email);
             usersProfile.setUsers(username, password);
@@ -68,18 +69,18 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(response); // http response code 418
         }
 
-        if (usersProfile.containsKeyUsername(username) == false) {
+        if (!usersProfile.containsKeyUsername(username)) {
             response.put("Cause", " \"" + username + "\" not registrated :( register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
             response.put("authorization", "ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // http response code 403
-        } else if (password.equals(usersProfile.getPassword(username)) == false) {
+        } else if (!password.equals(usersProfile.getPassword(username))) {
             response.put("Cause", "Wrong password! Check CapsLock :) and try again.");
             response.put("authorization", "ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
 
-        if (id == null) {  // пользователь заходит впервые за долгое время
+        if (httpSession.getAttribute("sessionId") == null) {
             id = usersProfile.getSessionId();
             usersProfile.incrementSessionId();
             httpSession.setAttribute("sessionId", id);
@@ -183,7 +184,7 @@ public class AccountService {
 
     }
 
-    public boolean validation(String email, String username, String password, Map<String, String> response) {
+    private boolean validation(String email, String username, String password, Map<String, String> response) {
         if (email == null) {
             email = "Uncorrect format. Use this format for email: \"email\":\"yourEmail@mail.ru\"";
             response.put("Cause", email);
