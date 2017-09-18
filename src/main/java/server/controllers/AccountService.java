@@ -38,7 +38,7 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // http response code 400
         }
 
-        if (validation(email,username,password,response) == true) {
+        if (validation(email, username, password, response) == true) {
             usersProfile.setUsersMail(username, email);
             usersProfile.setMailUsername(username, email);
             usersProfile.setUsers(username, password);
@@ -53,7 +53,7 @@ public class AccountService {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "auth")
-    public ResponseEntity authorize(@RequestBody JsonParser jsonParser, HttpSession httpSession)  {
+    public ResponseEntity authorize(@RequestBody JsonParser jsonParser, HttpSession httpSession) {
 
         Map<String, String> response = new LinkedHashMap<>();
 
@@ -69,11 +69,11 @@ public class AccountService {
         }
 
         if (usersProfile.containsKeyUsername(username) == false) {
-            response.put("Cause"," \"" + username + "\" not registrated :( register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
+            response.put("Cause", " \"" + username + "\" not registrated :( register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
             response.put("authorization", "ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // http response code 403
         } else if (password.equals(usersProfile.getPassword(username)) == false) {
-            response.put("Cause","Wrong password! Check CapsLock :) and try again.");
+            response.put("Cause", "Wrong password! Check CapsLock :) and try again.");
             response.put("authorization", "ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
@@ -86,7 +86,7 @@ public class AccountService {
             httpSession.setAttribute("username", username);
         }
 
-        response.put("username","Hello " + username + "!");
+        response.put("username", "Hello " + username + "!");
         response.put("authorization", "SUCCESSFUL");
 
         return ResponseEntity.ok(response);
@@ -99,7 +99,7 @@ public class AccountService {
         Integer id = (Integer) httpSession.getAttribute("sessionId");
         String username = (String) httpSession.getAttribute("username");
 
-        if ( id == null) {
+        if (id == null) {
             response.put("Cause", "You haven't authorized. authorize: {\"username\",\"password\"} on POST localhost:8081/auth");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // http response code 401
         } else {
@@ -112,14 +112,14 @@ public class AccountService {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "exit")
-    public ResponseEntity logOut(HttpSession httpSession)  {
+    public ResponseEntity logOut(HttpSession httpSession) {
 
         Map<String, String> response = new LinkedHashMap<>();
         Integer id = (Integer) httpSession.getAttribute("sessionId");
         @SuppressWarnings("unused")
         String username = (String) httpSession.getAttribute("username");
 
-        if ( id == null) {
+        if (id == null) {
             response.put("Cause", "You haven't authorized. authorize: {\"username\",\"password\"} on POST localhost:8081/auth");
             response.put("log out", "ERROR");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -134,7 +134,7 @@ public class AccountService {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "rename")
-    public ResponseEntity rename(@RequestBody JsonParser jsonParser, HttpSession httpSession)  {
+    public ResponseEntity rename(@RequestBody JsonParser jsonParser, HttpSession httpSession) {
 
         Map<String, String> response = new LinkedHashMap<>();
 
@@ -151,7 +151,7 @@ public class AccountService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        if (validation(email,username,password,response)) {
+        if (validation(email, username, password, response)) {
             usersProfile.removeUser(oldUsername);
 
             usersProfile.setUsersMail(username, email);
@@ -168,18 +168,18 @@ public class AccountService {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "allUsers")
-    public ResponseEntity printAllUsers()  {
+    public ResponseEntity printAllUsers() {
 
-       Map<String, String> response = new LinkedHashMap<>();
+        Map<String, String> response = new LinkedHashMap<>();
 
-       usersProfile.getAllUsers(response);
+        usersProfile.getAllUsers(response);
 
-       if (response.isEmpty()) {
+        if (response.isEmpty()) {
             response.put("all users", "not users yet");
             return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).body(response); // 416
-       }
+        }
 
-       return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
 
     }
 

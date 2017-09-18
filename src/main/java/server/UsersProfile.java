@@ -9,8 +9,8 @@ public class UsersProfile {
 
     private Map<String, String> users = new HashMap<>();
 
-    private Map<String, String>  usersMail = new HashMap<>();
-    private Map<String, String>  mailUsers = new HashMap<>();
+    private Map<String, String> usersMail = new HashMap<>();
+    private Map<String, String> mailUsers = new HashMap<>();
 
     @SuppressWarnings("unused")
     public int getSessionId() {
@@ -40,17 +40,17 @@ public class UsersProfile {
     @SuppressWarnings("unused")
     public void setUsers(String username, String password) {
 
-        users.put(username,password);
+        users.put(username, password);
     }
 
     @SuppressWarnings("unused")
     public void setUsersMail(String username, String email) {
-        usersMail.put(username,email);
+        usersMail.put(username, email);
     }
 
     @SuppressWarnings("unused")
     public void setMailUsername(String username, String email) {
-        mailUsers.put(email,username);
+        mailUsers.put(email, username);
     }
 
     @SuppressWarnings("unused")
