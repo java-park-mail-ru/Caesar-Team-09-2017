@@ -2,7 +2,6 @@ package server.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import server.JsonParser;
 import server.UsersProfile;
@@ -70,7 +69,8 @@ public class AccountService {
         }
 
         if (!usersProfile.containsKeyUsername(username)) {
-            response.put("Cause", " \"" + username + "\" not registrated :( register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
+            response.put("Cause", " \"" + username + "\" not registrated :( " +
+                    "register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
             response.put("authorization", "ERROR");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // http response code 403
         } else if (!password.equals(usersProfile.getPassword(username))) {
@@ -94,7 +94,7 @@ public class AccountService {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "info")
-    public ResponseEntity RequestUserCurrentSession(HttpSession httpSession) {
+    public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
         Map<String, String> response = new LinkedHashMap<>();
         Integer id = (Integer) httpSession.getAttribute("sessionId");
