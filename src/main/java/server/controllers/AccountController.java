@@ -23,13 +23,11 @@ public class AccountController {
     @RequestMapping(method = RequestMethod.POST, path = "reg")
     public ResponseEntity register(@RequestBody User user) { // как поймать исключения в конструкторе?
 
-        String email = user.getEmail();
         String username = user.getUsername();
-        String password = user.getPassword();
 
         Map<String, String> response = new LinkedHashMap<>();
 
-        if (userService.validation(email, username, password, response)) {
+        if (userService.validation(user, response)) {
             userService.setUser(username, user);
 
             return ResponseEntity.ok(user);  // http response code 200
@@ -55,10 +53,11 @@ public class AccountController {
         }
 
         if (!userService.containsUsername(username)) {
-            response.put("Cause", " \"" + username + "\" not registrated :( "
-                    + "register: {\"email\",\"username\",\"password\"} on POST localhost:8081/registr");
+            response.put("Cause", " \"" + username + "\"did not registrate :( ");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response); // http response code 403
-        } else if (!password.equals(userService.getPassword(username))) {
+        }
+
+        if (!password.equals(userService.getPassword(username))) {
             response.put("Cause", "Wrong password! Check CapsLock :) and try again.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
@@ -78,12 +77,12 @@ public class AccountController {
         String username = (String) httpSession.getAttribute("username");
 
         if (username == null) {
-            response.put("Cause", "You haven't authorized. authorize: {\"username\",\"password\"} on POST localhost:8081/auth");
+            response.put("Cause", "You haven't authorized.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // http response code 401
-        } else {
-            response.put("username", "Hello " + username);
-            response.put("sessionId", "Your sessionId: " + httpSession.getId());
         }
+
+        response.put("username", "Hello " + username);
+        response.put("sessionId", "Your sessionId: " + httpSession.getId());
 
         return ResponseEntity.ok(response);
     }
@@ -96,7 +95,7 @@ public class AccountController {
         String username = (String) httpSession.getAttribute("username");
 
         if (username == null) {
-            response.put("Cause", "You haven't authorized. authorize: {\"username\",\"password\"} on POST localhost:8081/auth");
+            response.put("Cause", "You haven't authorized.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
@@ -110,18 +109,16 @@ public class AccountController {
 
         Map<String, String> response = new LinkedHashMap<>();
 
-        String email = user.getEmail();
         String username = user.getUsername();
-        String password = user.getPassword();
 
         String oldUsername = (String) httpSession.getAttribute("username");
 
         if (oldUsername == null) {
             response.put("Cause", "You must authorize before change your personal Information\n");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
-        if (userService.validation(email, username, password, response)) {
+        if (userService.validation(user, response)) {
             userService.removeUser(oldUsername);
 
             userService.setUser(username, user);
@@ -139,12 +136,13 @@ public class AccountController {
         Map<String, String> response = new LinkedHashMap<>();
 
         List<User> list = userService.getAllUsers();
-        list.forEach((value) -> {
-            response.put(value.getEmail(), "email");
-            response.put(value.getUsername(), "username");
-        });
 
-        return ResponseEntity.ok(response);
+        if (list.isEmpty()) {
+            response.put("all users", "not users yet");
+            return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).body(response); // 416
+        }
+
+        return ResponseEntity.ok(list);
 
     }
 }

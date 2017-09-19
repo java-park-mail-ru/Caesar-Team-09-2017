@@ -48,7 +48,11 @@ public class UserService {
         return list;
     }
 
-    public boolean validation(String email, String username, String password, Map<String, String> response) {
+    public boolean validation(User user, Map<String, String> response) {
+        String email = user.getEmail();
+        String username = user.getUsername();
+        String password = user.getPassword();
+
         if (email == null) {
             email = "Incorrect format. Use this format for email: \"email\":\"yourEmail@mail.ru\"";
             response.put("Cause", email);

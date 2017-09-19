@@ -18,6 +18,8 @@ public class User {
         this.email = email;
         this.username = username;
         this.password = password;
+
+        // зашифровать пароль здесь и записать в this.password
     }
 
     public String getEmail() {
