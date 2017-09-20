@@ -19,7 +19,7 @@ public class User {
         this.username = username;
         this.password = password;
 
-        // зашифровать пароль здесь и записать в this.password
+//        TODO encrypt password here and write into this.password
     }
 
     public String getEmail() {
