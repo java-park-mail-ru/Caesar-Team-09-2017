@@ -8,7 +8,6 @@ import server.UserService;
 
 import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -20,7 +19,7 @@ public class AccountController {
 
     @CrossOrigin(origins = urlFrontendServer)
     @RequestMapping(method = RequestMethod.POST, path = "reg")
-    public ResponseEntity register(@RequestBody User user) { // как поймать исключения в конструкторе?
+    public ResponseEntity register(@RequestBody User user) {
 
         String username = user.getUsername();
 
@@ -136,15 +135,7 @@ public class AccountController {
     @CrossOrigin(origins = urlFrontendServer)
     @RequestMapping(method = RequestMethod.POST, path = "allUsers")
     public ResponseEntity printAllUsers() {
-
-        List<User> list = userService.getAllUsers();
-
-        if (list.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).body(list); // 416
-        }
-
-        return ResponseEntity.ok(list);
-
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
 }
