@@ -15,9 +15,9 @@ import java.util.Map;
 public class AccountController {
 
     private UserService userService = new UserService();
-    private final String urlFrontendServer = "http://tp-2017-2-caesar.herokuapp.com";
+    private static final String FRONTEND_ORIGIN = "http://tp-2017-2-caesar.herokuapp.com";
 
-    @CrossOrigin(origins = urlFrontendServer)
+    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "reg")
     public ResponseEntity register(@RequestBody User user) {
 
@@ -35,7 +35,7 @@ public class AccountController {
 
     }
 
-    @CrossOrigin(origins = urlFrontendServer)
+    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "auth")
     public ResponseEntity authorize(@RequestBody User user, HttpSession httpSession) {
 
@@ -68,7 +68,7 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = urlFrontendServer)
+    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "info")
     public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
@@ -87,7 +87,7 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = urlFrontendServer)
+    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "exit")
     public ResponseEntity logOut(HttpSession httpSession) {
 
@@ -105,7 +105,7 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = urlFrontendServer)
+    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "rename")
     public ResponseEntity rename(@RequestBody User user, HttpSession httpSession) {
 
@@ -132,7 +132,7 @@ public class AccountController {
 
     }
 
-    @CrossOrigin(origins = urlFrontendServer)
+    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "allUsers")
     public ResponseEntity printAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
