@@ -10,16 +10,19 @@ import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
+@CrossOrigin(origins = {"http://localhost:8080", "https://tp-2017-2-caesar.herokuapp.com"},
+        allowedHeaders = "Content-Type, *", allowCredentials = "true")
 @RestController
 public class AccountController {
 
-    private UserService userService = new UserService();
-    private static final String FRONTEND_ORIGIN = "http://tp-2017-2-caesar.herokuapp.com";
+    private UserService userService;
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
+    public AccountController(UserService userService) {
+        this.userService = userService;
+    }
+
     @RequestMapping(method = RequestMethod.POST, path = "reg")
-    public ResponseEntity register(@RequestBody User user) {
+    public ResponseEntity register(@RequestBody User user, HttpSession httpSession) {
 
         String username = user.getUsername();
 
@@ -27,7 +30,7 @@ public class AccountController {
 
         if (userService.validation(user, bodyResponse)) {
             userService.setUser(username, user);
-
+            authorize(user, httpSession);
             return ResponseEntity.ok(user);  // http response code 200
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse); // http response code 400
@@ -35,7 +38,6 @@ public class AccountController {
 
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "auth")
     public ResponseEntity authorize(@RequestBody User user, HttpSession httpSession) {
 
@@ -53,12 +55,12 @@ public class AccountController {
 
         if (!userService.containsUsername(username)) {
             bodyResponse.put("Cause", " \"" + username + "\"did not registrate :( ");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse); // http response code 403
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse);
         }
 
         if (!password.equals(userService.getPassword(username))) {
             bodyResponse.put("Cause", "Wrong password! Check CapsLock :) and try again.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);  // http response code 403
         }
 
         if (httpSession.getAttribute("username") == null) {
@@ -68,7 +70,6 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "info")
     public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
@@ -87,8 +88,7 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "exit")
+    @RequestMapping(method = RequestMethod.POST, path = "logout")
     public ResponseEntity logOut(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -105,7 +105,6 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "rename")
     public ResponseEntity rename(@RequestBody User user, HttpSession httpSession) {
 
@@ -117,7 +116,7 @@ public class AccountController {
 
         if (oldUsername == null) {
             bodyResponse.put("Cause", "You must authorize before change your personal Information\n");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(bodyResponse);
         }
 
         if (userService.validation(user, bodyResponse)) {
@@ -125,17 +124,19 @@ public class AccountController {
 
             userService.setUser(username, user);
             httpSession.setAttribute("username", username);
-            return ResponseEntity.ok(bodyResponse);
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse);
         }
 
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
     @RequestMapping(method = RequestMethod.POST, path = "allUsers")
     public ResponseEntity printAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
 }
+
+
+
