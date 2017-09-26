@@ -1,1 +1,13 @@
 language: java
+sudo: required
+jdk:
+- oraclejdk8
+branches:
+  only:
+  - develop
+deploy:
+  provider: heroku
+  app:
+    develop: tp-2017-2-caesar-backend
+  api_key:
+    secure: 38935a2f-856e-4412-8883-86aaab035f8a

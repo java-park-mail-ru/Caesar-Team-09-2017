@@ -10,16 +10,18 @@ import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
+@CrossOrigin(origins = {"http://localhost:8080", "https://tp-2017-2-caesar.herokuapp.com"})
 @RestController
 public class AccountController {
 
-    private UserService userService = new UserService();
-    private static final String FRONTEND_ORIGIN = "http://tp-2017-2-caesar.herokuapp.com";
+    private UserService userService;
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "reg")
-    public ResponseEntity register(@RequestBody User user) {
+    public AccountController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/signup")
+    public ResponseEntity register(@RequestBody User user, HttpSession httpSession) {
 
         String username = user.getUsername();
 
@@ -27,7 +29,7 @@ public class AccountController {
 
         if (userService.validation(user, bodyResponse)) {
             userService.setUser(username, user);
-
+            authorize(user, httpSession);
             return ResponseEntity.ok(user);  // http response code 200
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse); // http response code 400
@@ -35,8 +37,7 @@ public class AccountController {
 
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "auth")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/login")
     public ResponseEntity authorize(@RequestBody User user, HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -47,29 +48,28 @@ public class AccountController {
         String usernameBySession = (String) httpSession.getAttribute("username");
 
         if (usernameBySession != null) {
-            bodyResponse.put("Cause", "You are already authorized");
+            bodyResponse.put("Cause", "You have already authorized");
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(bodyResponse); // http response code 418
         }
 
         if (!userService.containsUsername(username)) {
             bodyResponse.put("Cause", " \"" + username + "\"did not registrate :( ");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse); // http response code 403
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse);
         }
 
         if (!password.equals(userService.getPassword(username))) {
             bodyResponse.put("Cause", "Wrong password! Check CapsLock :) and try again.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);  // http response code 403
         }
 
         if (httpSession.getAttribute("username") == null) {
             httpSession.setAttribute("username", username);
         }
 
-        return ResponseEntity.ok(bodyResponse);
+        return ResponseEntity.ok("{}");
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "info")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/info")
     public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -81,14 +81,13 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(bodyResponse); // http response code 401
         }
 
-        bodyResponse.put("username", "Hello " + username);
-        bodyResponse.put("sessionId", "Your sessionId: " + httpSession.getId());
+        bodyResponse.put("username", username);
+        bodyResponse.put("sessionId", httpSession.getId());
 
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "exit")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/logout")
     public ResponseEntity logOut(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -101,12 +100,12 @@ public class AccountController {
         }
 
         httpSession.removeAttribute("username");
+        httpSession.invalidate();
 
-        return ResponseEntity.ok(bodyResponse);
+        return ResponseEntity.ok("{}");
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "rename")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/user/rename")
     public ResponseEntity rename(@RequestBody User user, HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -117,7 +116,7 @@ public class AccountController {
 
         if (oldUsername == null) {
             bodyResponse.put("Cause", "You must authorize before change your personal Information\n");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(bodyResponse);
         }
 
         if (userService.validation(user, bodyResponse)) {
@@ -125,17 +124,19 @@ public class AccountController {
 
             userService.setUser(username, user);
             httpSession.setAttribute("username", username);
-            return ResponseEntity.ok(bodyResponse);
+            return ResponseEntity.ok(user);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse);
         }
 
     }
 
-    @CrossOrigin(origins = FRONTEND_ORIGIN)
-    @RequestMapping(method = RequestMethod.POST, path = "allUsers")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/user/rating")
     public ResponseEntity printAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
 }
+
+
+
