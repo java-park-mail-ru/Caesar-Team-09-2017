@@ -10,8 +10,7 @@ import javax.servlet.http.HttpSession;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://localhost:8080", "https://tp-2017-2-caesar.herokuapp.com"},
-        allowedHeaders = "Content-Type, *", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080", "https://tp-2017-2-caesar.herokuapp.com"})
 @RestController
 public class AccountController {
 
@@ -21,7 +20,7 @@ public class AccountController {
         this.userService = userService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "reg")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/signup")
     public ResponseEntity register(@RequestBody User user, HttpSession httpSession) {
 
         String username = user.getUsername();
@@ -38,7 +37,7 @@ public class AccountController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "auth")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/login")
     public ResponseEntity authorize(@RequestBody User user, HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -49,7 +48,7 @@ public class AccountController {
         String usernameBySession = (String) httpSession.getAttribute("username");
 
         if (usernameBySession != null) {
-            bodyResponse.put("Cause", "You are already authorized");
+            bodyResponse.put("Cause", "You have already authorized");
             return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(bodyResponse); // http response code 418
         }
 
@@ -67,10 +66,10 @@ public class AccountController {
             httpSession.setAttribute("username", username);
         }
 
-        return ResponseEntity.ok(bodyResponse);
+        return ResponseEntity.ok("{}");
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "info")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/info")
     public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -82,13 +81,13 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(bodyResponse); // http response code 401
         }
 
-        bodyResponse.put("username", "Hello " + username);
-        bodyResponse.put("sessionId", "Your sessionId: " + httpSession.getId());
+        bodyResponse.put("username", username);
+        bodyResponse.put("sessionId", httpSession.getId());
 
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "logout")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/logout")
     public ResponseEntity logOut(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -101,11 +100,12 @@ public class AccountController {
         }
 
         httpSession.removeAttribute("username");
+        httpSession.invalidate();
 
-        return ResponseEntity.ok(bodyResponse);
+        return ResponseEntity.ok("{}");
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "rename")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/user/rename")
     public ResponseEntity rename(@RequestBody User user, HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -131,7 +131,7 @@ public class AccountController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "allUsers")
+    @RequestMapping(method = RequestMethod.POST, path = "/api/user/rating")
     public ResponseEntity printAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
