@@ -77,7 +77,7 @@ paths:
 
   /api/auth/login:
     post:
-      summary: Signup New User
+      summary: Log in
       consumes: []
       produces:
         - application/json
@@ -145,7 +145,7 @@ paths:
                   - You have already authorized
 
   /api/auth/info:
-    post:
+    get:
       summary: Check user session
       description: Authentication user by JSESSIONID
       consumes: []
@@ -166,7 +166,7 @@ paths:
                 description: users username
                 enum:
                   - seva
-              username:
+              email:
                 type: string
                 description: users email
                 enum:
@@ -185,7 +185,7 @@ paths:
                   - You haven't authorized.
 
   /api/auth/logout:
-    post:
+    get:
       summary: Logout session
       parameters: []
       responses:
@@ -276,8 +276,8 @@ paths:
                   - You haven't authorized.
 
   /api/user/rating:
-    post:
-      summary: get best players
+    get:
+      summary: Get best players
       consumes: []
       produces:
         - application/json

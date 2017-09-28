@@ -69,7 +69,7 @@ public class AccountController {
         return ResponseEntity.ok("{}");
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/info")
+    @RequestMapping(method = RequestMethod.GET, path = "/api/auth/info")
     public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -87,7 +87,7 @@ public class AccountController {
         return ResponseEntity.ok(bodyResponse);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/api/auth/logout")
+    @RequestMapping(method = RequestMethod.GET, path = "/api/auth/logout")
     public ResponseEntity logOut(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();
@@ -131,7 +131,7 @@ public class AccountController {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/api/user/rating")
+    @RequestMapping(method = RequestMethod.GET, path = "/api/user/rating")
     public ResponseEntity printAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
