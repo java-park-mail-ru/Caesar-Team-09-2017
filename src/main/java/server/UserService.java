@@ -35,6 +35,10 @@ public class UserService {
         return users.get(username).getPassword();
     }
 
+    public String getEmail(String username) {
+        return users.get(username).getEmail();
+    }
+
     public void removeUser(String username) {
         users.remove(username);
     }

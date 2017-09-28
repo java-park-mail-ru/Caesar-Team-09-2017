@@ -82,6 +82,7 @@ public class AccountController {
         }
 
         bodyResponse.put("username", username);
+        bodyResponse.put("email", userService.getEmail(username));
 
         return ResponseEntity.ok(bodyResponse);
     }

@@ -159,12 +159,18 @@ paths:
             type: object
             required:
               - username
+              - email
             properties:
               username:
                 type: string
                 description: users username
                 enum:
                   - seva
+              username:
+                type: string
+                description: users email
+                enum:
+                  - seva213415@inbox.ru
         '401':
           description: not authorized
           schema:
