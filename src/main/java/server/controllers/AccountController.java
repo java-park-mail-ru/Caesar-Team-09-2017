@@ -82,7 +82,6 @@ public class AccountController {
         }
 
         bodyResponse.put("username", username);
-        bodyResponse.put("sessionId", httpSession.getId());
 
         return ResponseEntity.ok(bodyResponse);
     }
