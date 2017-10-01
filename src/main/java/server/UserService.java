@@ -1,5 +1,8 @@
 package server;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -7,13 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
 public class UserService {
 
     private Map<String, User> users = new HashMap<>();
 
     public void setUser(String username, User user) {
-        users.put(username, user);
+        String encryptedPassword = passwordEncoder().encode(user.getPassword());
+        User userWithEncryptedPassword = user.copy();
+        userWithEncryptedPassword.setPassword(encryptedPassword);
+        users.put(username, userWithEncryptedPassword);
     }
 
     private boolean containsEmail(String email) {
@@ -31,10 +38,6 @@ public class UserService {
         return users.containsKey(username);
     }
 
-    public String getPassword(String username) {
-        return users.get(username).getPassword();
-    }
-
     public String getEmail(String username) {
         return users.get(username).getEmail();
     }
@@ -50,6 +53,13 @@ public class UserService {
         }
 
         return list;
+    }
+
+    public  boolean checkPassword(String username, String password) {
+        String encryptedPassword = users.get(username).getPassword();
+        System.out.println(password);
+        System.out.println(encryptedPassword);
+        return passwordEncoder().matches(password, encryptedPassword);
     }
 
     public boolean validation(User user, Map<String, String> response) {
@@ -90,6 +100,11 @@ public class UserService {
         }
 
         return true;
+    }
+
+    @Bean
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
 

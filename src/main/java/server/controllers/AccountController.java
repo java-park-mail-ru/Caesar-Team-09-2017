@@ -57,7 +57,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyResponse);
         }
 
-        if (!password.equals(userService.getPassword(username))) {
+        if (!userService.checkPassword(username, password)) {
             bodyResponse.put("Cause", "Wrong password! Check CapsLock :) and try again.");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(bodyResponse);  // http response code 403
         }
@@ -69,7 +69,7 @@ public class AccountController {
         return ResponseEntity.ok("{}");
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/api/auth/info")
+    @RequestMapping(method = RequestMethod.GET, path = "/api/auth/me")
     public ResponseEntity requestUserCurrentSession(HttpSession httpSession) {
 
         Map<String, String> bodyResponse = new LinkedHashMap<>();

@@ -19,7 +19,12 @@ public class User {
         this.username = username;
         this.password = password;
 
-//        TODO encrypt password here and write into this.password
+    }
+
+    public User(User user) {
+        this.email = user.getEmail();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
     }
 
     public String getEmail() {
@@ -34,4 +39,13 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public User copy() {
+        return new User(this);
+    }
+
 }

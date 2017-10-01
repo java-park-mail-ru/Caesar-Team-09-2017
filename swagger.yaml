@@ -144,7 +144,7 @@ paths:
                 enum:
                   - You have already authorized
 
-  /api/auth/info:
+  /api/auth/me:
     get:
       summary: Check user session
       description: Authentication user by JSESSIONID
