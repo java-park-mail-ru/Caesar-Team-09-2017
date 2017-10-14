@@ -11,7 +11,7 @@ produces:
 paths:
   /api/auth/signup:
     post:
-      summary: Signup New User
+      summary: Signup New account
       consumes: []
       produces:
         - application/json
@@ -146,8 +146,8 @@ paths:
 
   /api/auth/me:
     get:
-      summary: Check user session
-      description: Authentication user by JSESSIONID
+      summary: Check account session
+      description: Authentication account by JSESSIONID
       consumes: []
       produces:
         - application/json
@@ -204,9 +204,9 @@ paths:
                 enum:
                   - You haven't authorized.
 
-  /api/user/rename:
+  /api/account/rename:
     post:
-      summary: Update user
+      summary: Update account
       consumes: []
       produces:
         - application/json
@@ -275,7 +275,7 @@ paths:
                 enum:
                   - You haven't authorized.
 
-  /api/user/rating:
+  /api/account/rating:
     get:
       summary: Get best players
       consumes: []
