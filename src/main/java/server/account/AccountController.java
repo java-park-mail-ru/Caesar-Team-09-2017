@@ -28,7 +28,7 @@ public class AccountController {
         }
         account = (Account) responseEntity.getBody();
 
-        authorize(account, httpSession);
+        httpSession.setAttribute("username", account.getUsername());
 
         return responseEntity;
     }

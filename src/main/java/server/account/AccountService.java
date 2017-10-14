@@ -77,8 +77,8 @@ public class AccountService {
 
 
             final String sql = "UPDATE FUser SET email = ?, username = ? " +
-                    "WHERE LOWER(nickname COLLATE \"ucs_basic\") =  LOWER(? COLLATE \"ucs_basic\")";
-            jdbcTemplate.update(sql, account.getEmail(), account.getUsername());
+                    "WHERE LOWER(username COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\")";
+            jdbcTemplate.update(sql, account.getEmail(), account.getUsername(), username);
 
             return new ResponseEntity(account, HttpStatus.OK);
 
@@ -101,7 +101,7 @@ public class AccountService {
 
         } catch (EmptyResultDataAccessException e) {
 
-            return new ResponseEntity(Error.getJson("Can't find user with nickname: " + username),
+            return new ResponseEntity(Error.getJson("Can't find user with username: " + username),
                     HttpStatus.NOT_FOUND);
         }
     }
