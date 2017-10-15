@@ -3,6 +3,8 @@ package server.account;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 public class Account {
@@ -70,4 +72,16 @@ public class Account {
         this.password = password;
     }
 
+    @JsonIgnore
+    public ObjectNode getJson(){
+        final ObjectMapper map = new ObjectMapper();
+        final ObjectNode node = map.createObjectNode();
+
+        node.put("email", this.email);
+        node.put("username", this.username);
+        node.put("password", this.password);
+        node.put("score", this.score);
+
+        return node;
+    }
 }
