@@ -22,11 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@AutoConfigureMockMvc(print = MockMvcPrint.NONE)
+@Transactional
 public class AccountServiceTest {
 
 	@Autowired
 	private AccountService accountService;
 
+	@Autowired
 	private MockMvc mockMvc;
 
 
@@ -39,6 +42,7 @@ public class AccountServiceTest {
 
 	@Test
 	public void testMe() throws Exception {
+		accountService.createAccount(new Account("test@test.com", "foo", "bar"));
 		mockMvc
 				.perform(get("/api/auth/me").sessionAttr("username", "foo"))
 				.andExpect(status().isOk());
