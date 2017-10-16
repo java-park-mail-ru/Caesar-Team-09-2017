@@ -24,7 +24,7 @@ public class AccountController {
     public ResponseEntity register(@RequestBody Account account, HttpSession httpSession) {
 
         ResponseEntity responseEntity = accountService.createAccount(account);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+        if (responseEntity.getStatusCode() != HttpStatus.CREATED) {
             return responseEntity;
         }
         account = (Account) responseEntity.getBody();

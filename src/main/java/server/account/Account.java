@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import javax.validation.constraints.NotNull;
+
 
 public class Account {
 
@@ -15,8 +17,9 @@ public class Account {
     private long score;
 
     @JsonCreator
-    public Account(@JsonProperty("email") String email, @JsonProperty("username") String username,
-                   @JsonProperty("password") String password) {
+    public Account(@JsonProperty(value = "email", required = true) String email,
+                   @JsonProperty(value = "username", required = true) String username,
+                   @JsonProperty(value = "password", required = true) String password) {
 
         this.email = email;
         this.username = username;

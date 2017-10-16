@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import server.error.Error;
 
 import java.util.List;
@@ -128,6 +129,7 @@ public class AccountService {
 
         return new ResponseEntity(accounts, HttpStatus.OK);
     }
+
 
 }
 
