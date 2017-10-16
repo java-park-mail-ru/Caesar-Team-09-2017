@@ -19,13 +19,18 @@ import java.util.List;
 @Service
 public class AccountService {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+    private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity createAccount(Account account) {
+    public AccountService(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	public ResponseEntity createAccount(Account account) {
 
         try {
-            String encryptedPassword = passwordEncoder().encode(account.getPassword());
+            String encryptedPassword = passwordEncoder.encode(account.getPassword());
             final String sql = "INSERT INTO FUser(username, email, password) VALUES(?,?,?)";
             jdbcTemplate.update(sql,
                     new Object[]{ account.getUsername(), account.getEmail(), encryptedPassword });
@@ -112,7 +117,7 @@ public class AccountService {
         String encryptedPassword = (String) jdbcTemplate.queryForObject(
                 sql, new Object[]{ username }, String.class);
 
-        return passwordEncoder().matches(password, encryptedPassword);
+        return passwordEncoder.matches(password, encryptedPassword);
     }
 
     public ResponseEntity getAccountsScore() {
@@ -124,9 +129,5 @@ public class AccountService {
         return new ResponseEntity(accounts, HttpStatus.OK);
     }
 
-    @Bean
-    private PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
 

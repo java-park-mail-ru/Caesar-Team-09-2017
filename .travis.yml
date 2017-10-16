@@ -11,3 +11,11 @@ deploy:
     develop: tp-2017-2-caesar-backend
   api_key:
     secure: 38935a2f-856e-4412-8883-86aaab035f8a
+services:
+  - postgresql
+before_script:
+  - psql -c "create user caesartest with password 'caesartest';" -U postgres
+  - psql -c "alter role caesartest with superuser;" -U postgres
+  - psql -c "create database caesartest;" -U postgres
+  - psql -c "grant all on database caesartest to caesartest;" -U postgres
+
