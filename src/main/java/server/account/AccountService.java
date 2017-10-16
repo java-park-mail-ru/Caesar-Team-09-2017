@@ -1,133 +1,70 @@
 package server.account;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import server.error.Error;
+
+import server.account.dao.AccountDao;
+import server.account.dao.AccountDaoImpl;
+
 
 import java.util.List;
-
 
 @Service
 public class AccountService {
 
     private final JdbcTemplate jdbcTemplate;
+    private  AccountDaoImpl accountDaoimpl;
     private final PasswordEncoder passwordEncoder;
 
-    public AccountService(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
-		this.jdbcTemplate = jdbcTemplate;
-		this.passwordEncoder = passwordEncoder;
-	}
 
-	public ResponseEntity createAccount(Account account) {
-
-        try {
-            String encryptedPassword = passwordEncoder.encode(account.getPassword());
-            final String sql = "INSERT INTO FUser(username, email, password) VALUES(?,?,?)";
-            jdbcTemplate.update(sql,
-                    new Object[]{ account.getUsername(), account.getEmail(), encryptedPassword });
-
-            return new ResponseEntity(account, HttpStatus.CREATED); // 201
-
-        } catch (DuplicateKeyException e) {
-
-            final String sql = "SELECT * FROM FUser " +
-                    "WHERE LOWER(username COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\") " +
-                    "OR LOWER(email COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\")";
-
-            List<Account> accounts = jdbcTemplate.query(sql,
-                    new Object[] { account.getUsername(), account.getEmail() }, new AccountRowMapper());
-
-            return new ResponseEntity(accounts, HttpStatus.CONFLICT); // 409
-        }
+    public AccountService(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder, AccountDaoImpl accountDaoimpl) {
+            this.jdbcTemplate = jdbcTemplate;
+            this.passwordEncoder = passwordEncoder;
+            this.accountDaoimpl = accountDaoimpl;
     }
 
-    public ResponseEntity getAccount(String username) {
+    public AccountDao createAccount(Account account) {
 
-        ResponseEntity responseEntity = findAccount(username, jdbcTemplate);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            return responseEntity;
-        }
+        String encryptedPassword = passwordEncoder.encode(account.getPassword());
 
-        return  responseEntity;
+        AccountDao accountDao = new AccountDao(account.getEmail(), account.getUsername(), encryptedPassword);
+        accountDaoimpl.insertAccount(accountDao);
+
+        return accountDao;
     }
 
-    public ResponseEntity renameAccount(Account account, String username) {
+    public AccountDao getAccount(String username) {
 
-        try {
+        AccountDao accountDao = accountDaoimpl.getAccount(username);
 
-//          **************************************find account**************************************
-            ResponseEntity responseEntity = findAccount(username, jdbcTemplate);
-            if (responseEntity.getStatusCode() != HttpStatus.OK) {
-                return responseEntity;
-            }
-            Account oldAccount = (Account) responseEntity.getBody();
-//          **************************************find account**************************************
-
-            if (account.getEmail() == null) {
-                account.setEmail(oldAccount.getEmail());
-            }
-
-            if (account.getUsername() == null) {
-                account.setUsername(oldAccount.getUsername());
-            }
-
-
-            final String sql = "UPDATE FUser SET email = ?, username = ? " +
-                    "WHERE LOWER(username COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\")";
-            jdbcTemplate.update(sql, account.getEmail(), account.getUsername(), username);
-
-            return new ResponseEntity(account, HttpStatus.OK);
-
-        } catch (DuplicateKeyException e) {
-
-            return new ResponseEntity(Error.getJson("this username/email has already existed"), HttpStatus.CONFLICT); // 409
-
-        }
+        return  accountDao;
     }
 
-    public static ResponseEntity findAccount(String username, JdbcTemplate jdbcTemplate) {
-        try {
+    public AccountDao renameAccount(Account account, String username) {
 
-            final String sql = "SELECT * from FUser " +
-                    "WHERE LOWER(username COLLATE \"POSIX\") = LOWER(? COLLATE \"POSIX\")";
-            Account account = (Account) jdbcTemplate.queryForObject(
-                    sql, new Object[]{ username }, new AccountRowMapper());
+        AccountDao accountDao = new AccountDao(account);
+        accountDaoimpl.renameAccount(accountDao, username);
 
-            return new ResponseEntity(account, HttpStatus.OK);
-
-        } catch (EmptyResultDataAccessException e) {
-
-            return new ResponseEntity(Error.getJson("Can't find user with username: " + username),
-                    HttpStatus.NOT_FOUND);
-        }
+        return accountDao;
     }
 
     public  boolean checkPassword(String username, String password) {
-        final String sql = "SELECT password from FUser " +
-                "WHERE LOWER(username COLLATE \"POSIX\") = LOWER(? COLLATE \"POSIX\")";
+        final String sql = "SELECT password from FUser "
+                + "WHERE LOWER(username COLLATE \"POSIX\") = LOWER(? COLLATE \"POSIX\")";
         String encryptedPassword = (String) jdbcTemplate.queryForObject(
-                sql, new Object[]{ username }, String.class);
+                sql, new Object[]{username}, String.class);
 
         return passwordEncoder.matches(password, encryptedPassword);
     }
 
-    public ResponseEntity getAccountsScore() {
+    public List<AccountDao> getAccountsScore() {
 
-        final String sql = ("SELECT * FROM FUser order by score");
+        List<AccountDao> accountsDao = accountDaoimpl.getScoreAccount();
 
-        List<Account> accounts = jdbcTemplate.query(sql.toString(), new AccountRowMapper());
-
-        return new ResponseEntity(accounts, HttpStatus.OK);
+        return accountsDao;
     }
-
 }
 

@@ -1,38 +1,51 @@
-package server.account;
+package server.account.dao;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import server.account.Account;
 
-
-public class Account {
+public class AccountDao {
 
     private String email;
     private String username;
     private String password;
     private long score;
 
+    private String status;
+    private String error;
+
     @JsonCreator
-    public Account(@JsonProperty(value = "email") String email,
-                   @JsonProperty(value = "username", required = true) String username,
-                   @JsonProperty(value = "password", required = true) String password) {
+    public AccountDao(String email, String username, String password) {
 
         this.email = email;
         this.username = username;
         this.password = password;
+    }
+
+    public AccountDao() {
 
     }
 
-    public Account() {
-
-    }
-
-    public Account(Account account) {
+    public AccountDao(Account account) {
         this.email = account.getEmail();
         this.username = account.getUsername();
         this.password = account.getPassword();
+    }
+
+    @JsonIgnore
+    public String getError() {
+        return error;
+    }
+
+    public long getScore() {
+        return score;
+    }
+
+    @JsonIgnore
+    public String getStatus() {
+        return status;
     }
 
     public String getEmail() {
@@ -48,8 +61,17 @@ public class Account {
         return password;
     }
 
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
     public void setScore(long score) {
         this.score = score;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setEmail(String email) {
