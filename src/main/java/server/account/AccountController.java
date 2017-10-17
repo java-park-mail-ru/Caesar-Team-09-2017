@@ -1,6 +1,5 @@
 package server.account;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +43,10 @@ public class AccountController {
                     HttpStatus.I_AM_A_TEAPOT); // http response code 418
         }
 
-//      **************************************find account**************************************
         ResponseEntity responseEntity = accountService.getAccount(account.getUsername());
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
             return responseEntity;
         }
-//      **************************************find account**************************************
 
         String username = account.getUsername();
         String password = account.getPassword();
@@ -99,8 +96,8 @@ public class AccountController {
         String username = (String) httpSession.getAttribute("username");
 
         if (username == null) {
-            return new ResponseEntity(Error.getJson("You must authorize" +
-                    " before change your personal Information"),
+            return new ResponseEntity(Error.getJson("You must authorize"
+                    + " before change your personal Information"),
                     HttpStatus.UNAUTHORIZED);
         }
 

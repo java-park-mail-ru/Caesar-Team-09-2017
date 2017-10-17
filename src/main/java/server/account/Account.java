@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import javax.validation.constraints.NotNull;
-
 
 public class Account {
 
@@ -27,7 +25,7 @@ public class Account {
 
     }
 
-    public Account(){
+    public Account() {
 
     }
 
@@ -35,15 +33,6 @@ public class Account {
         this.email = account.getEmail();
         this.username = account.getUsername();
         this.password = account.getPassword();
-    }
-
-    public Account copy() {
-        return new Account(this);
-    }
-
-
-    public long getScore() {
-        return score;
     }
 
     public String getEmail() {
@@ -75,8 +64,9 @@ public class Account {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     @JsonIgnore
-    public ObjectNode getJson(){
+    public ObjectNode getJson() {
         final ObjectMapper map = new ObjectMapper();
         final ObjectNode node = map.createObjectNode();
 

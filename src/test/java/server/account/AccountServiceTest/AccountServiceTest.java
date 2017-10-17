@@ -48,7 +48,7 @@ public class AccountServiceTest {
     public void setUp() {
         accountService.createAccount(new Account("seva@mail.ru", "seva", "qwerty"));
     }
-
+//  ***************************************** CREATE ACCOUNT START *****************************************
     @Test
     public void createSimpleAccount() {
         accountService.createAccount(new Account(getRandomString(SECURE_RANDOM, 10) + "@mail.ru",
@@ -73,7 +73,9 @@ public class AccountServiceTest {
                         "seva", getRandomString(SECURE_RANDOM, 10))).getStatusCode();
         assertEquals(HttpStatus.CONFLICT, httpStatus);
     }
+//  ***************************************** CREATE ACCOUNT END *****************************************
 
+//  ***************************************** GET ACCOUNT START *****************************************
     @Test
     public void getAccount() {
         ResponseEntity responseEntity = accountService.getAccount("seva");
@@ -88,6 +90,10 @@ public class AccountServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, accountService.getAccount("username5").getStatusCode());
     }
 
+//  ***************************************** GET ACCOUNT END *****************************************
+
+
+//  ***************************************** CHECK PASSWORD START *****************************************
     @Test
     public void checkPasswordTrue() throws ClassCastException {
         assertTrue(accountService.checkPassword("seva", "qwerty"));
@@ -98,6 +104,10 @@ public class AccountServiceTest {
         assertFalse(accountService.checkPassword("seva", "qwerty123"));
     }
 
+//  ***************************************** CHECK PASSWORD END *****************************************
+
+
+//  ***************************************** RENAME ACCOUNT START *****************************************
     @Test
     public void renameSimpleAccount() {
         String username = getRandomString(SECURE_RANDOM, 10);
@@ -112,6 +122,35 @@ public class AccountServiceTest {
         assertEquals(newUsername, account.getUsername());
 
     }
+
+    @Test
+    public void renameAccountDoesNotExist() {
+        String username = getRandomString(SECURE_RANDOM, 10);
+        String password = getRandomString(SECURE_RANDOM, 10);
+        String email = getRandomString(SECURE_RANDOM, 10) + "@mail.ru";
+        String newUsername = getRandomString(SECURE_RANDOM, 10);
+        assertEquals(HttpStatus.NOT_FOUND, accountService.renameAccount(
+                new Account(email, username, password), newUsername).getStatusCode());
+
+    }
+
+    @Test
+    public void renameAccountToExistAccount() {
+        String username1 = getRandomString(SECURE_RANDOM, 10);
+        String password1 = getRandomString(SECURE_RANDOM, 10);
+        String email1 = getRandomString(SECURE_RANDOM, 10) + "@mail.ru";
+        accountService.createAccount(new Account(email1, username1, password1));
+
+        String username2 = getRandomString(SECURE_RANDOM, 10);
+        String password2 = getRandomString(SECURE_RANDOM, 10);
+        String email2 = getRandomString(SECURE_RANDOM, 10) + "@mail.ru";
+        accountService.createAccount(new Account(email2, username2, password2));
+
+        String newUsername = getRandomString(SECURE_RANDOM, 10);
+        assertEquals(HttpStatus.CONFLICT, accountService.renameAccount(
+                new Account(email1, newUsername, password2), username2).getStatusCode());
+    }
+//  ***************************************** RENAME ACCOUNT END *****************************************
 
     public String getRandomString(SecureRandom random, int length){
         final String lettersAndDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";

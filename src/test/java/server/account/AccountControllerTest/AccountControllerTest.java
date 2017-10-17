@@ -15,8 +15,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
-import server.account.Account;
-import server.account.AccountService;
+
 
 import static service.ServiceService.clearDatabase;
 
