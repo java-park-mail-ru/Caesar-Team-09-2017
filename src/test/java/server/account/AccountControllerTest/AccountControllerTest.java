@@ -34,9 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AccountControllerTest {
 
 	@Autowired
-	private AccountService accountService;
-
-	@Autowired
 	private MockMvc mockMvc;
 
     @Autowired
@@ -60,8 +57,17 @@ public class AccountControllerTest {
     }
 
     @Before
-    public void setup() {
-        accountService.createAccount(new Account("seva@mail.ru","seva", "qwerty"));
+    public void setup() throws Exception {
+        final JSONObject json = new JSONObject();
+        json.put("username", "seva");
+        json.put("password", "qwerty");
+        json.put("email", "seva@mail.ru");
+        mockMvc
+                .perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()))
+                .andExpect(status().isCreated());
+
         mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
 
@@ -251,7 +257,7 @@ public class AccountControllerTest {
 
 // *************************************** ME START***************************************
     @Test
-    public void CheckAuthorizedTrue() throws Exception {
+    public void checkAuthorizedTrue() throws Exception {
         mockMvc
                 .perform(get("/api/auth/me")
                         .sessionAttr("username", "seva"))
@@ -259,11 +265,12 @@ public class AccountControllerTest {
     }
 
     @Test
-	public void CheckAuthorizedFalse() throws Exception {
+	public void checkAuthorizedFalse() throws Exception {
 		mockMvc
 				.perform(get("/api/auth/me"))
 				.andExpect(status().isUnauthorized());
 	}
+
 // *************************************** ME END***************************************
 
 
@@ -285,7 +292,79 @@ public class AccountControllerTest {
     }
 // *************************************** LOGOUT END***************************************
 
-	public String getRandomString(SecureRandom random, int length){
+// *************************************** RENAME START***************************************
+    @Test
+    public void simpleRename() throws Exception {
+        final JSONObject json = new JSONObject();
+        json.put("username", getRandomString(SECURE_RANDOM, 10));
+        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        mockMvc
+                .perform(post("/api/auth/signup")
+                        .session(mockSession)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("username").value(json.get("username")))
+                .andExpect(jsonPath("email").value(json.get("email")));
+
+        json.put("username", getRandomString(SECURE_RANDOM, 10));
+        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        mockMvc
+                .perform(post("/api/user/rename")
+                        .session(mockSession)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("username").value(json.get("username")))
+                .andExpect(jsonPath("email").value(json.get("email")));
+    }
+
+    @Test
+    public void notAuthorizedRename() throws Exception {
+        final JSONObject json = new JSONObject();
+        json.put("username", "seva");
+        json.put("email", "seva@mail.ru");
+        json.put("password", "qwerty");
+        mockMvc
+                .perform(post("/api/user/rename")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void checkAuthorizedAfterRename() throws Exception {
+        final JSONObject json = new JSONObject();
+        json.put("username", getRandomString(SECURE_RANDOM, 10));
+        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        mockMvc
+                .perform(post("/api/auth/signup")
+                        .session(mockSession)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()))
+                .andExpect(status().isCreated())
+                .andExpect(request().sessionAttribute("username", json.getString("username")))
+                .andExpect(jsonPath("username").value(json.get("username")))
+                .andExpect(jsonPath("email").value(json.get("email")));
+
+        json.put("username", getRandomString(SECURE_RANDOM, 10));
+        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        mockMvc
+                .perform(post("/api/user/rename")
+                        .session(mockSession)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()))
+                .andExpect(status().isOk())
+                .andExpect(request().sessionAttribute("username", json.getString("username")))
+                .andExpect(jsonPath("username").value(json.get("username")))
+                .andExpect(jsonPath("email").value(json.get("email")));
+    }
+
+// *************************************** RENAME END***************************************
+
+    public String getRandomString(SecureRandom random, int length){
 		final String lettersAndDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
 		final StringBuilder stringBuilder = new StringBuilder(length);
 		for(int i = 0; i < length; ++i){
