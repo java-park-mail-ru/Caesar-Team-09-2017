@@ -42,7 +42,7 @@ paths:
                 enum:
                   - Vera_good_day!
       responses:
-        '200':
+        '201':
           description: SUCCESS
           schema:
             type: object
@@ -60,7 +60,7 @@ paths:
                 description: users username
                 enum:
                   - seva
-        '400':
+        '409':
           description: email/login exists
           schema:
             type: object
@@ -74,7 +74,6 @@ paths:
                   - This email exists
                   - This username exists
                   - Incorrect format.
-
   /api/auth/login:
     post:
       summary: Log in
@@ -105,7 +104,7 @@ paths:
         '200':
           description: SUCCESS
                    - seva
-        '400':
+        '404':
           description: not registered
           schema:
             type: object
@@ -204,7 +203,7 @@ paths:
                 enum:
                   - You haven't authorized.
 
-  /api/account/rename:
+  /api/user/rename:
     post:
       summary: Update account
       consumes: []
@@ -248,7 +247,7 @@ paths:
                 description: users username
                 enum:
                   - I'm your eyes when you must steal
-        '400':
+        '409':
           description: email/login exists
           schema:
             type: object
@@ -275,7 +274,7 @@ paths:
                 enum:
                   - You haven't authorized.
 
-  /api/account/rating:
+  /api/user/rating:
     get:
       summary: Get best players
       consumes: []

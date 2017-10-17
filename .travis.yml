@@ -4,9 +4,8 @@ jdk:
 
 services:
   - postgresql
-before_script:
-  - psql -c "create user caesartest with password 'caesartest';" -U postgres
-  - psql -c "alter role caesartest with superuser;" -U postgres
+before_install:
+  - psql -c "create user caesartest with SUPERUSER password 'caesartest';" -U postgres
   - psql -c "create database caesartest;" -U postgres
   - psql -c "grant all on database caesartest to caesartest;" -U postgres
 
