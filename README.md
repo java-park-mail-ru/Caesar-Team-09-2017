@@ -3,7 +3,6 @@
 - Подловченко Вера
 - Чебаков Дмитрий
 
-# Deploy
-https://tp-2017-2-caesar-backend.herokuapp.com/
-# REST API
-https://app.swaggerhub.com/apis/CaezarTeam/REST_API/1.0.0
+# [Deploy](https://tp-2017-2-caesar-backend.herokuapp.com/)
+
+# [REST API](https://app.swaggerhub.com/apis/CaezarTeam/REST_API/1.0.0)
