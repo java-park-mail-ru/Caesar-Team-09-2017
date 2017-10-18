@@ -15,7 +15,7 @@ public class Account {
     private long score;
 
     @JsonCreator
-    public Account(@JsonProperty(value = "email", required = true) String email,
+    public Account(@JsonProperty(value = "email") String email,
                    @JsonProperty(value = "username", required = true) String username,
                    @JsonProperty(value = "password", required = true) String password) {
 

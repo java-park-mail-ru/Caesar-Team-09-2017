@@ -152,7 +152,7 @@ public class AccountControllerTest {
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json.toString()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isCreated());
         json.remove("username");
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
