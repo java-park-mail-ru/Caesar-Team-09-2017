@@ -16,20 +16,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.validation.constraints.NotNull;
 
-import static service.ServiceService.clearDatabase;
+import static utils.TestUtils.createJsonResponse;
+import static service.ServiceDb.clearDatabase;
 
-import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest()
+@SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
-//@Transactional
 public class AccountControllerTest {
 
 	@Autowired
@@ -38,17 +38,10 @@ public class AccountControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-
     @Autowired
     private WebApplicationContext wac; // for mockSession
 
     protected MockHttpSession mockSession; // for test double login
-
-    @Before
-    public void clearDataBaseBefore() throws SQLException {
-        clearDatabase(jdbcTemplate);
-    }
 
     @After
     public void clearDatabaseAfter() throws SQLException {
@@ -58,26 +51,18 @@ public class AccountControllerTest {
     @Before
     public void setup() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", "seva");
-        json.put("password", "qwerty");
-        json.put("email", "seva@mail.ru");
-        mockMvc
-                .perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(json.toString()))
-                .andExpect(status().isCreated());
+        createJsonResponse(json,"seva", "seva@mail.ru", "qwerty");
+        signupWithoutChecks(json);
 
         mockSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
     }
 
-// *************************************** CREATE ACCOUNT START***************************************
     @Test
     public void simpleRegister() throws Exception {
-        final JSONObject json = new JSONObject();
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        clearDatabase(jdbcTemplate);
 
+        final JSONObject json = new JSONObject();
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -91,64 +76,40 @@ public class AccountControllerTest {
     @Test
     public void usernameOrEmailAlreadyExists() throws Exception {
         // signup two account
-        String[] username = { getRandomString(SECURE_RANDOM, 10), getRandomString(SECURE_RANDOM, 10)};
-        String[] email = { getRandomString(SECURE_RANDOM, 10) + "@mail.ru", getRandomString(SECURE_RANDOM, 10) + "@mail.ru"};
+        String[] username = { "Vera", "Varya"};
+        String[] email = { "Vera@mail.ru", "Varya@mail.ru"};
         // first account
         final JSONObject json = new JSONObject();
-        json.put("username", username[0]);
-        json.put("email", email[0]);
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        createJsonResponse(json, username[0], email[0], null);
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json.toString()))
                 .andExpect(status().isCreated());
         // second account
-        json.put("username", username[1]);
-        json.put("email", email[1]);
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        createJsonResponse(json, username[1], email[1], null);
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json.toString()))
                 .andExpect(status().isCreated());
         // try to signup with first username
-        json.put("username", username[0]);
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        createJsonResponse(json, username[0], null, null);
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json.toString()))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$[0].email").value(email[0]))
-                .andExpect(jsonPath("$[0].username").value(username[0]));
+                .andExpect(status().isConflict());
         // try to signup with second email
-        json.put("username", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
-        json.put("email", email[1]);
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        createJsonResponse(json, null, email[1], null);
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json.toString()))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$[0].email").value(email[1]))
-                .andExpect(jsonPath("$[0].username").value(username[1]));
-        // try to signup with first email and second username
-        json.put("username", username[0]);
-        json.put("email", email[1]);
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$[0].email").value(email[0]))
-                .andExpect(jsonPath("$[0].username").value(username[0]))
-                .andExpect(jsonPath("$[1].email").value(email[1]))
-                .andExpect(jsonPath("$[1].username").value(username[1]));
+                .andExpect(status().isConflict());
     }
 
     @Test
     public void emptyCredentials() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
+        createJsonResponse(json,null, null, null);
+        json.remove("email");
         mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json.toString()))
@@ -168,9 +129,7 @@ public class AccountControllerTest {
     @Test
     public void authorizedAfterRegister() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -178,15 +137,11 @@ public class AccountControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(request().sessionAttribute("username", json.getString("username")));
     }
-// *************************************** CREATE ACCOUNT END***************************************
 
-// *************************************** LOGIN START***************************************
     @Test
     public void simplyLogIn() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", "seva");
-        json.put("password", "qwerty");
-        json.put("email", "seva@mail.ru");
+        createJsonResponse(json,"seva", "seva@mail.ru", "qwerty");
         mockMvc
                 .perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -200,9 +155,7 @@ public class AccountControllerTest {
     @Test
     public void AccountDoesNotExistLogIn() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -214,9 +167,7 @@ public class AccountControllerTest {
     @Test
     public void wrongPasswordLogIn() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", "seva");
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", "seva@mail.ru");
+        createJsonResponse(json,"seva", "seva@mail.ru", "NOT QWERTY");
         mockMvc
                 .perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -228,9 +179,7 @@ public class AccountControllerTest {
     @Test
     public void doubleLogIn() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", "seva");
-        json.put("password", "qwerty");
-        json.put("email", "seva@mail.ru");
+        createJsonResponse(json,"seva", "seva@mail.ru", "qwerty");
         mockMvc
                 .perform(post("/api/auth/login")
                         .session(mockSession)
@@ -251,10 +200,7 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("message").value("You have already authorized"));
 
     }
-// *************************************** LOGIN END***************************************
 
-
-// *************************************** ME START***************************************
     @Test
     public void checkAuthorizedTrue() throws Exception {
         mockMvc
@@ -270,11 +216,6 @@ public class AccountControllerTest {
 				.andExpect(status().isUnauthorized());
 	}
 
-// *************************************** ME END***************************************
-
-
-
-// *************************************** LOGOUT START***************************************
     @Test
     public void logOutTrue() throws Exception {
         mockMvc
@@ -289,26 +230,18 @@ public class AccountControllerTest {
                 .perform(get("/api/auth/logout"))
                 .andExpect(status().isUnauthorized());
     }
-// *************************************** LOGOUT END***************************************
 
-// *************************************** RENAME START***************************************
     @Test
     public void simpleRename() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/auth/signup")
                         .session(mockSession)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(json.toString()))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("username").value(json.get("username")))
-                .andExpect(jsonPath("email").value(json.get("email")));
+                        .content(json.toString()));
 
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/user/rename")
                         .session(mockSession)
@@ -322,9 +255,7 @@ public class AccountControllerTest {
     @Test
     public void notAuthorizedRename() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", "seva");
-        json.put("email", "seva@mail.ru");
-        json.put("password", "qwerty");
+        createJsonResponse(json,"seva", "seva@mail.ru", "qwerty");
         mockMvc
                 .perform(post("/api/user/rename")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -335,21 +266,14 @@ public class AccountControllerTest {
     @Test
     public void checkAuthorizedAfterRename() throws Exception {
         final JSONObject json = new JSONObject();
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("password", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/auth/signup")
                         .session(mockSession)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(json.toString()))
-                .andExpect(status().isCreated())
-                .andExpect(request().sessionAttribute("username", json.getString("username")))
-                .andExpect(jsonPath("username").value(json.get("username")))
-                .andExpect(jsonPath("email").value(json.get("email")));
+                        .content(json.toString()));
 
-        json.put("username", getRandomString(SECURE_RANDOM, 10));
-        json.put("email", getRandomString(SECURE_RANDOM, 10) + "@mail.ru");
+        createJsonResponse(json,null, null, null);
         mockMvc
                 .perform(post("/api/user/rename")
                         .session(mockSession)
@@ -361,14 +285,10 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("email").value(json.get("email")));
     }
 
-// *************************************** RENAME END***************************************
-
-    public String getRandomString(SecureRandom random, int length){
-		final String lettersAndDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
-		final StringBuilder stringBuilder = new StringBuilder(length);
-		for(int i = 0; i < length; ++i){
-			stringBuilder.append(lettersAndDigits.toCharArray()[random.nextInt(lettersAndDigits.length())]);
-		}
-		return stringBuilder.toString();
-	}
+    private void signupWithoutChecks(@NotNull JSONObject json) throws Exception {
+        mockMvc
+                .perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.toString()));
+    }
 }

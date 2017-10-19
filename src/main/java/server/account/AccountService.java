@@ -1,5 +1,7 @@
 package server.account;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,9 +16,10 @@ import server.error.Error;
 
 import java.util.List;
 
-
 @Service
 public class AccountService {
+
+    private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
@@ -38,14 +41,8 @@ public class AccountService {
 
         } catch (DuplicateKeyException e) {
 
-            final String sql = "SELECT * FROM FUser "
-                    + "WHERE LOWER(username COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\") "
-                    + "OR LOWER(email COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\")";
-
-            List<Account> accounts = jdbcTemplate.query(sql,
-                    new Object[] {account.getUsername(), account.getEmail()}, new AccountRowMapper());
-
-            return new ResponseEntity(accounts, HttpStatus.CONFLICT); // 409
+            logger.warn(e.getMessage());
+            return new ResponseEntity(HttpStatus.CONFLICT); // 409
         }
     }
 
@@ -53,6 +50,7 @@ public class AccountService {
 
         ResponseEntity responseEntity = findAccount(username, jdbcTemplate);
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            logger.info(responseEntity.getStatusCode().getReasonPhrase());
             return responseEntity;
         }
 
@@ -86,6 +84,7 @@ public class AccountService {
 
         } catch (DuplicateKeyException e) {
 
+            logger.warn(e.getMessage());
             return new ResponseEntity(Error.getJson("this username/email has already existed"),
                     HttpStatus.CONFLICT); // 409
 
@@ -103,7 +102,6 @@ public class AccountService {
             return new ResponseEntity(account, HttpStatus.OK);
 
         } catch (EmptyResultDataAccessException e) {
-
             return new ResponseEntity(Error.getJson("Can't find user with username: " + username),
                     HttpStatus.NOT_FOUND);
         }
@@ -115,7 +113,11 @@ public class AccountService {
         String encryptedPassword = (String) jdbcTemplate.queryForObject(
                 sql, new Object[]{username}, String.class);
 
-        return passwordEncoder.matches(password, encryptedPassword);
+        boolean flag = passwordEncoder.matches(password, encryptedPassword);
+        if (!flag) {
+            logger.warn("Wrong password");
+        }
+        return flag;
     }
 
     public ResponseEntity getAccountsScore() {

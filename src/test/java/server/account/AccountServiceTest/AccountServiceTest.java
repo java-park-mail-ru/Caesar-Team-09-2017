@@ -2,6 +2,7 @@ package server.account.AccountServiceTest;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 
 import static org.junit.Assert.*;
-import static service.ServiceService.clearDatabase;
+import static service.ServiceDb.clearDatabase;
+import static utils.TestUtils.getRandomString;
 
 @SpringBootTest()
 @RunWith(SpringRunner.class)
@@ -48,7 +50,7 @@ public class AccountServiceTest {
     public void setUp() {
         accountService.createAccount(new Account("seva@mail.ru", "seva", "qwerty"));
     }
-//  ***************************************** CREATE ACCOUNT START *****************************************
+
     @Test
     public void createSimpleAccount() {
         accountService.createAccount(new Account(getRandomString(SECURE_RANDOM, 10) + "@mail.ru",
@@ -73,9 +75,7 @@ public class AccountServiceTest {
                         "seva", getRandomString(SECURE_RANDOM, 10))).getStatusCode();
         assertEquals(HttpStatus.CONFLICT, httpStatus);
     }
-//  ***************************************** CREATE ACCOUNT END *****************************************
 
-//  ***************************************** GET ACCOUNT START *****************************************
     @Test
     public void getAccount() {
         ResponseEntity responseEntity = accountService.getAccount("seva");
@@ -90,10 +90,6 @@ public class AccountServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, accountService.getAccount("username5").getStatusCode());
     }
 
-//  ***************************************** GET ACCOUNT END *****************************************
-
-
-//  ***************************************** CHECK PASSWORD START *****************************************
     @Test
     public void checkPasswordTrue() throws ClassCastException {
         assertTrue(accountService.checkPassword("seva", "qwerty"));
@@ -104,10 +100,6 @@ public class AccountServiceTest {
         assertFalse(accountService.checkPassword("seva", "qwerty123"));
     }
 
-//  ***************************************** CHECK PASSWORD END *****************************************
-
-
-//  ***************************************** RENAME ACCOUNT START *****************************************
     @Test
     public void renameSimpleAccount() {
         String username = getRandomString(SECURE_RANDOM, 10);
@@ -149,16 +141,6 @@ public class AccountServiceTest {
         String newUsername = getRandomString(SECURE_RANDOM, 10);
         assertEquals(HttpStatus.CONFLICT, accountService.renameAccount(
                 new Account(email1, newUsername, password2), username2).getStatusCode());
-    }
-//  ***************************************** RENAME ACCOUNT END *****************************************
-
-    public String getRandomString(SecureRandom random, int length){
-        final String lettersAndDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
-        final StringBuilder stringBuilder = new StringBuilder(length);
-        for(int i = 0; i < length; ++i){
-            stringBuilder.append(lettersAndDigits.toCharArray()[random.nextInt(lettersAndDigits.length())]);
-        }
-        return stringBuilder.toString();
     }
 
 }
