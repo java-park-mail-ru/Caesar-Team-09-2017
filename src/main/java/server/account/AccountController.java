@@ -1,18 +1,24 @@
 package server.account;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import server.account.dao.AccountDao;
 import server.error.Error;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:8080", "https://tp-2017-2-caesar.herokuapp.com"})
 @RequestMapping("/api")
 @RestController
 public class AccountController {
+
+    private Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     private AccountService accountService;
 
@@ -23,15 +29,16 @@ public class AccountController {
     @PostMapping(path = "/auth/signup")
     public ResponseEntity register(@RequestBody Account account, HttpSession httpSession) {
 
-        ResponseEntity responseEntity = accountService.createAccount(account);
-        if (responseEntity.getStatusCode() != HttpStatus.CREATED) {
-            return responseEntity;
+        AccountDao accountDao = accountService.createAccount(account);
+        if (!accountDao.getStatus().equals("CREATED")) {
+            logger.info(accountDao.getStatus());
+            return new ResponseEntity(Error.getJson(accountDao.getError()),
+                    HttpStatus.CONFLICT);
         }
-        account = (Account) responseEntity.getBody();
 
-        httpSession.setAttribute("username", account.getUsername());
+        httpSession.setAttribute("username", accountDao.getUsername());
 
-        return responseEntity;
+        return new ResponseEntity(accountDao, HttpStatus.CREATED); // 201
     }
 
     @PostMapping(path = "/auth/login")
@@ -44,22 +51,25 @@ public class AccountController {
                     HttpStatus.I_AM_A_TEAPOT); // http response code 418
         }
 
-        ResponseEntity responseEntity = accountService.getAccount(account.getUsername());
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            return responseEntity;
+        String username = account.getUsername();
+        AccountDao accountDao = accountService.getAccount(username);
+        if (!accountDao.getStatus().equals("OK")) {
+            logger.info(accountDao.getStatus());
+            return new ResponseEntity(Error.getJson(accountDao.getError()),
+                    HttpStatus.NOT_FOUND);
         }
 
-        String username = account.getUsername();
         String password = account.getPassword();
 
         if (!accountService.checkPassword(username, password)) {
+            logger.warn("Wrong password");
             return new ResponseEntity(Error.getJson("Wrong password! Check CapsLock :) and try again."),
                     HttpStatus.FORBIDDEN); // http response code 403
         }
 
         httpSession.setAttribute("username", username);
 
-        return responseEntity;
+        return new ResponseEntity(accountDao, HttpStatus.OK); // 200
     }
 
     @GetMapping(path = "/auth/me")
@@ -72,7 +82,9 @@ public class AccountController {
                     HttpStatus.UNAUTHORIZED); // http response code 401
         }
 
-        return accountService.getAccount(username);
+        AccountDao accountDao = accountService.getAccount(username);
+
+        return new ResponseEntity(accountDao, HttpStatus.OK);
     }
 
     @GetMapping(path = "/auth/logout")
@@ -102,20 +114,31 @@ public class AccountController {
                     HttpStatus.UNAUTHORIZED);
         }
 
-        ResponseEntity responseEntity = accountService.renameAccount(account, username);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            return responseEntity;
+        AccountDao accountDao = accountService.renameAccount(account, username);
+        if (!accountDao.getStatus().equals("OK")) {
+            logger.info(accountDao.getStatus());
+            HttpStatus httpStatus;
+            if (accountDao.getStatus().equals("NOT_FOUND")) {
+                httpStatus = HttpStatus.NOT_FOUND;
+            } else if (accountDao.getStatus().equals("CONFLICT")) {
+                httpStatus = HttpStatus.CONFLICT;
+            } else {
+                httpStatus = HttpStatus.BAD_REQUEST;
+            }
+            return new ResponseEntity(Error.getJson(accountDao.getError()),
+                    httpStatus);
         }
-        account = (Account) responseEntity.getBody();
 
-        httpSession.setAttribute("username", account.getUsername());
+        httpSession.setAttribute("username", accountDao.getUsername());
 
-        return responseEntity;
+        return new ResponseEntity(accountDao, HttpStatus.OK);
     }
 
     @GetMapping(path = "/user/rating")
     public ResponseEntity printAllUsers() {
-        return accountService.getAccountsScore();
+        List<AccountDao> accountsDao = accountService.getAccountsScore();
+
+        return new ResponseEntity(accountsDao, HttpStatus.OK);
     }
 
 }

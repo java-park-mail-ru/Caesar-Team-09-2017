@@ -2,19 +2,17 @@ package server.account.AccountServiceTest;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import server.account.Account;
 import server.account.AccountService;
+import server.account.dao.AccountDao;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -64,30 +62,29 @@ public class AccountServiceTest {
     @Test
     public void createExistUsernameOrEmailAccount() {
 
-        HttpStatus httpStatus = accountService.createAccount(
+        String status = accountService.createAccount(
                 new Account("seva@mail.ru",
                 getRandomString(SECURE_RANDOM, 10),
-                getRandomString(SECURE_RANDOM, 10))).getStatusCode();
-        assertEquals(HttpStatus.CONFLICT, httpStatus);
+                getRandomString(SECURE_RANDOM, 10))).getStatus();
+        assertEquals("CONFLICT", status);
 
-        httpStatus = accountService.createAccount(
+        status = accountService.createAccount(
                 new Account(getRandomString(SECURE_RANDOM, 10) + "@mail.ru",
-                        "seva", getRandomString(SECURE_RANDOM, 10))).getStatusCode();
-        assertEquals(HttpStatus.CONFLICT, httpStatus);
+                        "seva", getRandomString(SECURE_RANDOM, 10))).getStatus();
+        assertEquals("CONFLICT", status);
     }
 
     @Test
     public void getAccount() {
-        ResponseEntity responseEntity = accountService.getAccount("seva");
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        final Account accountByUsername = (Account) responseEntity.getBody();
-        assertEquals("seva", accountByUsername.getUsername());
-        assertEquals("seva@mail.ru", accountByUsername.getEmail());
+        AccountDao accountDao = accountService.getAccount("seva");
+        assertEquals("OK", accountDao.getStatus());
+        assertEquals("seva", accountDao.getUsername());
+        assertEquals("seva@mail.ru", accountDao.getEmail());
     }
 
     @Test
     public void getAccountNotExist() throws ClassCastException {
-        assertEquals(HttpStatus.NOT_FOUND, accountService.getAccount("username5").getStatusCode());
+        assertEquals("NOT_FOUND", accountService.getAccount("username5").getStatus());
     }
 
     @Test
@@ -108,10 +105,10 @@ public class AccountServiceTest {
         accountService.createAccount(new Account(email, username, password));
         String newUsername = getRandomString(SECURE_RANDOM, 10);
         String newEmail = getRandomString(SECURE_RANDOM, 10) + "@mail.ru";
-        Account account = (Account) accountService.renameAccount(
-                new Account(newEmail, newUsername, password), username).getBody();
-        assertEquals(newEmail, account.getEmail());
-        assertEquals(newUsername, account.getUsername());
+        AccountDao accountDao = accountService.renameAccount(
+                new Account(newEmail, newUsername, password), username);
+        assertEquals(newEmail, accountDao.getEmail());
+        assertEquals(newUsername, accountDao.getUsername());
 
     }
 
@@ -121,8 +118,8 @@ public class AccountServiceTest {
         String password = getRandomString(SECURE_RANDOM, 10);
         String email = getRandomString(SECURE_RANDOM, 10) + "@mail.ru";
         String newUsername = getRandomString(SECURE_RANDOM, 10);
-        assertEquals(HttpStatus.NOT_FOUND, accountService.renameAccount(
-                new Account(email, username, password), newUsername).getStatusCode());
+        assertEquals("NOT_FOUND", accountService.renameAccount(
+                new Account(email, username, password), newUsername).getStatus());
 
     }
 
@@ -139,8 +136,8 @@ public class AccountServiceTest {
         accountService.createAccount(new Account(email2, username2, password2));
 
         String newUsername = getRandomString(SECURE_RANDOM, 10);
-        assertEquals(HttpStatus.CONFLICT, accountService.renameAccount(
-                new Account(email1, newUsername, password2), username2).getStatusCode());
+        assertEquals("CONFLICT", accountService.renameAccount(
+                new Account(email1, newUsername, password2), username2).getStatus());
     }
 
 }

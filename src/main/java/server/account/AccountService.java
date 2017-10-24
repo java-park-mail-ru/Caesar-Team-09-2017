@@ -1,110 +1,54 @@
 package server.account;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
-import server.error.Error;
+import server.account.dao.AccountDao;
+import server.account.dao.AccountDaoImpl;
+
 
 import java.util.List;
 
 @Service
 public class AccountService {
 
-    private Logger logger = LoggerFactory.getLogger(AccountController.class);
-
     private final JdbcTemplate jdbcTemplate;
+    private  AccountDaoImpl accountDaoimpl;
     private final PasswordEncoder passwordEncoder;
 
-    public AccountService(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
+
+    public AccountService(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder, AccountDaoImpl accountDaoimpl) {
             this.jdbcTemplate = jdbcTemplate;
             this.passwordEncoder = passwordEncoder;
+            this.accountDaoimpl = accountDaoimpl;
     }
 
-    public ResponseEntity createAccount(Account account) {
+    public AccountDao createAccount(Account account) {
 
-        try {
-            String encryptedPassword = passwordEncoder.encode(account.getPassword());
-            final String sql = "INSERT INTO FUser(username, email, password) VALUES(?,?,?)";
-            jdbcTemplate.update(sql,
-                    new Object[]{account.getUsername(), account.getEmail(), encryptedPassword});
+        String encryptedPassword = passwordEncoder.encode(account.getPassword());
 
-            return new ResponseEntity(account, HttpStatus.CREATED); // 201
+        AccountDao accountDao = new AccountDao(account.getEmail(), account.getUsername(), encryptedPassword);
+        accountDaoimpl.insertAccount(accountDao);
 
-        } catch (DuplicateKeyException e) {
-
-            logger.warn(e.getMessage());
-            return new ResponseEntity(HttpStatus.CONFLICT); // 409
-        }
+        return accountDao;
     }
 
-    public ResponseEntity getAccount(String username) {
+    public AccountDao getAccount(String username) {
 
-        ResponseEntity responseEntity = findAccount(username, jdbcTemplate);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            logger.info(responseEntity.getStatusCode().getReasonPhrase());
-            return responseEntity;
-        }
+        AccountDao accountDao = accountDaoimpl.getAccount(username);
 
-        return  responseEntity;
+        return  accountDao;
     }
 
-    public ResponseEntity renameAccount(Account account, String username) {
+    public AccountDao renameAccount(Account account, String username) {
 
-        try {
+        AccountDao accountDao = new AccountDao(account);
+        accountDaoimpl.renameAccount(accountDao, username);
 
-            ResponseEntity responseEntity = findAccount(username, jdbcTemplate);
-            if (responseEntity.getStatusCode() != HttpStatus.OK) {
-                return responseEntity;
-            }
-            Account oldAccount = (Account) responseEntity.getBody();
-
-            if (account.getEmail() == null) {
-                account.setEmail(oldAccount.getEmail());
-            }
-
-            if (account.getUsername() == null) {
-                account.setUsername(oldAccount.getUsername());
-            }
-
-
-            final String sql = "UPDATE FUser SET email = ?, username = ? "
-                    + "WHERE LOWER(username COLLATE \"POSIX\") =  LOWER(? COLLATE \"POSIX\")";
-            jdbcTemplate.update(sql, account.getEmail(), account.getUsername(), username);
-
-            return new ResponseEntity(account, HttpStatus.OK);
-
-        } catch (DuplicateKeyException e) {
-
-            logger.warn(e.getMessage());
-            return new ResponseEntity(Error.getJson("this username/email has already existed"),
-                    HttpStatus.CONFLICT); // 409
-
-        }
-    }
-
-    public static ResponseEntity findAccount(String username, JdbcTemplate jdbcTemplate) {
-        try {
-
-            final String sql = "SELECT * from FUser "
-                    + "WHERE LOWER(username COLLATE \"POSIX\") = LOWER(? COLLATE \"POSIX\")";
-            Account account = (Account) jdbcTemplate.queryForObject(
-                    sql, new Object[]{username}, new AccountRowMapper());
-
-            return new ResponseEntity(account, HttpStatus.OK);
-
-        } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity(Error.getJson("Can't find user with username: " + username),
-                    HttpStatus.NOT_FOUND);
-        }
+        return accountDao;
     }
 
     public  boolean checkPassword(String username, String password) {
@@ -113,20 +57,14 @@ public class AccountService {
         String encryptedPassword = (String) jdbcTemplate.queryForObject(
                 sql, new Object[]{username}, String.class);
 
-        boolean flag = passwordEncoder.matches(password, encryptedPassword);
-        if (!flag) {
-            logger.warn("Wrong password");
-        }
-        return flag;
+        return passwordEncoder.matches(password, encryptedPassword);
     }
 
-    public ResponseEntity getAccountsScore() {
+    public List<AccountDao> getAccountsScore() {
 
-        final String sql = ("SELECT * FROM FUser order by score");
+        List<AccountDao> accountsDao = accountDaoimpl.getScoreAccount();
 
-        List<Account> accounts = jdbcTemplate.query(sql.toString(), new AccountRowMapper());
-
-        return new ResponseEntity(accounts, HttpStatus.OK);
+        return accountsDao;
     }
 }
 
