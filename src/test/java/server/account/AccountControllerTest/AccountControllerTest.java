@@ -14,10 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.validation.constraints.NotNull;
 
+import static org.junit.Assert.assertEquals;
 import static utils.TestUtils.createJsonResponse;
 import static service.ServiceDb.clearDatabase;
 
@@ -81,28 +84,18 @@ public class AccountControllerTest {
         // first account
         final JSONObject json = new JSONObject();
         createJsonResponse(json, username[0], email[0], null);
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isCreated());
+        signupWithoutChecks(json);
         // second account
         createJsonResponse(json, username[1], email[1], null);
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isCreated());
+        signupWithoutChecks(json);
         // try to signup with first username
         createJsonResponse(json, username[0], null, null);
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isConflict());
+        MvcResult result = signupWithoutChecks(json);
+        assertEquals(409, result.getResponse().getStatus());
         // try to signup with second email
         createJsonResponse(json, null, email[1], null);
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isConflict());
+        result = signupWithoutChecks(json);
+        assertEquals(409, result.getResponse().getStatus());
     }
 
     @Test
@@ -110,20 +103,18 @@ public class AccountControllerTest {
         final JSONObject json = new JSONObject();
         createJsonResponse(json,null, null, null);
         json.remove("email");
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isCreated());
+        MvcResult result = signupWithoutChecks(json);
+        assertEquals(201, result.getResponse().getStatus());
+
+        createJsonResponse(json,null, null, null);
         json.remove("username");
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isBadRequest());
+        result = signupWithoutChecks(json);
+        assertEquals(400, result.getResponse().getStatus());
+
+        createJsonResponse(json,null, null, null);
         json.remove("password");
-        mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.toString()))
-                .andExpect(status().isBadRequest());
+        result = signupWithoutChecks(json);
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
@@ -153,7 +144,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void AccountDoesNotExistLogIn() throws Exception {
+    public void accountDoesNotExistLogIn() throws Exception {
         final JSONObject json = new JSONObject();
         createJsonResponse(json,null, null, null);
         mockMvc
@@ -198,7 +189,6 @@ public class AccountControllerTest {
                 .andExpect(status().isIAmATeapot())
                 .andExpect(request().sessionAttribute("username", json.getString("username")))
                 .andExpect(jsonPath("message").value("You have already authorized"));
-
     }
 
     @Test
@@ -285,10 +275,11 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("email").value(json.get("email")));
     }
 
-    private void signupWithoutChecks(@NotNull JSONObject json) throws Exception {
-        mockMvc
+    private MvcResult signupWithoutChecks(@NotNull JSONObject json) throws Exception {
+        return mockMvc
                 .perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(json.toString()));
+                        .content(json.toString()))
+                        .andReturn();
     }
 }

@@ -32,11 +32,6 @@ public class AccountServiceTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Before
-    public void clearDataBaseBefore() throws SQLException {
-        clearDatabase(jdbcTemplate);
-    }
-
     @After
     public void clearDatabaseAfter() throws SQLException {
         clearDatabase(jdbcTemplate);
@@ -46,6 +41,7 @@ public class AccountServiceTest {
 
     @Before
     public void setUp() {
+        clearDatabase(jdbcTemplate);
         accountService.createAccount(new Account("seva@mail.ru", "seva", "qwerty"));
     }
 
