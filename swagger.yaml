@@ -1,0 +1,314 @@
+swagger: '2.0'
+info:
+  description: Rest api
+  version: 1.0.0
+  title: CaezarTeam
+  contact: {}
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /api/auth/signup:
+    post:
+      summary: Signup New account
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - email
+              - username
+              - password
+            properties:
+              email:
+                type: string
+                description: users email
+                enum:
+                  - seva213415@inbox.ru
+              username:
+                type: string
+                description: users username
+                enum:
+                  - seva
+              password:
+                type: string
+                description: users password
+                enum:
+                  - Vera_good_day!
+      responses:
+        '201':
+          description: SUCCESS
+          schema:
+            type: object
+            required:
+              - email
+              - username
+            properties:
+              email:
+                type: string
+                description: users email
+                enum:
+                  - seva213415@inbox.ru
+              username:
+                type: string
+                description: users username
+                enum:
+                  - seva
+        '409':
+          description: email/login exists
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - This email exists
+                  - This username exists
+                  - Incorrect format.
+  /api/auth/login:
+    post:
+      summary: Log in
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - username
+              - password
+            properties:
+              username:
+                type: string
+                description: users username
+                enum:
+                  - seva
+              password:
+                type: string
+                description: users password
+                enum:
+                  - Vera_good_day!
+      responses:
+        '200':
+          description: SUCCESS
+                   - seva
+        '404':
+          description: not registered
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - did not registrate :(
+
+        '403':
+          description: wrong password
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - Wrong password! Check CapsLock :) and try again.
+
+        '418':
+          description: double authorization
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - You have already authorized
+
+  /api/auth/me:
+    get:
+      summary: Check account session
+      description: Authentication account by JSESSIONID
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: SUCCESS
+          schema:
+            type: object
+            required:
+              - username
+              - email
+            properties:
+              username:
+                type: string
+                description: users username
+                enum:
+                  - seva
+              email:
+                type: string
+                description: users email
+                enum:
+                  - seva213415@inbox.ru
+        '401':
+          description: not authorized
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - You haven't authorized.
+
+  /api/auth/logout:
+    get:
+      summary: Logout session
+      parameters: []
+      responses:
+        '200':
+          description: SUCCESS
+        '401':
+          description: not authorized
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - You haven't authorized.
+
+  /api/user/rename:
+    post:
+      summary: Update account
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                enum:
+                  - I'm your dream, make you real
+              username:
+                type: string
+                enum:
+                  - I'm your eyes when you must steal
+              password:
+                type: string
+                enum:
+                  - I'm your pain when you can\'t feel
+      responses:
+        '200':
+          description: SUCCESS
+          schema:
+            type: object
+            required:
+              - email
+              - username
+            properties:
+              email:
+                type: string
+                description: users email
+                enum:
+                  - I'm your dream, make you real
+              username:
+                type: string
+                description: users username
+                enum:
+                  - I'm your eyes when you must steal
+        '409':
+          description: email/login exists
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - This email exists
+                  - This username exists
+                  - Incorrect format.
+        '401':
+          description: not authorized
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                description: Description of message
+                enum:
+                  - You haven't authorized.
+
+  /api/user/rating:
+    get:
+      summary: Get best players
+      consumes: []
+      produces:
+        - application/json
+      parameters: []
+
+      responses:
+        '200':
+          description: in real JSON user1, user2 doesn't exists. There is only array of JSON elements
+          schema:
+            type: object
+            properties:
+              user1:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    enum:
+                    - seva213415@inbox.ru
+                  username:
+                    type: string
+                    enum:
+                    - seva
+
+              user2:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    enum:
+                    - I'm your dream, make you real
+                  username:
+                    type: string
+                    enum:
+                    - I'm your eyes when you must steal
+
