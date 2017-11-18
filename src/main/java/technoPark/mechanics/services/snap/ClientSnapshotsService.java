@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import technoPark.mechanics.models.Coords;
+import technoPark.mechanics.models.Move;
+import technoPark.mechanics.models.part.MovePart;
 import technoPark.mechanics.models.player.GameUser;
 import technoPark.mechanics.models.part.MechanicPart;
 import technoPark.mechanics.models.part.MousePart;
@@ -48,9 +50,11 @@ public class ClientSnapshotsService {
             }
 
             playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
+            playerSnaps.stream().filter(ClientSnap::isBonus).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
 
             final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);
             processMouseMove(player, lastSnap.getMouse());
+            processPlayerMove(player, lastSnap.getMove());
         }
     }
 
@@ -64,6 +68,18 @@ public class ClientSnapshotsService {
     // сохранить текущий клик
     private void processMouseMove(@NotNull GameUser gameUser, @NotNull Coords mouse) {
         gameUser.claimPart(MousePart.class).setMouse(mouse);
+    }
+
+    // сделать действия по нажатию на клаву
+    private void processMove(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
+        final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
+        if (mechanicPart.tryMove()) {
+            gameSession.getMapForGame().moveTo(snap.getMove());
+        }
+    }
+    // сохранить текущее состояние клавы
+    private void processPlayerMove(@NotNull GameUser gameUser, @NotNull Move move) {
+        gameUser.claimPart(MovePart.class).setMove(move);
     }
 
     public void clearForUser(Id<AccountDao> userProfileId) {

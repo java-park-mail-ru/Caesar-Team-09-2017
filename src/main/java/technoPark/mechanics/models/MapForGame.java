@@ -2,21 +2,28 @@ package technoPark.mechanics.models;
 
 import org.jetbrains.annotations.NotNull;
 
+import technoPark.mechanics.models.part.MechanicPart;
 import technoPark.mechanics.models.session.GameSession;
 import technoPark.mechanics.models.part.GamePart;
 import technoPark.mechanics.models.player.GameObject;
 import technoPark.mechanics.models.player.GameUserId;
 import technoPark.model.id.Id;
-import static technoPark.mechanics.Config.PLAYERS_COUNT;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static technoPark.mechanics.Config.*;
+
 public class MapForGame extends GameObject {
 
     @NotNull
     private final List<GameUserId> gameUserIds;
+
+    // TODO: для мультиплеер нужен список координат
+    @NotNull
+    private float playerX;
+    private float playerY;
 
     @NotNull
     private final GameSession gameSession;
@@ -31,18 +38,39 @@ public class MapForGame extends GameObject {
         if (!gameSession.isSinglePlay()) {
             gameUserIds.get(1).setGameUserId(gameSession.getSecond().getAccountId());
         }
+        this.playerX = PLAYER_X;
+        this.playerY = PLAYER_Y;
     }
 
     public void drillAt(@NotNull Coords coords) {
-//        final int i = (int) (coords.x / Config.SQUARE_SIZE) + ((int)(coords.y / Config.SQUARE_SIZE)) * Config.SQUARES_IN_A_ROW;
-//        if (i < 0 || i > 8) {
-//            return;
-//        }
-//
+        // TODO: понять какой из игроков поля бурит
 //        final Id<AccountDao> occupant = gameUserIds.get(i).getGameUserId();
 //        if (occupant != null) {
 //            gameSession.getEnemy(occupant).claimPart(MechanicPart.class).incrementScore();
 //        }
+        gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
+    }
+
+    public void moveTo(@NotNull Move move) {
+        // TODO: понять какой из игроков поля сделал движение
+        switch (move.getKeyDown()) {
+            case DOWN:
+                playerY += PLAYERS_SPEED;
+                break;
+            case UP:
+                break;
+            case LEFT:
+                playerX -= PLAYERS_SPEED;
+                break;
+            case RIGHT:
+                playerX += PLAYERS_SPEED;
+                break;
+            case SPACE:
+                // TODO: сделать прыжок
+                break;
+            case NOTHING:
+                break;
+        }
     }
 
     @Override

@@ -134,8 +134,8 @@ public class GameSession {
     }
 
     public boolean tryFinishGame() {
-//        if (first.claimPart(MechanicPart.class).getScore() >= Config.SCORES_TO_WIN
-//                || second.claimPart(MechanicPart.class).getScore() >= Config.SCORES_TO_WIN) {
+//        if (first.claimPart(MechanicPart.class).getEnergy() >= Config.SCORES_TO_WIN
+//                || second.claimPart(MechanicPart.class).getEnergy() >= Config.SCORES_TO_WIN) {
 //            gameSessionService.finishGame(this);
 //            isFinished = true;
 //            return true;

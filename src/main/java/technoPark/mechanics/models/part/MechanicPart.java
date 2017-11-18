@@ -6,11 +6,16 @@ import technoPark.mechanics.Config;
 import technoPark.mechanics.MechanicsTimeService;
 import technoPark.mechanics.models.Snap;
 
+import static technoPark.mechanics.Config.START_ENERGY;
+
 public class MechanicPart implements GamePart {
 
-    private int score;
+    private int energy;
+
     private boolean isDrill;
     private long lastTimeDrilled;
+    private boolean isMove;
+    private long lastTimeMoved;
 
     @NotNull
     private final MechanicsTimeService timeService;
@@ -18,17 +23,18 @@ public class MechanicPart implements GamePart {
 
     public MechanicPart(@NotNull MechanicsTimeService timeService) {
         this.timeService = timeService;
-        score = 0;
+        energy = START_ENERGY;
         lastTimeDrilled = -Config.DRILING_COOLDOWN;
+        lastTimeMoved = -Config.MOVEMENT_COOLDOWN;
         isDrill = false;
     }
 
-    public int getScore() {
-        return score;
+    public int getEnergy() {
+        return energy;
     }
 
-    public void incrementScore() {
-        this.score++;
+    public void decrementEnergy() {
+        this.energy--;
     }
 
     public boolean tryDrill() {
@@ -36,12 +42,28 @@ public class MechanicPart implements GamePart {
             return false;
         }
         final long now = timeService.time();
-        if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
-            lastTimeDrilled = now;
+        if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
+            lastTimeMoved = now;
             isDrill = true;
             return true;
         }
         return false;
+    }
+
+    public boolean tryMove() {
+        if (isMove) {
+            return false;
+        }
+        final long now = timeService.time();
+        if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
+            lastTimeDrilled = now;
+            isMove = true;
+            return true;
+        }
+        return false;
+    }
+    public void setMove(boolean move) {
+        isMove = move;
     }
 
     public void setDrill(boolean drill) {
@@ -59,7 +81,7 @@ public class MechanicPart implements GamePart {
         private final boolean isDrill;
 
         public MechanicPartSnap(MechanicPart mechanicPart) {
-            this.score = mechanicPart.score;
+            this.score = mechanicPart.energy;
             this.isDrill = mechanicPart.isDrill;
         }
 

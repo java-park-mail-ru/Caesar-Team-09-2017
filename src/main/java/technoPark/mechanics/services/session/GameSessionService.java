@@ -112,8 +112,8 @@ public class GameSessionService {
         gameSession.setFinished();
 /*        final FinishGame.Overcome firstOvercome;
         final FinishGame.Overcome secondOvercome;
-        final int firstScore = gameSession.getFirst().claimPart(MechanicPart.class).getScore();
-        final int secondScore = gameSession.getSecond().claimPart(MechanicPart.class).getScore();
+        final int firstScore = gameSession.getFirst().claimPart(MechanicPart.class).getEnergy();
+        final int secondScore = gameSession.getSecond().claimPart(MechanicPart.class).getEnergy();
         if (firstScore == secondScore) {
             firstOvercome = FinishGame.Overcome.DRAW;
             secondOvercome = FinishGame.Overcome.DRAW;

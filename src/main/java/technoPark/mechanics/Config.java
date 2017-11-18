@@ -3,8 +3,10 @@ package technoPark.mechanics;
 public class Config {
 
     public static final int PLAYERS_COUNT = 2;
+    public static final int PLAYERS_SPEED = 10;
 
     public static final long DRILING_COOLDOWN = 150;
+    public static final long MOVEMENT_COOLDOWN = 50;
     public static final long START_SWITCH_DELAY = 5000;
     public static final long SWITCH_DELTA = 300;
     public static final long SWITCH_DELAY_MIN = 1500;
@@ -25,7 +27,8 @@ public class Config {
         DOWN,
         RIGHT,
         LEFT,
-        SPACE
+        SPACE,
+        NOTHING
     }
 
     public static final int WORLD_WIDTH = 1600;
