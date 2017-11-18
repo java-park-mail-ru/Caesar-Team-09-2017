@@ -41,7 +41,7 @@ paths:
                 description: users password
                 enum:
                   - Vera_good_day!
-      responses:
+      mechanics.responses:
         '201':
           description: SUCCESS
           schema:
@@ -65,11 +65,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - This email exists
                   - This username exists
@@ -100,7 +100,7 @@ paths:
                 description: users password
                 enum:
                   - Vera_good_day!
-      responses:
+      mechanics.responses:
         '200':
           description: SUCCESS
                    - seva
@@ -109,11 +109,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - did not registrate :(
 
@@ -122,11 +122,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - Wrong password! Check CapsLock :) and try again.
 
@@ -135,11 +135,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - You have already authorized
 
@@ -151,7 +151,7 @@ paths:
       produces:
         - application/json
       parameters: []
-      responses:
+      mechanics.responses:
         '200':
           description: SUCCESS
           schema:
@@ -175,11 +175,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - You haven't authorized.
 
@@ -187,7 +187,7 @@ paths:
     get:
       summary: Logout session
       parameters: []
-      responses:
+      mechanics.responses:
         '200':
           description: SUCCESS
         '401':
@@ -195,11 +195,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - You haven't authorized.
 
@@ -228,7 +228,7 @@ paths:
                 type: string
                 enum:
                   - I'm your pain when you can\'t feel
-      responses:
+      mechanics.responses:
         '200':
           description: SUCCESS
           schema:
@@ -252,11 +252,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - This email exists
                   - This username exists
@@ -266,11 +266,11 @@ paths:
           schema:
             type: object
             required:
-              - message
+              - messageRequest
             properties:
-              message:
+              messageRequest:
                 type: string
-                description: Description of message
+                description: Description of messageRequest
                 enum:
                   - You haven't authorized.
 
@@ -282,7 +282,7 @@ paths:
         - application/json
       parameters: []
 
-      responses:
+      mechanics.responses:
         '200':
           description: in real JSON user1, user2 doesn't exists. There is only array of JSON elements
           schema:
