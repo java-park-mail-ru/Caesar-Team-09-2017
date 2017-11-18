@@ -12,7 +12,6 @@ import technoPark.websocket.MessageHandler;
 import technoPark.websocket.MessageHandlerContainer;
 
 
-
 @Component
 public class JoinGameHandler extends MessageHandler<JoinGame> {
     @NotNull

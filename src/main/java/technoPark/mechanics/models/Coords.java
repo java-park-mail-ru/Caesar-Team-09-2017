@@ -3,7 +3,6 @@ package technoPark.mechanics.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
-
 @SuppressWarnings("PublicField")
 public class Coords {
 

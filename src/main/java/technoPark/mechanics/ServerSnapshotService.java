@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import technoPark.mechanics.models.GameUser;
-import technoPark.mechanics.multi.GameSession;
 import technoPark.mechanics.responses.ServerSnap;
 import technoPark.websocket.RemotePointService;
 

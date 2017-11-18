@@ -1,12 +1,11 @@
 package technoPark.services.dao;
 
-
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import technoPark.model.account.dao.AccountDao;
 
+import technoPark.model.account.dao.AccountDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

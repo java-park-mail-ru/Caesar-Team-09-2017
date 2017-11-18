@@ -8,12 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
-
 import technoPark.services.AccountService;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 
+import java.io.IOException;
 
 import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
 

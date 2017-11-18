@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 
-
 public abstract class MessageHandler<T extends MessageRequest> {
     @NotNull
     private final Class<T> clazz;

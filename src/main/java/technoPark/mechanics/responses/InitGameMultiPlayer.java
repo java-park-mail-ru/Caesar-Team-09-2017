@@ -9,7 +9,7 @@ import technoPark.websocket.MessageResponse;
 import java.util.Map;
 
 public class InitGameMultiPlayer {
-    public static final class Request extends MessageResponse {
+    public static final class Response extends MessageResponse {
         private Id<AccountDao> self;
         private Id<AccountDao> enemy;
         private Map<Id<AccountDao>, GameUser.ServerPlayerSnap> players;

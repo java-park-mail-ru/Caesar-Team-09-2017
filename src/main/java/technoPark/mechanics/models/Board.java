@@ -2,15 +2,13 @@ package technoPark.mechanics.models;
 
 import org.jetbrains.annotations.NotNull;
 
-import technoPark.mechanics.multi.GameSession;
+import technoPark.mechanics.GameSession;
 import technoPark.model.id.Id;
 import static technoPark.mechanics.Config.SQUARES_COUNT;
-
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 public class Board extends GameObject {
 

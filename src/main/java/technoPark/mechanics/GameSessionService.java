@@ -1,22 +1,17 @@
-package technoPark.mechanics.multi;
+package technoPark.mechanics;
 
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technoPark.mechanics.*;
 import technoPark.mechanics.models.GameUser;
-import technoPark.mechanics.models.MechanicPart;
-import technoPark.mechanics.responses.FinishGame;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
-import org.jetbrains.annotations.NotNull;
 import technoPark.websocket.RemotePointService;
 
-
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -34,7 +29,7 @@ public class GameSessionService {
     private final MechanicsTimeService timeService;
 
     @NotNull
-    private final technoPark.mechanics.multi.GameInitService gameInitService;
+    private final GameInitService gameInitService;
 
     @NotNull
     private final GameTaskScheduler gameTaskScheduler;
@@ -46,7 +41,7 @@ public class GameSessionService {
 
     public GameSessionService(@NotNull RemotePointService remotePointService,
                               @NotNull MechanicsTimeService timeService,
-                              @NotNull technoPark.mechanics.multi.GameInitService gameInitService,
+                              @NotNull GameInitService gameInitService,
                               @NotNull GameTaskScheduler gameTaskScheduler,
                               @NotNull ClientSnapshotsService clientSnapshotsService) {
         this.remotePointService = remotePointService;
@@ -72,15 +67,22 @@ public class GameSessionService {
     public void forceTerminate(@NotNull GameSession gameSession, boolean error) {
         final boolean exists = gameSessions.remove(gameSession);
         gameSession.setFinished();
+        boolean singlePlay = gameSession.isSinglePlay();
         usersMap.remove(gameSession.getFirst().getAccountId());
-        usersMap.remove(gameSession.getSecond().getAccountId());
+        if (!singlePlay) {
+            usersMap.remove(gameSession.getSecond().getAccountId());
+        }
         final CloseStatus status = error ? CloseStatus.SERVER_ERROR : CloseStatus.NORMAL;
         if (exists) {
             remotePointService.cutDownConnection(gameSession.getFirst().getAccountId(), status);
-            remotePointService.cutDownConnection(gameSession.getSecond().getAccountId(), status);
+            if (!singlePlay) {
+                remotePointService.cutDownConnection(gameSession.getSecond().getAccountId(), status);
+            }
         }
         clientSnapshotsService.clearForUser(gameSession.getFirst().getAccountId());
-        clientSnapshotsService.clearForUser(gameSession.getSecond().getAccountId());
+        if (!singlePlay) {
+            clientSnapshotsService.clearForUser(gameSession.getSecond().getAccountId());
+        }
 
         LOGGER.info("Game session " + gameSession.getSessionId() + (error ? " was terminated due to error. " : " was cleaned. ")
                 + gameSession.toString());
@@ -90,11 +92,13 @@ public class GameSessionService {
         return gameSession.getPlayers().stream().map(GameUser::getAccountId).allMatch(remotePointService::isConnected);
     }
 
-    public void startGame(@NotNull AccountDao first, @NotNull AccountDao second) {
+    public void startGame(@NotNull AccountDao first,@Nullable AccountDao second) {
         final GameSession gameSession = new GameSession(first, second, this, timeService);
         gameSessions.add(gameSession);
         usersMap.put(gameSession.getFirst().getAccountId(), gameSession);
-        usersMap.put(gameSession.getSecond().getAccountId(), gameSession);
+        if (!gameSession.isSinglePlay()) {
+            usersMap.put(gameSession.getSecond().getAccountId(), gameSession);
+        }
         gameInitService.initGameFor(gameSession);
         gameTaskScheduler.schedule(Config.START_SWITCH_DELAY, new SwapTask(gameSession, gameTaskScheduler, Config.START_SWITCH_DELAY));
         LOGGER.info("Game session " + gameSession.getSessionId() + " started. " + gameSession.toString());
@@ -102,34 +106,34 @@ public class GameSessionService {
 
     public void finishGame(@NotNull GameSession gameSession) {
         gameSession.setFinished();
-        final FinishGame.Overcome firstOvercome;
-        final FinishGame.Overcome secondOvercome;
-        final int firstScore = gameSession.getFirst().claimPart(MechanicPart.class).getScore();
-        final int secondScore = gameSession.getSecond().claimPart(MechanicPart.class).getScore();
-        if (firstScore == secondScore) {
-            firstOvercome = FinishGame.Overcome.DRAW;
-            secondOvercome = FinishGame.Overcome.DRAW;
-        } else if (firstScore > secondScore) {
-            firstOvercome = FinishGame.Overcome.WIN;
-            secondOvercome = FinishGame.Overcome.LOSE;
-        } else {
-            firstOvercome = FinishGame.Overcome.LOSE;
-            secondOvercome = FinishGame.Overcome.WIN;
-        }
+//        final FinishGame.Overcome firstOvercome;
+//        final FinishGame.Overcome secondOvercome;
+//        final int firstScore = gameSession.getFirst().claimPart(MechanicPart.class).getScore();
+//        final int secondScore = gameSession.getSecond().claimPart(MechanicPart.class).getScore();
+//        if (firstScore == secondScore) {
+//            firstOvercome = FinishGame.Overcome.DRAW;
+//            secondOvercome = FinishGame.Overcome.DRAW;
+//        } else if (firstScore > secondScore) {
+//            firstOvercome = FinishGame.Overcome.WIN;
+//            secondOvercome = FinishGame.Overcome.LOSE;
+//        } else {
+//            firstOvercome = FinishGame.Overcome.LOSE;
+//            secondOvercome = FinishGame.Overcome.WIN;
+//        }
 
-        try {
-            remotePointService.sendMessageToUser(gameSession.getFirst().getAccountId(), new FinishGame(firstOvercome));
-        } catch (IOException ex) {
-            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
-                    gameSession.getFirst().getAccountDao().getUsername()), ex);
-        }
-
-        try {
-            remotePointService.sendMessageToUser(gameSession.getSecond().getAccountId(), new FinishGame(secondOvercome));
-        } catch (IOException ex) {
-            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
-                    gameSession.getSecond().getAccountDao().getUsername()), ex);
-        }
+//        try {
+//            remotePointService.sendMessageToUser(gameSession.getFirst().getAccountId(), new FinishGame(firstOvercome));
+//        } catch (IOException ex) {
+//            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
+//                    gameSession.getFirst().getAccountDao().getUsername()), ex);
+//        }
+//
+//        try {
+//            remotePointService.sendMessageToUser(gameSession.getSecond().getAccountId(), new FinishGame(secondOvercome));
+//        } catch (IOException ex) {
+//            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
+//                    gameSession.getSecond().getAccountDao().getUsername()), ex);
+//        }
     }
 
     private static final class SwapTask extends GameTaskScheduler.GameSessionTask {

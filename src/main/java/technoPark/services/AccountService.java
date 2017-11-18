@@ -1,10 +1,8 @@
 package technoPark.services;
 
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import technoPark.model.account.Account;
 import technoPark.model.account.dao.AccountDao;

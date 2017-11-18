@@ -1,15 +1,15 @@
 package technoPark.mechanics;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
+
 import technoPark.mechanics.models.Coords;
 import technoPark.mechanics.models.GameUser;
 import technoPark.mechanics.models.MechanicPart;
 import technoPark.mechanics.models.MousePart;
-import technoPark.mechanics.multi.GameSession;
 import technoPark.mechanics.requests.ClientSnap;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
 
 
 import java.util.*;
@@ -36,7 +36,10 @@ public class ClientSnapshotsService {
     public void processSnapshotsFor(@NotNull GameSession gameSession) {
         final Collection<GameUser> players = new ArrayList<>();
         players.add(gameSession.getFirst());
-        players.add(gameSession.getSecond());
+        if (!gameSession.isSinglePlay()) {
+            players.add(gameSession.getSecond());
+        }
+
         for (GameUser player : players) {
             final List<ClientSnap> playerSnaps = getSnapForUser(player.getAccountId());
             if (playerSnaps.isEmpty()) {

@@ -1,10 +1,10 @@
 package technoPark.mechanics.handlers;
 
-import technoPark.model.id.Id;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
+import technoPark.model.id.Id;
 import technoPark.mechanics.GameMechanics;
 import technoPark.mechanics.requests.ClientSnap;
 import technoPark.model.account.dao.AccountDao;

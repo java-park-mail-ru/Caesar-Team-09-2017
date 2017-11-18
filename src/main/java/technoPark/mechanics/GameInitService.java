@@ -1,4 +1,4 @@
-package technoPark.mechanics.single;
+package technoPark.mechanics;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -6,9 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technoPark.mechanics.Config;
-import technoPark.mechanics.ServerSnapshotService;
 import technoPark.mechanics.models.GameUser;
+import technoPark.mechanics.responses.InitGameMultiPlayer;
 import technoPark.mechanics.responses.InitGameSinglePlayer;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
@@ -18,8 +17,7 @@ import static technoPark.mechanics.Config.GROUND_HEIGHT;
 import static technoPark.mechanics.Config.MAP;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -34,22 +32,30 @@ public class GameInitService {
     }
 
     public void initGameFor(@NotNull technoPark.mechanics.GameSession gameSession) {
-        final GameUser player = gameSession.getPlayer();
-
-        final InitGameSinglePlayer.Response initMessage = createInitMessageFor(gameSession, player.getAccountId());
-        //noinspection OverlyBroadCatchBlock
-        try {
-            remotePointService.sendMessageToUser(player.getAccountId(), initMessage);
-        } catch (IOException e) {
-            //TODO: Reentrance mechanism
-           remotePointService.cutDownConnection(player.getAccountId(), CloseStatus.SERVER_ERROR);
-            LOGGER.error("Unnable to start a models", e);
+        final Collection<GameUser> players = new ArrayList<>();
+        players.add(gameSession.getFirst());
+        if (!gameSession.isSinglePlay()) {
+            players.add(gameSession.getSecond());
         }
-
+        for (GameUser player : players) {
+            //noinspection OverlyBroadCatchBlock
+            try {
+                if (!gameSession.isSinglePlay()) {
+                    remotePointService.sendMessageToUser(player.getAccountId(), createInitMessageForMulti(gameSession, player.getAccountId()));
+                } else {
+                    remotePointService.sendMessageToUser(player.getAccountId(), createInitMessageForSingle(gameSession, player.getAccountId()));
+                }
+            } catch (IOException e) {
+                //TODO: Reentrance mechanism
+                players.forEach(playerToCutOff -> remotePointService.cutDownConnection(playerToCutOff.getAccountId(),
+                        CloseStatus.SERVER_ERROR));
+                LOGGER.error("Unnable to start a models", e);
+            }
+        }
     }
 
     @SuppressWarnings("TooBroadScope")
-    private InitGameSinglePlayer.Response createInitMessageFor(@NotNull technoPark.mechanics.GameSession gameSession, @NotNull Id<AccountDao> userId) {
+    private InitGameSinglePlayer.Response createInitMessageForSingle(@NotNull technoPark.mechanics.GameSession gameSession, @NotNull Id<AccountDao> userId) {
         final InitGameSinglePlayer.Response initGameSinglePlayerMessage = new InitGameSinglePlayer.Response();
 
         final Map<Id<AccountDao>, GameUser.ServerPlayerSnap> playerSnaps = new HashMap<>();
@@ -76,6 +82,13 @@ public class GameInitService {
         initGameSinglePlayerMessage.setGroundHeight(GROUND_HEIGHT);
         initGameSinglePlayerMessage.setMap(MAP);
 //        initGameSinglePlayerMessage.setBoard(gameSession.getBoard().getSnap());
+        return initGameSinglePlayerMessage;
+    }
+
+    @SuppressWarnings("TooBroadScope")
+    private InitGameMultiPlayer.Response createInitMessageForMulti(@NotNull technoPark.mechanics.GameSession gameSession, @NotNull Id<AccountDao> userId) {
+        final InitGameMultiPlayer.Response initGameSinglePlayerMessage = new InitGameMultiPlayer.Response();
+
         return initGameSinglePlayerMessage;
     }
 }

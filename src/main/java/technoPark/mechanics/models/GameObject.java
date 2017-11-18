@@ -1,9 +1,10 @@
 package technoPark.mechanics.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import technoPark.model.id.Id;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import technoPark.model.id.Id;
 
 import java.util.HashMap;
 import java.util.List;

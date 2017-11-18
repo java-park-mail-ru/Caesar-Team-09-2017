@@ -2,6 +2,7 @@ package technoPark.mechanics.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
+
 import technoPark.mechanics.Config;
 import technoPark.mechanics.models.Coords;
 import technoPark.websocket.MessageRequest;

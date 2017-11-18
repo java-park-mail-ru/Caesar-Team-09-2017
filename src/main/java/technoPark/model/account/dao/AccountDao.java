@@ -2,7 +2,6 @@ package technoPark.model.account.dao;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jetbrains.annotations.NotNull;
 
 import technoPark.model.account.Account;
 import technoPark.model.id.Id;

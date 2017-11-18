@@ -13,7 +13,6 @@ import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 import technoPark.services.AccountService;
 import technoPark.websocket.RemotePointService;
-import technoPark.mechanics.multi.GameSession;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -36,10 +35,7 @@ public class GameMechanicsImpl implements GameMechanics {
     private final RemotePointService remotePointService;
 
     @NotNull
-    private final technoPark.mechanics.multi.GameSessionService gameMultiSessionService;
-
-    @NotNull
-    private final technoPark.mechanics.single.GameSessionService gameSingleSessionService;
+    private final GameSessionService gameSessionService;
 
     @NotNull
     private final MechanicsTimeService timeService;
@@ -60,16 +56,14 @@ public class GameMechanicsImpl implements GameMechanics {
                              @NotNull ClientSnapshotsService clientSnapshotsService,
                              @NotNull ServerSnapshotService serverSnapshotService,
                              @NotNull RemotePointService remotePointService,
-                             @NotNull technoPark.mechanics.multi.GameSessionService gameMultiSessionService,
-                             @NotNull technoPark.mechanics.single.GameSessionService gameSingleSessionService,
+                             @NotNull GameSessionService gameSessionService,
                              @NotNull MechanicsTimeService timeService,
                              @NotNull GameTaskScheduler gameTaskScheduler) {
         this.accountService = accountService;
         this.clientSnapshotsService = clientSnapshotsService;
         this.serverSnapshotService = serverSnapshotService;
         this.remotePointService = remotePointService;
-        this.gameMultiSessionService = gameMultiSessionService;
-        this.gameSingleSessionService = gameSingleSessionService;
+        this.gameSessionService = gameSessionService;
         this.timeService = timeService;
         this.gameTaskScheduler = gameTaskScheduler;
     }
@@ -83,7 +77,7 @@ public class GameMechanicsImpl implements GameMechanics {
     // действие срабатываемое при подключение пользователя(когда он отправляет сообщение)
     @Override
     public void addUser(@NotNull Id<AccountDao> userId, @NotNull JoinGame joinGame) {
-        if (gameMultiSessionService.isPlaying(userId)) {
+        if (gameSessionService.isPlaying(userId)) {
             return;
         }
 
@@ -111,7 +105,7 @@ public class GameMechanicsImpl implements GameMechanics {
             matchedPlayers.add(accountService.getAccountFromId(candidate.getId()));
             if (matchedPlayers.size() == 2) {
                 final Iterator<AccountDao> iterator = matchedPlayers.iterator();
-                gameMultiSessionService.startGame(iterator.next(), iterator.next());
+                gameSessionService.startGame(iterator.next(), iterator.next());
                 matchedPlayers.clear();
             }
         }
@@ -123,7 +117,7 @@ public class GameMechanicsImpl implements GameMechanics {
             if (!insureCandidate(candidate)) {
                 continue;
             }
-            gameSingleSessionService.startGame(accountService.getAccountFromId(candidate.getId()));
+            gameSessionService.startGame(accountService.getAccountFromId(candidate.getId()), null);
         }
 
     }
@@ -146,7 +140,7 @@ public class GameMechanicsImpl implements GameMechanics {
             }
         }
 
-        for (GameSession session : gameMultiSessionService.getSessions()) {
+        for (GameSession session : gameSessionService.getSessions()) {
             clientSnapshotsService.processSnapshotsFor(session);
         }
 
@@ -154,13 +148,13 @@ public class GameMechanicsImpl implements GameMechanics {
 
         final List<GameSession> sessionsToTerminate = new ArrayList<>();
         final List<GameSession> sessionsToFinish = new ArrayList<>();
-        for (GameSession session : gameMultiSessionService.getSessions()) {
+        for (GameSession session : gameSessionService.getSessions()) {
             if (session.tryFinishGame()) {
                 sessionsToFinish.add(session);
                 continue;
             }
 
-            if (!gameMultiSessionService.checkHealthState(session)) {
+            if (!gameSessionService.checkHealthState(session)) {
                 sessionsToTerminate.add(session);
                 continue;
             }
@@ -174,8 +168,8 @@ public class GameMechanicsImpl implements GameMechanics {
             session.getPlayers().forEach(user -> user.claimPart(MechanicPart.class).setDrill(false));
 
         }
-        sessionsToTerminate.forEach(session -> gameMultiSessionService.forceTerminate(session, true));
-        sessionsToFinish.forEach(session -> gameMultiSessionService.forceTerminate(session, false));
+        sessionsToTerminate.forEach(session -> gameSessionService.forceTerminate(session, true));
+        sessionsToFinish.forEach(session -> gameSessionService.forceTerminate(session, false));
 
         tryStartGames();
         clientSnapshotsService.reset();
@@ -184,8 +178,8 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void reset() {
-        for (GameSession session : gameMultiSessionService.getSessions()) {
-            gameMultiSessionService.forceTerminate(session, true);
+        for (GameSession session : gameSessionService.getSessions()) {
+            gameSessionService.forceTerminate(session, true);
         }
         waiters.forEach(user -> remotePointService.cutDownConnection(user, CloseStatus.SERVER_ERROR));
         waiters.clear();
