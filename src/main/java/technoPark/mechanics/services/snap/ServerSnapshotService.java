@@ -1,9 +1,10 @@
-package technoPark.mechanics;
+package technoPark.mechanics.services.snap;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import technoPark.mechanics.models.GameUser;
+import technoPark.mechanics.models.player.GameUser;
+import technoPark.mechanics.models.session.GameSession;
 import technoPark.mechanics.responses.ServerSnap;
 import technoPark.websocket.RemotePointService;
 
@@ -29,7 +30,7 @@ public class ServerSnapshotService {
         final ServerSnap snap = new ServerSnap();
 
         snap.setPlayers(playersSnaps);
-//        snap.setBoard(gameSession.getBoard().getSnap());
+//        snap.setBoard(gameSession.getMapForGame().getSnap());
         snap.setServerFrameTime(frameTime);
         //noinspection OverlyBroadCatchBlock
         try {

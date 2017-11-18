@@ -1,8 +1,12 @@
-package technoPark.mechanics.models;
+package technoPark.mechanics.models.player;
 
 import org.jetbrains.annotations.NotNull;
 
 import technoPark.mechanics.MechanicsTimeService;
+import technoPark.mechanics.models.Snap;
+import technoPark.mechanics.models.part.GamePart;
+import technoPark.mechanics.models.part.MechanicPart;
+import technoPark.mechanics.models.part.MousePart;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 

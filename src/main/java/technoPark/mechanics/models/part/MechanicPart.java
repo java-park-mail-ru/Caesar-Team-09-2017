@@ -1,11 +1,13 @@
-package technoPark.mechanics.models;
+package technoPark.mechanics.models.part;
 
 import org.jetbrains.annotations.NotNull;
 
 import technoPark.mechanics.Config;
 import technoPark.mechanics.MechanicsTimeService;
+import technoPark.mechanics.models.Snap;
 
 public class MechanicPart implements GamePart {
+
     private int score;
     private boolean isDrill;
     private long lastTimeDrilled;
@@ -29,7 +31,7 @@ public class MechanicPart implements GamePart {
         this.score++;
     }
 
-    public boolean tryFire() {
+    public boolean tryDrill() {
         if (isDrill) {
             return false;
         }
@@ -59,7 +61,6 @@ public class MechanicPart implements GamePart {
         public MechanicPartSnap(MechanicPart mechanicPart) {
             this.score = mechanicPart.score;
             this.isDrill = mechanicPart.isDrill;
-
         }
 
         public int getScore() {

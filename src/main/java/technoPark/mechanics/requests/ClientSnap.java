@@ -10,13 +10,14 @@ import technoPark.websocket.MessageRequest;
 @SuppressWarnings({"NullableProblems"})
 public class ClientSnap extends MessageRequest {
 
-
     private Config.KeyDown keyDown;
+    private Config.Bonus bonus;
 
     @NotNull
     private Coords mouse;
 
     private boolean isDrill;
+    private boolean isBonus;
     private long frameTime;
 
     @NotNull
@@ -52,16 +53,20 @@ public class ClientSnap extends MessageRequest {
     public void setFrameTime(long frameTime) {
         this.frameTime = frameTime;
     }
-}
 
-/*
-{
-"isDrill": bool,
-"mouse": {
-    x: float,
-    y: float
-    },
-"frameTime": long,
-"keyDown": enum
+    public Config.Bonus getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Config.Bonus bonus) {
+        this.bonus = bonus;
+    }
+
+    public boolean isBonus() {
+        return isBonus;
+    }
+
+    public void setBonus(boolean bonus) {
+        isBonus = bonus;
+    }
 }
- */

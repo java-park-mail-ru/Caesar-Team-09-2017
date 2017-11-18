@@ -1,6 +1,6 @@
 package technoPark.mechanics.responses;
 
-import technoPark.mechanics.models.GameUser;
+import technoPark.mechanics.models.player.GameUser;
 import org.jetbrains.annotations.NotNull;
 import technoPark.websocket.MessageResponse;
 

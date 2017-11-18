@@ -10,12 +10,30 @@ public class InitGameSinglePlayer {
         private int playerY;
         private int playerWidth;
         private int playerHeight;
-        private int coins;
+        private int countOfBonuses;
         private int coinWidth;
         private int coinHeight;
         private int groundWidth;
         private int groundHeight;
         private int[][] map;
+        private int startMoney;
+        private int startEnergy;
+
+        public int getStartEnergy() {
+            return startEnergy;
+        }
+
+        public void setStartEnergy(int startEnergy) {
+            this.startEnergy = startEnergy;
+        }
+
+        public int getStartMoney() {
+            return startMoney;
+        }
+
+        public void setStartMoney(int startMoney) {
+            this.startMoney = startMoney;
+        }
 
         public int getWorldWidth() {
             return worldWidth;
@@ -65,12 +83,12 @@ public class InitGameSinglePlayer {
             this.playerHeight = playerHeight;
         }
 
-        public int getCoins() {
-            return coins;
+        public int getCountOfBonuses() {
+            return countOfBonuses;
         }
 
-        public void setCoins(int coins) {
-            this.coins = coins;
+        public void setCountOfBonuses(int countOfBonuses) {
+            this.countOfBonuses = countOfBonuses;
         }
 
         public int getCoinWidth() {

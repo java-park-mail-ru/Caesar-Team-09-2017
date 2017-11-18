@@ -1,12 +1,13 @@
-package technoPark.mechanics;
+package technoPark.mechanics.services.snap;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import technoPark.mechanics.models.Coords;
-import technoPark.mechanics.models.GameUser;
-import technoPark.mechanics.models.MechanicPart;
-import technoPark.mechanics.models.MousePart;
+import technoPark.mechanics.models.player.GameUser;
+import technoPark.mechanics.models.part.MechanicPart;
+import technoPark.mechanics.models.part.MousePart;
+import technoPark.mechanics.models.session.GameSession;
 import technoPark.mechanics.requests.ClientSnap;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
@@ -53,13 +54,14 @@ public class ClientSnapshotsService {
         }
     }
 
+    // сделать действия по клику
     private void processClick(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
         final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
-        if (mechanicPart.tryFire()) {
-//            gameSession.getBoard().drillAt(snap.getMouse());
+        if (mechanicPart.tryDrill()) {
+            gameSession.getMapForGame().drillAt(snap.getMouse());
         }
     }
-
+    // сохранить текущий клик
     private void processMouseMove(@NotNull GameUser gameUser, @NotNull Coords mouse) {
         gameUser.claimPart(MousePart.class).setMouse(mouse);
     }

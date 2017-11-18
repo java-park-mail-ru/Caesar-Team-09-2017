@@ -1,9 +1,10 @@
-package technoPark.mechanics;
+package technoPark.mechanics.models.session;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import technoPark.mechanics.MechanicsTimeService;
 
 import java.util.*;
 
@@ -60,13 +61,13 @@ public class GameTaskScheduler {
     }
 
     public abstract static class GameSessionTask implements ScheduledTask {
-        private final technoPark.mechanics.GameSession gameSession;
+        private final GameSession gameSession;
 
-        public GameSessionTask(technoPark.mechanics.GameSession gameSession) {
+        public GameSessionTask(GameSession gameSession) {
             this.gameSession = gameSession;
         }
 
-        public technoPark.mechanics.GameSession getGameSession() {
+        public GameSession getGameSession() {
             return gameSession;
         }
 

@@ -6,9 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technoPark.mechanics.models.MechanicPart;
+import technoPark.mechanics.models.part.MechanicPart;
+import technoPark.mechanics.models.session.GameSession;
+import technoPark.mechanics.models.session.GameTaskScheduler;
 import technoPark.mechanics.requests.ClientSnap;
 import technoPark.mechanics.requests.JoinGame;
+import technoPark.mechanics.services.snap.ClientSnapshotsService;
+import technoPark.mechanics.services.session.GameSessionService;
+import technoPark.mechanics.services.snap.ServerSnapshotService;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 import technoPark.services.AccountService;
@@ -166,8 +171,8 @@ public class GameMechanicsImpl implements GameMechanics {
                 sessionsToTerminate.add(session);
             }
             session.getPlayers().forEach(user -> user.claimPart(MechanicPart.class).setDrill(false));
-
         }
+
         sessionsToTerminate.forEach(session -> gameSessionService.forceTerminate(session, true));
         sessionsToFinish.forEach(session -> gameSessionService.forceTerminate(session, false));
 

@@ -1,10 +1,14 @@
-package technoPark.mechanics;
+package technoPark.mechanics.models.session;
 
 import org.jetbrains.annotations.Nullable;
-import technoPark.mechanics.models.GameUser;
+import org.jetbrains.annotations.NotNull;
+
+import technoPark.mechanics.services.session.GameSessionService;
+import technoPark.mechanics.MechanicsTimeService;
+import technoPark.mechanics.models.MapForGame;
+import technoPark.mechanics.models.player.GameUser;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +25,8 @@ public class GameSession {
     private final GameUser first;
     @Nullable
     private final GameUser second;
-//    @NotNull
-//    private final Board board;
+    @NotNull
+    private final MapForGame mapForGame;
     @NotNull
     private final GameSessionService gameSessionService;
 
@@ -43,7 +47,7 @@ public class GameSession {
         }
         this.isFinished = false;
 
-//        this.board = new Board(this);
+        this.mapForGame = new MapForGame(this);
     }
 
     @NotNull
@@ -65,10 +69,10 @@ public class GameSession {
         throw new IllegalArgumentException("Requested enemy for models but user not participant");
     }
 
-//    @NotNull
-//    public Board getBoard() {
-//        return board;
-//    }
+    @NotNull
+    public MapForGame getMapForGame() {
+        return mapForGame;
+    }
     @NotNull
     public GameUser getFirst() {
         return first;

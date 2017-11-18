@@ -1,4 +1,4 @@
-package technoPark.mechanics;
+package technoPark.mechanics.services;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -6,9 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technoPark.mechanics.models.GameUser;
+import technoPark.mechanics.Config;
+import technoPark.mechanics.models.player.GameUser;
+import technoPark.mechanics.models.session.GameSession;
 import technoPark.mechanics.responses.InitGameMultiPlayer;
 import technoPark.mechanics.responses.InitGameSinglePlayer;
+import technoPark.mechanics.services.snap.ServerSnapshotService;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 import technoPark.websocket.RemotePointService;
@@ -31,7 +34,7 @@ public class GameInitService {
         this.remotePointService = remotePointService;
     }
 
-    public void initGameFor(@NotNull technoPark.mechanics.GameSession gameSession) {
+    public void initGameFor(@NotNull GameSession gameSession) {
         final Collection<GameUser> players = new ArrayList<>();
         players.add(gameSession.getFirst());
         if (!gameSession.isSinglePlay()) {
@@ -55,7 +58,7 @@ public class GameInitService {
     }
 
     @SuppressWarnings("TooBroadScope")
-    private InitGameSinglePlayer.Response createInitMessageForSingle(@NotNull technoPark.mechanics.GameSession gameSession, @NotNull Id<AccountDao> userId) {
+    private InitGameSinglePlayer.Response createInitMessageForSingle(@NotNull GameSession gameSession, @NotNull Id<AccountDao> userId) {
         final InitGameSinglePlayer.Response initGameSinglePlayerMessage = new InitGameSinglePlayer.Response();
 
         final Map<Id<AccountDao>, GameUser.ServerPlayerSnap> playerSnaps = new HashMap<>();
@@ -75,18 +78,20 @@ public class GameInitService {
         initGameSinglePlayerMessage.setPlayerY(PLAYER_Y);
         initGameSinglePlayerMessage.setPlayerWidth(PLAYER_WIDTH);
         initGameSinglePlayerMessage.setPlayerHeight(PLAYER_HEIGHT);
-        initGameSinglePlayerMessage.setCoins(COINS);
+        initGameSinglePlayerMessage.setCountOfBonuses(COUNT_OF_BONUSES);
         initGameSinglePlayerMessage.setCoinWidth(COIN_WIDTH);
         initGameSinglePlayerMessage.setCoinHeight(COINT_HEIGHT);
         initGameSinglePlayerMessage.setGroundWidth(GROUND_WIDTH);
         initGameSinglePlayerMessage.setGroundHeight(GROUND_HEIGHT);
         initGameSinglePlayerMessage.setMap(MAP);
-//        initGameSinglePlayerMessage.setBoard(gameSession.getBoard().getSnap());
+        initGameSinglePlayerMessage.setStartMoney(START_MONEY);
+        initGameSinglePlayerMessage.setStartEnergy(START_ENERGY);
+//        initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
         return initGameSinglePlayerMessage;
     }
 
     @SuppressWarnings("TooBroadScope")
-    private InitGameMultiPlayer.Response createInitMessageForMulti(@NotNull technoPark.mechanics.GameSession gameSession, @NotNull Id<AccountDao> userId) {
+    private InitGameMultiPlayer.Response createInitMessageForMulti(@NotNull GameSession gameSession, @NotNull Id<AccountDao> userId) {
         final InitGameMultiPlayer.Response initGameSinglePlayerMessage = new InitGameMultiPlayer.Response();
 
         return initGameSinglePlayerMessage;

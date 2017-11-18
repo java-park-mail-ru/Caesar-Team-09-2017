@@ -1,4 +1,6 @@
-package technoPark.mechanics.models;
+package technoPark.mechanics.models.part;
+
+import technoPark.mechanics.models.Snap;
 
 public interface GamePart {
 

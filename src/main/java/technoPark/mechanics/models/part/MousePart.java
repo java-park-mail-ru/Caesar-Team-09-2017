@@ -1,6 +1,8 @@
-package technoPark.mechanics.models;
+package technoPark.mechanics.models.part;
 
 import org.jetbrains.annotations.NotNull;
+import technoPark.mechanics.models.Coords;
+import technoPark.mechanics.models.Snap;
 
 
 public class MousePart implements GamePart {

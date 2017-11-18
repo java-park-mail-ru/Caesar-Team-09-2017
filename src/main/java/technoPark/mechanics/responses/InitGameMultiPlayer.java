@@ -1,7 +1,7 @@
 package technoPark.mechanics.responses;
 
 import org.jetbrains.annotations.NotNull;
-import technoPark.mechanics.models.GameUser;
+import technoPark.mechanics.models.player.GameUser;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 import technoPark.websocket.MessageResponse;

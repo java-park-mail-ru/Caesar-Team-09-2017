@@ -1,4 +1,4 @@
-package technoPark.mechanics;
+package technoPark.mechanics.services.session;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -7,7 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technoPark.mechanics.models.GameUser;
+import technoPark.mechanics.Config;
+import technoPark.mechanics.MechanicsTimeService;
+import technoPark.mechanics.models.player.GameUser;
+import technoPark.mechanics.models.session.GameSession;
+import technoPark.mechanics.models.session.GameTaskScheduler;
+import technoPark.mechanics.services.GameInitService;
+import technoPark.mechanics.services.snap.ClientSnapshotsService;
 import technoPark.model.account.dao.AccountDao;
 import technoPark.model.id.Id;
 import technoPark.websocket.RemotePointService;
@@ -36,8 +42,6 @@ public class GameSessionService {
 
     @NotNull
     private final ClientSnapshotsService clientSnapshotsService;
-
-
 
     public GameSessionService(@NotNull RemotePointService remotePointService,
                               @NotNull MechanicsTimeService timeService,
@@ -106,34 +110,34 @@ public class GameSessionService {
 
     public void finishGame(@NotNull GameSession gameSession) {
         gameSession.setFinished();
-//        final FinishGame.Overcome firstOvercome;
-//        final FinishGame.Overcome secondOvercome;
-//        final int firstScore = gameSession.getFirst().claimPart(MechanicPart.class).getScore();
-//        final int secondScore = gameSession.getSecond().claimPart(MechanicPart.class).getScore();
-//        if (firstScore == secondScore) {
-//            firstOvercome = FinishGame.Overcome.DRAW;
-//            secondOvercome = FinishGame.Overcome.DRAW;
-//        } else if (firstScore > secondScore) {
-//            firstOvercome = FinishGame.Overcome.WIN;
-//            secondOvercome = FinishGame.Overcome.LOSE;
-//        } else {
-//            firstOvercome = FinishGame.Overcome.LOSE;
-//            secondOvercome = FinishGame.Overcome.WIN;
-//        }
+/*        final FinishGame.Overcome firstOvercome;
+        final FinishGame.Overcome secondOvercome;
+        final int firstScore = gameSession.getFirst().claimPart(MechanicPart.class).getScore();
+        final int secondScore = gameSession.getSecond().claimPart(MechanicPart.class).getScore();
+        if (firstScore == secondScore) {
+            firstOvercome = FinishGame.Overcome.DRAW;
+            secondOvercome = FinishGame.Overcome.DRAW;
+        } else if (firstScore > secondScore) {
+            firstOvercome = FinishGame.Overcome.WIN;
+            secondOvercome = FinishGame.Overcome.LOSE;
+        } else {
+            firstOvercome = FinishGame.Overcome.LOSE;
+            secondOvercome = FinishGame.Overcome.WIN;
+        }
 
-//        try {
-//            remotePointService.sendMessageToUser(gameSession.getFirst().getAccountId(), new FinishGame(firstOvercome));
-//        } catch (IOException ex) {
-//            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
-//                    gameSession.getFirst().getAccountDao().getUsername()), ex);
-//        }
-//
-//        try {
-//            remotePointService.sendMessageToUser(gameSession.getSecond().getAccountId(), new FinishGame(secondOvercome));
-//        } catch (IOException ex) {
-//            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
-//                    gameSession.getSecond().getAccountDao().getUsername()), ex);
-//        }
+        try {
+            remotePointService.sendMessageToUser(gameSession.getFirst().getAccountId(), new FinishGame(firstOvercome));
+        } catch (IOException ex) {
+            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
+                    gameSession.getFirst().getAccountDao().getUsername()), ex);
+        }
+
+        try {
+            remotePointService.sendMessageToUser(gameSession.getSecond().getAccountId(), new FinishGame(secondOvercome));
+        } catch (IOException ex) {
+            LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
+                    gameSession.getSecond().getAccountDao().getUsername()), ex);
+        }*/
     }
 
     private static final class SwapTask extends GameTaskScheduler.GameSessionTask {
@@ -141,7 +145,7 @@ public class GameSessionService {
         private final GameTaskScheduler gameTaskScheduler;
         private final long currentDelay;
 
-        private SwapTask(technoPark.mechanics.GameSession gameSession, GameTaskScheduler gameTaskScheduler, long currentDelay) {
+        private SwapTask(GameSession gameSession, GameTaskScheduler gameTaskScheduler, long currentDelay) {
             super(gameSession);
             this.gameTaskScheduler = gameTaskScheduler;
             this.currentDelay = currentDelay;
@@ -152,7 +156,6 @@ public class GameSessionService {
             if (getGameSession().isFinished()) {
                 return;
             }
-//            getGameSession().getBoard().randomSwap();
             final long newDelay = Math.max(currentDelay - Config.SWITCH_DELTA, Config.SWITCH_DELAY_MIN);
             gameTaskScheduler.schedule(newDelay,
                     new SwapTask(getGameSession(), gameTaskScheduler, newDelay));

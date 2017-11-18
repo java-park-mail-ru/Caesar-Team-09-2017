@@ -1,9 +1,11 @@
-package technoPark.mechanics.models;
+package technoPark.mechanics.models.player;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import technoPark.mechanics.models.Snap;
+import technoPark.mechanics.models.part.GamePart;
 import technoPark.model.id.Id;
 
 import java.util.HashMap;
@@ -48,6 +50,7 @@ public abstract class GameObject {
         return id;
     }
 
+    // вернуть MechanicPart and MousePart. балдеж
     @NotNull
     public List<Snap<? extends GamePart>> getPartSnaps() {
         return parts.values().stream()
