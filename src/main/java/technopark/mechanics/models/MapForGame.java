@@ -5,7 +5,7 @@ import technopark.mechanics.models.part.GamePart;
 import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.player.GameUserId;
 import technopark.mechanics.models.session.GameSession;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 import java.util.ArrayList;
 import java.util.List;

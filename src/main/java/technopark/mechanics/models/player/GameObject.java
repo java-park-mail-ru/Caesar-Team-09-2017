@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import technopark.mechanics.models.Snap;
 import technopark.mechanics.models.part.GamePart;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 import java.util.HashMap;
 import java.util.List;

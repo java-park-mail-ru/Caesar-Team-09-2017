@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 import technopark.mechanics.GameMechanics;
 import technopark.mechanics.requests.ClientSnap;
 import technopark.model.account.dao.AccountDao;

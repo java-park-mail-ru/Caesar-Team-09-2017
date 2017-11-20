@@ -8,7 +8,7 @@ import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.MapForGame;
 import technopark.mechanics.models.player.GameUser;
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 import java.util.Arrays;
 import java.util.List;

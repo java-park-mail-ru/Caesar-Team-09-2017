@@ -3,7 +3,7 @@ package technopark.mechanics;
 import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.requests.JoinGame;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 import technopark.mechanics.requests.ClientSnap;
 import technopark.model.account.dao.AccountDao;
 

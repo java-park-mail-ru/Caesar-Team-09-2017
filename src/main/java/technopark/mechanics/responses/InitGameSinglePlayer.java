@@ -1,5 +1,6 @@
 package technopark.mechanics.responses;
 
+import technopark.mechanics.models.Coords;
 import technopark.websocket.MessageResponse;
 
 public class InitGameSinglePlayer {
@@ -15,9 +16,26 @@ public class InitGameSinglePlayer {
         private int coinHeight;
         private int groundWidth;
         private int groundHeight;
-        private int[][] map;
         private int startMoney;
         private int startEnergy;
+        private int positionGround;
+        private Coords[] bonusPosition;
+
+        public Coords[] getBonusPosition() {
+            return bonusPosition;
+        }
+
+        public void setBonusPosition(Coords[] bonusPosition) {
+            this.bonusPosition = bonusPosition;
+        }
+
+        public int getPositionGround() {
+            return positionGround;
+        }
+
+        public void setPositionGround(int positionGround) {
+            this.positionGround = positionGround;
+        }
 
         public int getStartEnergy() {
             return startEnergy;
@@ -123,13 +141,6 @@ public class InitGameSinglePlayer {
             this.groundHeight = groundHeight;
         }
 
-        public int[][] getMap() {
-            return map;
-        }
-
-        public void setMap(int[][] map) {
-            this.map = map;
-        }
     }
 
 }

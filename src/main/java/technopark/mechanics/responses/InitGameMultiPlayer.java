@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.models.player.GameUser;
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 import technopark.websocket.MessageResponse;
 
 import java.util.Map;

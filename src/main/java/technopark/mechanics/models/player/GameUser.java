@@ -8,7 +8,7 @@ import technopark.mechanics.models.part.GamePart;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.part.MousePart;
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 import java.util.HashMap;
 import java.util.Map;

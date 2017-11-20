@@ -15,7 +15,7 @@ import technopark.mechanics.services.snap.ClientSnapshotsService;
 import technopark.mechanics.services.session.GameSessionService;
 import technopark.mechanics.services.snap.ServerSnapshotService;
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 import technopark.services.AccountService;
 import technopark.websocket.RemotePointService;
 

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 import java.util.HashMap;
 import java.util.Map;

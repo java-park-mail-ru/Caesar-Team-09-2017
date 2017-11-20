@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import technopark.model.account.Account;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 public class AccountDao {
 

@@ -7,18 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
 import technopark.mechanics.Config;
+import technopark.mechanics.models.Coords;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.responses.InitGameMultiPlayer;
 import technopark.mechanics.responses.InitGameSinglePlayer;
 import technopark.mechanics.services.snap.ServerSnapshotService;
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 import technopark.websocket.RemotePointService;
 
 import static technopark.mechanics.Config.*;
-import static technopark.mechanics.Config.GROUND_HEIGHT;
-import static technopark.mechanics.Config.MAP;
 
 import java.io.IOException;
 import java.util.*;
@@ -82,12 +81,23 @@ public class GameInitService {
         initGameSinglePlayerMessage.setPlayerHeight(PLAYER_HEIGHT);
         initGameSinglePlayerMessage.setCountOfBonuses(COUNT_OF_BONUSES);
         initGameSinglePlayerMessage.setCoinWidth(COIN_WIDTH);
-        initGameSinglePlayerMessage.setCoinHeight(COINT_HEIGHT);
+        initGameSinglePlayerMessage.setCoinHeight(COIN_HEIGHT);
         initGameSinglePlayerMessage.setGroundWidth(GROUND_WIDTH);
         initGameSinglePlayerMessage.setGroundHeight(GROUND_HEIGHT);
-        initGameSinglePlayerMessage.setMap(MAP);
         initGameSinglePlayerMessage.setStartMoney(START_MONEY);
         initGameSinglePlayerMessage.setStartEnergy(START_ENERGY);
+        initGameSinglePlayerMessage.setPositionGround(POSITION_GROUND);
+
+        Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
+        Coords validCenter = new Coords(COIN_WIDTH, COIN_HEIGHT + POSITION_GROUND);
+        int validRatioX = (int) (WORLD_WIDTH / validCenter.x);
+        int validRatioY = (int) ((WORLD_HEIGHT - POSITION_GROUND) / validCenter.y);
+        for(int i = 0; i < COUNT_OF_BONUSES; i++) {
+            double xRatio = Math.random() * validRatioX;
+            double yRatio = Math.random() * validRatioY;
+            bonusPosition[i] = new Coords(validCenter.x * xRatio, validCenter.y * yRatio);
+        }
+        initGameSinglePlayerMessage.setBonusPosition(bonusPosition);
 //        initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
         return initGameSinglePlayerMessage;
     }

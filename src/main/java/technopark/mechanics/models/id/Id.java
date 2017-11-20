@@ -1,4 +1,4 @@
-package technopark.model.id;
+package technopark.mechanics.models.id;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

@@ -3,7 +3,7 @@ package technopark.websocket;
 import org.jetbrains.annotations.NotNull;
 
 import technopark.model.account.dao.AccountDao;
-import technopark.model.id.Id;
+import technopark.mechanics.models.id.Id;
 
 public interface MessageHandlerContainer {
 
