@@ -90,12 +90,12 @@ public class GameInitService {
 
         Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
         Coords validCenter = new Coords(COIN_WIDTH, COIN_HEIGHT + POSITION_GROUND);
-        int validRatioX = (int) (WORLD_WIDTH / validCenter.x);
-        int validRatioY = (int) ((WORLD_HEIGHT - POSITION_GROUND) / validCenter.y);
+        double validRatioX = WORLD_WIDTH / COIN_WIDTH;
+        double validRatioY = WORLD_HEIGHT / COIN_HEIGHT;
         for(int i = 0; i < COUNT_OF_BONUSES; i++) {
-            double xRatio = Math.random() * validRatioX;
-            double yRatio = Math.random() * validRatioY;
-            bonusPosition[i] = new Coords(validCenter.x * xRatio, validCenter.y * yRatio);
+            double xRatio = Math.random() * validRatioX + COIN_WIDTH;
+            double yRatio = Math.random() * validRatioY + POSITION_GROUND + COIN_HEIGHT;
+            bonusPosition[i] = new Coords((int) (validCenter.x * xRatio), (int) (validCenter.y * yRatio));
         }
         initGameSinglePlayerMessage.setBonusPosition(bonusPosition);
 //        initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
