@@ -1,6 +1,7 @@
 package technopark.mechanics.models;
 
 import org.jetbrains.annotations.NotNull;
+import technopark.mechanics.Config;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.player.GameUserId;
@@ -53,6 +54,12 @@ public class MapForGame extends GameObject {
             int x = i * GROUND_WIDTH + GROUND_WIDTH / 2;
             int y = i * GROUND_HEIGHT + GROUND_HEIGHT / 2 + POSITION_GROUND;
             tiles[i] = new Tiles(new Coords(x, y));
+        }
+
+        for (int i = 0; i < COUNT_OF_BONUSES; i++) {
+            int index = findTile(BONUS_POSITION[i]);
+            tiles[index].setIsBonus(true);
+            tiles[index].setBonus(Config.Bonus.COIN);
         }
     }
 
@@ -127,6 +134,7 @@ public class MapForGame extends GameObject {
         }
         checkGravity(user);
         checkJump(user);
+        checkBonus(user);
     }
 
     private void checkGravity(@NotNull Id<AccountDao> user) {
@@ -142,6 +150,22 @@ public class MapForGame extends GameObject {
     }
 
     private void checkJump(@NotNull Id<AccountDao> user) {
+
+    }
+
+    private void checkBonus(@NotNull Id<AccountDao> user) {
+        final int i = findTile(userPosition.get(0));
+        if (tiles[i].isBonus()) {
+            Config.Bonus bonus = tiles[i].getBonus();
+            tiles[i].setIsBonus(false);
+            switch (bonus) {
+                case COIN:
+                    gameSession.getFirst().claimPart(MechanicPart.class).changeMoney(COIN_COST);
+                    break;
+                default:
+                    break;
+            }
+        }
 
     }
 
