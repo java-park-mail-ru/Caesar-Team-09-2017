@@ -3,7 +3,6 @@ package technopark.mechanics;
 import technopark.mechanics.models.Coords;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class Config {
 
@@ -44,8 +43,8 @@ public class Config {
     public static final int PLAYER_X = WORLD_WIDTH / 2;
     public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT / 2;
     public static final int COUNT_OF_BONUSES = 20;
-    public static final int COIN_WIDTH = 64;
-    public static final int COIN_HEIGHT = 64;
+    public static final int COIN_WIDTH = 32;
+    public static final int COIN_HEIGHT = 32;
     public static final int GROUND_WIDTH = 16;
     public static final int GROUND_HEIGHT = 16;
     public static final int START_MONEY = 100;

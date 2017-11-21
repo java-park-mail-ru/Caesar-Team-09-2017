@@ -7,6 +7,7 @@ import technopark.mechanics.models.Snap;
 import technopark.mechanics.models.part.GamePart;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.part.MousePart;
+import technopark.mechanics.models.part.MovePart;
 import technopark.model.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 
@@ -21,6 +22,7 @@ public class GameUser extends GameObject {
         this.accountDao = accountDao;
         addPart(MousePart.class, new MousePart());
         addPart(MechanicPart.class, new MechanicPart(timeService));
+        addPart(MovePart.class, new MovePart());
     }
 
     @NotNull

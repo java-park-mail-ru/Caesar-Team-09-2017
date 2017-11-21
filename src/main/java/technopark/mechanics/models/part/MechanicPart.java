@@ -12,40 +12,31 @@ import static technopark.mechanics.Config.START_MONEY;
 
 public class MechanicPart implements GamePart {
 
-    private int currentEnergy;
-    private int currentMoney;
-    private int prevEnergy;
-    private int prevMoney;
+    private int energy;
+    private int money;
     private boolean isDrill;
     private long lastTimeDrilled;
     private boolean isMove;
     private long lastTimeMoved;
-    private Coords[] destroyedTiles;
 
     @NotNull
     private final MechanicsTimeService timeService;
 
-    public void setDestroyedTiles(Coords[] destroyedTiles) {
-        this.destroyedTiles = destroyedTiles;
-    }
-
     public MechanicPart(@NotNull MechanicsTimeService timeService) {
         this.timeService = timeService;
-        prevEnergy = currentEnergy = START_ENERGY;
-        prevMoney = currentMoney = START_MONEY;
         lastTimeDrilled = -Config.DRILING_COOLDOWN;
         lastTimeMoved = -Config.MOVEMENT_COOLDOWN;
+        energy = START_ENERGY;
+        money = START_MONEY;
         isDrill = false;
     }
 
     public void decrementEnergy() {
-        this.prevEnergy = this.currentEnergy;
-        this.currentEnergy--;
+        this.energy--;
     }
 
     public void changeMoney(int value) {
-        this.prevMoney = this.currentMoney;
-        this.currentMoney += value;
+        this.money += value;
     }
 
     public boolean tryDrill() {
@@ -87,42 +78,21 @@ public class MechanicPart implements GamePart {
 
         private final int energy;
         private final int money;
-        private final int diffEnergy;
-        private final int diffMoney;
         private final boolean isDrill;
-        private Coords[] destroyedTiles;
 
         public MechanicPartSnap(MechanicPart mechanicPart) {
-            this.energy = mechanicPart.currentEnergy;
-            this.diffEnergy = mechanicPart.currentEnergy - mechanicPart.prevEnergy;
-            this.money = mechanicPart.currentMoney;
-            this.diffMoney = mechanicPart.currentMoney - mechanicPart.prevMoney;
+            this.energy = mechanicPart.energy;
+            this.money = mechanicPart.money;
             this.isDrill = mechanicPart.isDrill;
-            this.destroyedTiles = mechanicPart.destroyedTiles;
         }
 
         public int getEnergy() {
             return energy;
         }
 
-        public boolean isDrill() {
-            return isDrill;
-        }
-
         public int getMoney() {
             return money;
         }
 
-        public int getDiffEnergy() {
-            return diffEnergy;
-        }
-
-        public int getDiffMoney() {
-            return diffMoney;
-        }
-
-        public Coords[] getDestroyedTiles() {
-            return destroyedTiles;
-        }
     }
 }

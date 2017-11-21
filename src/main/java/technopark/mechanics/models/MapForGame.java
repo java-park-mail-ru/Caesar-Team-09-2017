@@ -24,13 +24,13 @@ public class MapForGame extends GameObject {
     private final List<Coords> userPosition;
 
     @NotNull
-    private final List<Coords> moveDifference;
-
-    @NotNull
     private final Tiles[] tilesPosition; // по слоям
 
     @NotNull
     private final GameSession gameSession;
+
+    private Coords[] destroyedTiles;
+
 
     private final int lengthX;
     private final int lengthY;
@@ -39,17 +39,14 @@ public class MapForGame extends GameObject {
         this.gameSession = gameSession;
         gameUserIds = new ArrayList<>();
         userPosition = new ArrayList<>();
-        moveDifference = new ArrayList<>();
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             gameUserIds.add(new GameUserId());
         }
         gameUserIds.get(0).setGameUserId(gameSession.getFirst().getAccountId());
         userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
-        moveDifference.add(new Coords(0, 0));
         if (!gameSession.isSinglePlay()) {
             gameUserIds.get(1).setGameUserId(gameSession.getSecond().getAccountId());
             userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
-            moveDifference.add(new Coords(0, 0));
         }
         lengthX = WORLD_WIDTH / GROUND_WIDTH;
         lengthY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT;
@@ -67,6 +64,7 @@ public class MapForGame extends GameObject {
             if (tilesPosition[i].isAlived()) {
                 tilesPosition[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
+                destroyedTiles[0] = tilesPosition[i].getCenterPosition();
             }
         }
 //        final Id<AccountDao> occupant = gameUserIds.get(i).getGameUserId();
@@ -95,18 +93,27 @@ public class MapForGame extends GameObject {
         System.out.println(i);
         switch (move.getKeyDown()) {
             case DOWN:
-                userPosition.get(0).y += PLAYERS_SPEED;
-                moveDifference.get(0).y = PLAYERS_SPEED;
+                if ((userPosition.get(0).y + PLAYERS_SPEED) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
+                    userPosition.get(0).y += PLAYERS_SPEED;
+                } else {
+                    userPosition.get(0).y = WORLD_HEIGHT - PLAYER_HEIGHT;
+                }
                 break;
             case UP:
                 break;
             case LEFT:
-                userPosition.get(0).x -= PLAYERS_SPEED;
-                moveDifference.get(0).x = -PLAYERS_SPEED;
+                if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) {
+                    userPosition.get(0).x -= PLAYERS_SPEED;
+                } else {
+                    userPosition.get(0).x = PLAYER_WIDTH;
+                }
                 break;
             case RIGHT:
-                userPosition.get(0).x += PLAYERS_SPEED;
-                moveDifference.get(0).x = PLAYERS_SPEED;
+                if ((userPosition.get(0).x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
+                    userPosition.get(0).x += PLAYERS_SPEED;
+                } else {
+                    userPosition.get(0).x = WORLD_WIDTH - PLAYER_WIDTH;
+                }
                 break;
             case SPACE:
 //                TODO: сделать прыжок
@@ -118,8 +125,8 @@ public class MapForGame extends GameObject {
         }
     }
 
-    public List<Coords> getMoveDifference() {
-        return moveDifference;
+    public List<Coords> getUserPosition() {
+        return userPosition;
     }
 
     @Override
@@ -131,45 +138,23 @@ public class MapForGame extends GameObject {
     @SuppressWarnings("unused")
     public static final class MapSnap implements Snap<MapForGame> {
 
-        @NotNull
-        private final List<Snap<? extends GamePart>> partSnaps;
+        private Coords[] destroyedTiles;
 
         @NotNull
-        private final List<Snap<GameUserId>> squares;
+        private final List<Coords> userPosition;
 
         @NotNull
-        private final Id<GameObject> id;
-
-        @NotNull
-        private final List<Coords> moveDifference;
-
         public MapSnap(@NotNull MapForGame mapForGame) {
-            this.partSnaps = mapForGame.getPartSnaps();
-            this.id = mapForGame.getId();
-            this.squares = mapForGame.gameUserIds.stream()
-                    .map(GameUserId::getSnap)
-                    .collect(Collectors.toList());
-            this.moveDifference = mapForGame.getMoveDifference();
+            this.destroyedTiles = mapForGame.destroyedTiles;
+            this.userPosition = mapForGame.userPosition;
         }
 
-        @NotNull
-        public Id<GameObject> getId() {
-            return id;
+        public Coords[] getDestroyedTiles() {
+            return destroyedTiles;
         }
 
-        @NotNull
-        public List<Snap<GameUserId>> getSquares() {
-            return squares;
-        }
-
-        @NotNull
-        public List<Snap<? extends GamePart>> getPartSnaps() {
-            return partSnaps;
-        }
-
-        @NotNull
-        public List<Coords> getMoveDifference() {
-            return moveDifference;
+        public List<Coords> getUserPosition() {
+            return userPosition;
         }
     }
 
