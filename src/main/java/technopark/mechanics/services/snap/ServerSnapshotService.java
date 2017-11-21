@@ -31,12 +31,10 @@ public class ServerSnapshotService {
 //            playersSnaps.add(player.getSnap());
 //        }
         final ServerSnap snap = new ServerSnap();
-        Coords[] dest = new Coords[1];
-        dest[0] = new Coords(100, 400);
         snap.setServerFrameTime(frameTime);
 //        snap.setPlayer(gameSession.getFirst().getSnap());
         snap.setMoveDifference(gameSession.getMapForGame().getSnap().getMoveDifference().get(0));
-        snap.setDestroyedTiles(dest);
+        snap.setDestroyedTiles(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getDestroyedTiles());
         snap.setDrilledSuccessful(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().isDrill());
         snap.setEnergyDifference(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getDiffEnergy());
         snap.setMoneyDifference(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getDiffMoney());

@@ -2,6 +2,7 @@ package technopark.mechanics.models;
 
 import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.models.part.GamePart;
+import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.player.GameUserId;
 import technopark.mechanics.models.session.GameSession;
@@ -25,11 +26,14 @@ public class MapForGame extends GameObject {
     @NotNull
     private final List<Coords> moveDifference;
 
-//    @NotNull
-//    private final Tiles[] tilesPosition; // по слоям
+    @NotNull
+    private final Tiles[] tilesPosition; // по слоям
 
     @NotNull
     private final GameSession gameSession;
+
+    private final int lengthX;
+    private final int lengthY;
 
     public MapForGame(@NotNull GameSession gameSession) {
         this.gameSession = gameSession;
@@ -47,14 +51,38 @@ public class MapForGame extends GameObject {
             userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
             moveDifference.add(new Coords(0, 0));
         }
+        lengthX = WORLD_WIDTH / GROUND_WIDTH;
+        lengthY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT;
+        tilesPosition = new Tiles[lengthX * lengthY]; // x * y
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
+        final int i = findTile(coords);
+        if (i != -1) {
+            if (tilesPosition[i].isAlived()) {
+                tilesPosition[i].setAlived(false);
+                gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
+            }
+        }
 //        final Id<AccountDao> occupant = gameUserIds.get(i).getGameUserId();
 //        if (occupant != null) {
 //            gameSession.getEnemy(occupant).claimPart(MechanicPart.class).incrementScore();
 //        }
 //        gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
+    }
+
+    private int findTile(@NotNull Coords coords) {
+        int i;
+        final int x = coords.x;
+        final int y = coords.y;
+        for(i = 0; i < lengthY - 1; i++) {
+            boolean conditionY = y >= tilesPosition[i].getCenterPosition().y && y < tilesPosition[i+1].getCenterPosition().y;
+            boolean conditionX = x >= tilesPosition[i].getCenterPosition().x && x < tilesPosition[i+1].getCenterPosition().x;
+            if (conditionY && conditionX) {
+               return i;
+            }
+        }
+        return -1;
     }
 
     public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {

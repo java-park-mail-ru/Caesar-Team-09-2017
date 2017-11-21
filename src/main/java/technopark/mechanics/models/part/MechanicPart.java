@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.Config;
 import technopark.mechanics.MechanicsTimeService;
+import technopark.mechanics.models.Coords;
 import technopark.mechanics.models.Snap;
 
 import static technopark.mechanics.Config.START_ENERGY;
@@ -19,10 +20,14 @@ public class MechanicPart implements GamePart {
     private long lastTimeDrilled;
     private boolean isMove;
     private long lastTimeMoved;
+    private Coords[] destroyedTiles;
 
     @NotNull
     private final MechanicsTimeService timeService;
 
+    public void setDestroyedTiles(Coords[] destroyedTiles) {
+        this.destroyedTiles = destroyedTiles;
+    }
 
     public MechanicPart(@NotNull MechanicsTimeService timeService) {
         this.timeService = timeService;
@@ -85,6 +90,7 @@ public class MechanicPart implements GamePart {
         private final int diffEnergy;
         private final int diffMoney;
         private final boolean isDrill;
+        private Coords[] destroyedTiles;
 
         public MechanicPartSnap(MechanicPart mechanicPart) {
             this.energy = mechanicPart.currentEnergy;
@@ -92,6 +98,7 @@ public class MechanicPart implements GamePart {
             this.money = mechanicPart.currentMoney;
             this.diffMoney = mechanicPart.currentMoney - mechanicPart.prevMoney;
             this.isDrill = mechanicPart.isDrill;
+            this.destroyedTiles = mechanicPart.destroyedTiles;
         }
 
         public int getEnergy() {
@@ -112,6 +119,10 @@ public class MechanicPart implements GamePart {
 
         public int getDiffMoney() {
             return diffMoney;
+        }
+
+        public Coords[] getDestroyedTiles() {
+            return destroyedTiles;
         }
     }
 }
