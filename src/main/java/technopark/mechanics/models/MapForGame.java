@@ -30,6 +30,8 @@ public class MapForGame extends GameObject {
 
     private Coords[] destroyedTiles;
 
+    private Coords destroyedBonus;
+
 
     private final int lengthX;
     private final int lengthY;
@@ -60,6 +62,7 @@ public class MapForGame extends GameObject {
             int index = findTile(BONUS_POSITION[i]);
             tiles[index].setIsBonus(true);
             tiles[index].setBonus(Config.Bonus.COIN);
+            tiles[index].setIndexPositionBonus(i);
         }
     }
 
@@ -156,6 +159,7 @@ public class MapForGame extends GameObject {
     private void checkBonus(@NotNull Id<AccountDao> user) {
         final int i = findTile(userPosition.get(0));
         if (tiles[i].isBonus()) {
+            destroyedBonus = BONUS_POSITION[tiles[i].getIndexPositionBonus()];
             Config.Bonus bonus = tiles[i].getBonus();
             tiles[i].setIsBonus(false);
             switch (bonus) {
@@ -187,10 +191,13 @@ public class MapForGame extends GameObject {
         @NotNull
         private final List<Coords> userPosition;
 
+        private Coords destroyedBonus;
+
         @NotNull
         public MapSnap(@NotNull MapForGame mapForGame) {
             this.destroyedTiles = mapForGame.destroyedTiles;
             this.userPosition = mapForGame.userPosition;
+            this.destroyedBonus = mapForGame.destroyedBonus;
         }
 
         public Coords[] getDestroyedTiles() {
@@ -199,6 +206,10 @@ public class MapForGame extends GameObject {
 
         public List<Coords> getUserPosition() {
             return userPosition;
+        }
+
+        public Coords getDestroyedBonus() {
+            return destroyedBonus;
         }
     }
 
