@@ -11,7 +11,7 @@ public class MousePart implements GamePart {
 
 
     public MousePart() {
-        this.mouse = new Coords(0.0f, 0.0f);
+        this.mouse = new Coords(0, 0);
     }
 
     @NotNull

@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("PublicField")
 public class Coords {
 
-    public Coords(@JsonProperty("x") double x, @JsonProperty("y") double y) {
+    public Coords(@JsonProperty("x") int x, @JsonProperty("y") int y) {
         this.x = x;
         this.y = y;
     }
 
-    public final double x;
-    public final double y;
+    public int x; // убрал final
+    public int y;
 
     @Override
     public String toString() {
@@ -24,7 +24,7 @@ public class Coords {
 
     @SuppressWarnings("NewMethodNamingConvention")
     @NotNull
-    public static Coords of(double x, double y) {
+    public static Coords of(int x, int y) {
         return new Coords(x, y);
     }
 }

@@ -87,17 +87,7 @@ public class GameInitService {
         initGameSinglePlayerMessage.setStartMoney(START_MONEY);
         initGameSinglePlayerMessage.setStartEnergy(START_ENERGY);
         initGameSinglePlayerMessage.setPositionGround(POSITION_GROUND);
-
-        Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
-        Coords validCenter = new Coords(COIN_WIDTH, COIN_HEIGHT + POSITION_GROUND);
-        double validRatioX = WORLD_WIDTH / COIN_WIDTH;
-        double validRatioY = WORLD_HEIGHT / COIN_HEIGHT;
-        for(int i = 0; i < COUNT_OF_BONUSES; i++) {
-            double xRatio = Math.random() * validRatioX + COIN_WIDTH;
-            double yRatio = Math.random() * validRatioY + POSITION_GROUND + COIN_HEIGHT;
-            bonusPosition[i] = new Coords((int) (validCenter.x * xRatio), (int) (validCenter.y * yRatio));
-        }
-        initGameSinglePlayerMessage.setBonusPosition(bonusPosition);
+        initGameSinglePlayerMessage.setBonusPosition(BONUS_POSITION);
 //        initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
         return initGameSinglePlayerMessage;
     }

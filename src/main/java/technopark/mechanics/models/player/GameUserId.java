@@ -30,15 +30,15 @@ public class GameUserId extends GameObject {
     public static final class GameUserIdSnap implements Snap<GameUserId> {
 
         @Nullable
-        private final Id<AccountDao> occupant;
+        private final Id<AccountDao> userId;
 
         public GameUserIdSnap(@NotNull GameUserId gameUserId) {
-            this.occupant = gameUserId.gameUserId;
+            this.userId = gameUserId.gameUserId;
         }
 
         @Nullable
         public Id<AccountDao> getOccupant() {
-            return occupant;
+            return userId;
         }
     }
 

@@ -7,11 +7,14 @@ import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.Snap;
 
 import static technopark.mechanics.Config.START_ENERGY;
+import static technopark.mechanics.Config.START_MONEY;
 
 public class MechanicPart implements GamePart {
 
-    private int energy;
-
+    private int currentEnergy;
+    private int currentMoney;
+    private int prevEnergy;
+    private int prevMoney;
     private boolean isDrill;
     private long lastTimeDrilled;
     private boolean isMove;
@@ -23,18 +26,21 @@ public class MechanicPart implements GamePart {
 
     public MechanicPart(@NotNull MechanicsTimeService timeService) {
         this.timeService = timeService;
-        energy = START_ENERGY;
+        prevEnergy = currentEnergy = START_ENERGY;
+        prevMoney = currentMoney = START_MONEY;
         lastTimeDrilled = -Config.DRILING_COOLDOWN;
         lastTimeMoved = -Config.MOVEMENT_COOLDOWN;
         isDrill = false;
     }
 
-    public int getEnergy() {
-        return energy;
+    public void decrementEnergy() {
+        this.prevEnergy = this.currentEnergy;
+        this.currentEnergy--;
     }
 
-    public void decrementEnergy() {
-        this.energy--;
+    public void changeMoney(int value) {
+        this.prevMoney = this.currentMoney;
+        this.currentMoney += value;
     }
 
     public boolean tryDrill() {
@@ -63,10 +69,6 @@ public class MechanicPart implements GamePart {
         return false;
     }
 
-    public void setMove(boolean move) {
-        isMove = move;
-    }
-
     public void setDrill(boolean drill) {
         isDrill = drill;
     }
@@ -78,20 +80,38 @@ public class MechanicPart implements GamePart {
 
     public static final class MechanicPartSnap implements Snap<MechanicPart> {
 
-        private final int score;
+        private final int energy;
+        private final int money;
+        private final int diffEnergy;
+        private final int diffMoney;
         private final boolean isDrill;
 
         public MechanicPartSnap(MechanicPart mechanicPart) {
-            this.score = mechanicPart.energy;
+            this.energy = mechanicPart.currentEnergy;
+            this.diffEnergy = mechanicPart.currentEnergy - mechanicPart.prevEnergy;
+            this.money = mechanicPart.currentMoney;
+            this.diffMoney = mechanicPart.currentMoney - mechanicPart.prevMoney;
             this.isDrill = mechanicPart.isDrill;
         }
 
-        public int getScore() {
-            return score;
+        public int getEnergy() {
+            return energy;
         }
 
         public boolean isDrill() {
             return isDrill;
+        }
+
+        public int getMoney() {
+            return money;
+        }
+
+        public int getDiffEnergy() {
+            return diffEnergy;
+        }
+
+        public int getDiffMoney() {
+            return diffMoney;
         }
     }
 }

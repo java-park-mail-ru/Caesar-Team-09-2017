@@ -6,6 +6,7 @@ import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.player.GameUserId;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.models.id.Id;
+import technopark.model.account.dao.AccountDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,14 @@ public class MapForGame extends GameObject {
     @NotNull
     private final List<GameUserId> gameUserIds;
 
-    //    TODO: для мультиплеер нужен список координат
     @NotNull
-    private float playerX;
-    private float playerY;
+    private final List<Coords> userPosition;
+
+    @NotNull
+    private final List<Coords> moveDifference;
+
+//    @NotNull
+//    private final Tiles[] tilesPosition; // по слоям
 
     @NotNull
     private final GameSession gameSession;
@@ -29,19 +34,22 @@ public class MapForGame extends GameObject {
     public MapForGame(@NotNull GameSession gameSession) {
         this.gameSession = gameSession;
         gameUserIds = new ArrayList<>();
+        userPosition = new ArrayList<>();
+        moveDifference = new ArrayList<>();
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             gameUserIds.add(new GameUserId());
         }
         gameUserIds.get(0).setGameUserId(gameSession.getFirst().getAccountId());
+        userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
+        moveDifference.add(new Coords(0, 0));
         if (!gameSession.isSinglePlay()) {
             gameUserIds.get(1).setGameUserId(gameSession.getSecond().getAccountId());
+            userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
+            moveDifference.add(new Coords(0, 0));
         }
-        this.playerX = PLAYER_X;
-        this.playerY = PLAYER_Y;
     }
 
-    public void drillAt(@NotNull Coords coords) {
-//        TODO: понять какой из игроков поля бурит
+    public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
 //        final Id<AccountDao> occupant = gameUserIds.get(i).getGameUserId();
 //        if (occupant != null) {
 //            gameSession.getEnemy(occupant).claimPart(MechanicPart.class).incrementScore();
@@ -49,19 +57,23 @@ public class MapForGame extends GameObject {
 //        gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
     }
 
-    public void moveTo(@NotNull Move move) {
-//        TODO: понять какой из игроков поля сделал движение
+    public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {
+        int i = userPosition.indexOf(user);
+        System.out.println(i);
         switch (move.getKeyDown()) {
             case DOWN:
-                playerY += PLAYERS_SPEED;
+                userPosition.get(0).y += PLAYERS_SPEED;
+                moveDifference.get(0).y = PLAYERS_SPEED;
                 break;
             case UP:
                 break;
             case LEFT:
-                playerX -= PLAYERS_SPEED;
+                userPosition.get(0).x -= PLAYERS_SPEED;
+                moveDifference.get(0).x = -PLAYERS_SPEED;
                 break;
             case RIGHT:
-                playerX += PLAYERS_SPEED;
+                userPosition.get(0).x += PLAYERS_SPEED;
+                moveDifference.get(0).x = PLAYERS_SPEED;
                 break;
             case SPACE:
 //                TODO: сделать прыжок
@@ -73,14 +85,18 @@ public class MapForGame extends GameObject {
         }
     }
 
+    public List<Coords> getMoveDifference() {
+        return moveDifference;
+    }
+
     @Override
     @NotNull
-    public BoardSnap getSnap() {
-        return new BoardSnap(this);
+    public MapForGame.MapSnap getSnap() {
+        return new MapSnap(this);
     }
 
     @SuppressWarnings("unused")
-    public static final class BoardSnap implements Snap<MapForGame> {
+    public static final class MapSnap implements Snap<MapForGame> {
 
         @NotNull
         private final List<Snap<? extends GamePart>> partSnaps;
@@ -91,12 +107,16 @@ public class MapForGame extends GameObject {
         @NotNull
         private final Id<GameObject> id;
 
-        public BoardSnap(@NotNull MapForGame mapForGame) {
+        @NotNull
+        private final List<Coords> moveDifference;
+
+        public MapSnap(@NotNull MapForGame mapForGame) {
             this.partSnaps = mapForGame.getPartSnaps();
             this.id = mapForGame.getId();
             this.squares = mapForGame.gameUserIds.stream()
                     .map(GameUserId::getSnap)
                     .collect(Collectors.toList());
+            this.moveDifference = mapForGame.getMoveDifference();
         }
 
         @NotNull
@@ -112,6 +132,11 @@ public class MapForGame extends GameObject {
         @NotNull
         public List<Snap<? extends GamePart>> getPartSnaps() {
             return partSnaps;
+        }
+
+        @NotNull
+        public List<Coords> getMoveDifference() {
+            return moveDifference;
         }
     }
 

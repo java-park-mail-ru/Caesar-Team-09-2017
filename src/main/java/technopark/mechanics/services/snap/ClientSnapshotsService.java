@@ -61,7 +61,7 @@ public class ClientSnapshotsService {
     private void processClick(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
         final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
         if (mechanicPart.tryDrill()) {
-            gameSession.getMapForGame().drillAt(snap.getMouse());
+            gameSession.getMapForGame().drillAt(snap.getMouse(), gameUser.getAccountId());
         }
     }
     // сохранить текущий клик
@@ -73,7 +73,7 @@ public class ClientSnapshotsService {
     private void processMove(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
         final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
         if (mechanicPart.tryMove()) {
-            gameSession.getMapForGame().moveTo(snap.getMove());
+            gameSession.getMapForGame().moveTo(snap.getMove(), gameUser.getAccountId());
         }
     }
     // сохранить текущее состояние клавы
