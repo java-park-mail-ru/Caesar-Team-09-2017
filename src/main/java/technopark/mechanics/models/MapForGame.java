@@ -54,6 +54,11 @@ public class MapForGame extends GameObject {
         lengthX = WORLD_WIDTH / GROUND_WIDTH;
         lengthY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT;
         tilesPosition = new Tiles[lengthX * lengthY]; // x * y
+        for (int i = 0; i < lengthX * lengthY; i++) {
+            int x = i * GROUND_WIDTH + GROUND_WIDTH / 2;
+            int y = i * GROUND_HEIGHT + GROUND_HEIGHT / 2 + POSITION_GROUND;
+            tilesPosition[i] = new Tiles(new Coords(x, y));
+        }
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
