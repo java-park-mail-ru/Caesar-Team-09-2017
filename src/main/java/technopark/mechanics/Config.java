@@ -8,6 +8,7 @@ public class Config {
 
     public static final int PLAYERS_COUNT = 2;
     public static final int PLAYERS_SPEED = 10;
+    public static final int FREE_FALL = 10; // I apologize for being rude
 
     public static final long DRILING_COOLDOWN = 150;
     public static final long MOVEMENT_COOLDOWN = 50;
