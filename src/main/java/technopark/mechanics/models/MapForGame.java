@@ -1,7 +1,6 @@
 package technopark.mechanics.models;
 
 import org.jetbrains.annotations.NotNull;
-import technopark.mechanics.models.part.GamePart;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.player.GameUserId;
@@ -11,7 +10,6 @@ import technopark.model.account.dao.AccountDao;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static technopark.mechanics.Config.*;
 
@@ -61,31 +59,34 @@ public class MapForGame extends GameObject {
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
         final int i = findTile(coords);
         if (i != -1) {
-            if (tilesPosition[i].isAlived()) {
+            if (tilesPosition[i].isAlived() && checkDrillForPosition(userPosition.get(0), coords)) {
                 tilesPosition[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tilesPosition[i].getCenterPosition();
             }
         }
-//        final Id<AccountDao> occupant = gameUserIds.get(i).getGameUserId();
-//        if (occupant != null) {
-//            gameSession.getEnemy(occupant).claimPart(MechanicPart.class).incrementScore();
-//        }
-//        gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
+
     }
 
     private int findTile(@NotNull Coords coords) {
-        int i;
+        int index;
         final int x = coords.x;
         final int y = coords.y;
-        for(i = 0; i < lengthY - 1; i++) {
-            boolean conditionY = y >= tilesPosition[i].getCenterPosition().y && y < tilesPosition[i+1].getCenterPosition().y;
-            boolean conditionX = x >= tilesPosition[i].getCenterPosition().x && x < tilesPosition[i+1].getCenterPosition().x;
+        for(index = 0; index < lengthY - 1; index++) {
+            boolean conditionY = y >= tilesPosition[index].getCenterPosition().y && y < tilesPosition[index+1].getCenterPosition().y;
+            boolean conditionX = x >= tilesPosition[index].getCenterPosition().x && x < tilesPosition[index+1].getCenterPosition().x;
             if (conditionY && conditionX) {
-               return i;
+               return index;
             }
         }
         return -1;
+    }
+
+    private boolean checkDrillForPosition(Coords position, Coords checkedTile) {
+        if (Math.abs(checkedTile.y - position.y) <= GROUND_HEIGHT && Math.abs(checkedTile.x - position.x) <= GROUND_WIDTH) {
+            return true;
+        }
+        return false;
     }
 
     public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {
