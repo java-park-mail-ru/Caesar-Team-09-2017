@@ -82,7 +82,7 @@ public class MapForGame extends GameObject {
         int index;
         final int x = coords.x;
         final int y = coords.y;
-        for(index = 0; index < lengthY - 1; index++) {
+        for(index = 0; index < lengthX * lengthY - 1; index++) {
             boolean conditionY = y >= tiles[index].getCenterPosition().y && y < tiles[index+1].getCenterPosition().y;
             boolean conditionX = x >= tiles[index].getCenterPosition().x && x < tiles[index+1].getCenterPosition().x;
             if (conditionY && conditionX) {

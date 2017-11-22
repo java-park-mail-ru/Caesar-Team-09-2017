@@ -47,8 +47,8 @@ public class Config {
     public static final int COUNT_OF_BONUSES = 20;
     public static final int COIN_WIDTH = 32;
     public static final int COIN_HEIGHT = 32;
-    public static final int GROUND_WIDTH = 16;
-    public static final int GROUND_HEIGHT = 16;
+    public static final int GROUND_WIDTH = 8;
+    public static final int GROUND_HEIGHT = 8;
     public static final int START_MONEY = 100;
     public static final int START_ENERGY = 100;
     public static final Coords[] BONUS_POSITION;
