@@ -58,12 +58,12 @@ public class MapForGame extends GameObject {
             tiles[i] = new Tiles(new Coords(x, y));
         }
 
-        /*for (int i = 0; i < COUNT_OF_BONUSES; i++) {
+        for (int i = 0; i < COUNT_OF_BONUSES; i++) {
             int index = findTile(BONUS_POSITION[i]);
             tiles[index].setIsBonus(true);
             tiles[index].setBonus(Config.Bonus.COIN);
             tiles[index].setIndexPositionBonus(i);
-        }*/
+        }
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
