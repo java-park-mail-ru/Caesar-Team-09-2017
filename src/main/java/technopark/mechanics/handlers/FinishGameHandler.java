@@ -12,25 +12,25 @@ import technopark.websocket.MessageHandler;
 import technopark.websocket.MessageHandlerContainer;
 
 @Component
-public class FinishGameHandler extends MessageHandler<FinishGame> {
+public class FinishGameHandler extends MessageHandler<FinishGame.Request> {
     @NotNull
     private GameMechanics gameMechanics;
     @NotNull
     private MessageHandlerContainer messageHandlerContainer;
 
     public FinishGameHandler(@NotNull GameMechanics gameMechanics, @NotNull MessageHandlerContainer messageHandlerContainer) {
-        super(FinishGame.class);
+        super(FinishGame.Request.class);
         this.gameMechanics = gameMechanics;
         this.messageHandlerContainer = messageHandlerContainer;
     }
 
     @PostConstruct
     private void init() {
-        messageHandlerContainer.registerHandler(FinishGame.class, this);
+        messageHandlerContainer.registerHandler(FinishGame.Request.class, this);
     }
 
     @Override
-    public void handle(@NotNull FinishGame message, @NotNull Id<AccountDao> forUser) {
+    public void handle(@NotNull FinishGame.Request message, @NotNull Id<AccountDao> forUser) {
         gameMechanics.finishGame(message.getUserId());
     }
 }

@@ -52,14 +52,15 @@ public class MapForGame extends GameObject {
         tiles = new Tiles[lengthX * lengthY]; // x * y
         for (int i = 0; i < lengthY; i++) {
             for (int j = 0; j < lengthX; j++) {
-                int x = j * GROUND_WIDTH + GROUND_WIDTH / 2;
-                int y = i * GROUND_HEIGHT + GROUND_HEIGHT / 2 + POSITION_GROUND;
+                int x = j * GROUND_WIDTH + (GROUND_WIDTH / 2);
+                int y = i * GROUND_HEIGHT + (GROUND_HEIGHT / 2) + POSITION_GROUND;
                 tiles[i * lengthX + j] = new Tiles(new Coords(x, y));
             }
         }
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
             int index = findTile(BONUS_POSITION[i]);
             if (index == -1) {
+                System.out.println("BONUS problems");
                 System.out.println(BONUS_POSITION[i]);
             } else {
                 tiles[index].setIsBonus(true);
@@ -73,7 +74,9 @@ public class MapForGame extends GameObject {
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
         final int i = findTile(coords);
         if (i != -1) {
-            if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(0), coords)) {
+            System.out.println("i != -1");
+            if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(0), tiles[i].getCenterPosition())) {
+                System.out.println("checkDrillForPosition");
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tiles[i].getCenterPosition();
@@ -83,8 +86,8 @@ public class MapForGame extends GameObject {
 
     private int findTile(@NotNull Coords coords) {
         int index;
-        final int x = coords.x;
-        final int y = coords.y;
+        final int x = coords.x + GROUND_WIDTH / 2;
+        final int y = coords.y + GROUND_HEIGHT / 2;
         // сначала находим x
         for (index = 0; index < lengthX - 1; index++) {
             boolean conditionX = x >= tiles[index].getCenterPosition().x && x < tiles[index + 1].getCenterPosition().x;
@@ -103,7 +106,8 @@ public class MapForGame extends GameObject {
     }
 
     private boolean checkDrillForPosition(Coords position, Coords checkedTile) {
-        if (Math.abs(checkedTile.y - position.y) <= GROUND_HEIGHT && Math.abs(checkedTile.x - position.x) <= GROUND_WIDTH) {
+        System.out.println("isAlived");
+        if (Math.abs(checkedTile.y - position.y) <= 3 * GROUND_HEIGHT && Math.abs(checkedTile.x - position.x) <= 3 * GROUND_WIDTH) {
             return true;
         }
         return false;
@@ -113,19 +117,16 @@ public class MapForGame extends GameObject {
         // int i = userPosition.indexOf(user);
         switch (move.getKeyDown()) {
             case DOWN:
-                if ((userPosition.get(0).y + PLAYERS_SPEED) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
-                    userPosition.get(0).y += PLAYERS_SPEED;
-                } else {
-                    userPosition.get(0).y = WORLD_HEIGHT - PLAYER_HEIGHT;
-                }
                 break;
             case UP:
                 // TODO : сделать прыжок
                 break;
             case LEFT:
-                System.out.println(userPosition.get(0).x);
                 if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) {
                     userPosition.get(0).x -= PLAYERS_SPEED;
+                    if (!checkMove(userPosition.get(0))) {
+                        userPosition.get(0).x += PLAYERS_SPEED;
+                    }
                 } else {
                     userPosition.get(0).x = PLAYER_WIDTH;
                 }
@@ -133,6 +134,9 @@ public class MapForGame extends GameObject {
             case RIGHT:
                 if ((userPosition.get(0).x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
                     userPosition.get(0).x += PLAYERS_SPEED;
+                    if (!checkMove(userPosition.get(0))) {
+                        userPosition.get(0).x -= PLAYERS_SPEED;
+                    }
                 } else {
                     userPosition.get(0).x = WORLD_WIDTH - PLAYER_WIDTH;
                 }
@@ -150,10 +154,18 @@ public class MapForGame extends GameObject {
         checkBonus(user);
     }
 
+    private boolean checkMove(Coords newPosition) {
+        int index = findTile(newPosition);
+        if (index != -1 && tiles[index].isAlived()) {
+            return false;
+        }
+        return true;
+    }
+
     private void checkGravity(@NotNull Id<AccountDao> user) {
-        Coords tileUnderPlayer = new Coords(userPosition.get(0).x, userPosition.get(0).y + GROUND_HEIGHT / 2);
+        Coords tileUnderPlayer = new Coords(userPosition.get(0).x, userPosition.get(0).y + GROUND_HEIGHT);
         final int i = findTile(tileUnderPlayer);
-        if (i != -1 && tiles[i].isAlived()) {
+        if (i != -1 && !tiles[i].isAlived()) {
             if ((userPosition.get(0).y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
                 userPosition.get(0).y += FREE_FALL;
             } else {

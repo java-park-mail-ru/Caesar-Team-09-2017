@@ -75,7 +75,11 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void finishGame(@NotNull long userId) {
-        remotePointService.cutDownConnection(new Id<AccountDao>(userId), CloseStatus.NORMAL);
+        for (GameSession session : gameSessionService.getSessions()) {
+            if (session.getFirst().getAccountId().getId() == userId) {
+                gameSessionService.forceTerminate(session, false);
+            }
+        }
     }
     // действие срабатываемое по приему сообщения snap от клиента
     @Override

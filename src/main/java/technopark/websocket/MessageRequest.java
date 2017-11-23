@@ -12,7 +12,7 @@ import technopark.mechanics.requests.FinishGame;
 @JsonSubTypes({
         @Type(JoinGame.class),
         @Type(ClientSnap.class),
-        @Type(FinishGame.class)
+        @Type(FinishGame.Request.class)
 })
 public abstract class MessageRequest extends Message {
 }

@@ -7,8 +7,8 @@ import java.util.Arrays;
 public class Config {
 
     public static final int PLAYERS_COUNT = 2;
-    public static final int PLAYERS_SPEED = 2;
-    public static final int FREE_FALL = 2;
+    public static final int PLAYERS_SPEED = 3;
+    public static final int FREE_FALL = 3;
     public static final int COIN_COST = 15;
 
     public static final long DRILING_COOLDOWN = 150;
