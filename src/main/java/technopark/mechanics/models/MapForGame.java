@@ -50,11 +50,11 @@ public class MapForGame extends GameObject {
         lengthX = WORLD_WIDTH / GROUND_WIDTH;
         lengthY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT;
         tiles = new Tiles[lengthX * lengthY]; // x * y
-        for(int i = 0; i < lengthY; i++) {
-            for(int j = 0; j < lengthX; j++) {
+        for (int i = 0; i < lengthY; i++) {
+            for (int j = 0; j < lengthX; j++) {
                 int x = j * GROUND_WIDTH + GROUND_WIDTH / 2;
                 int y = i * GROUND_HEIGHT + GROUND_HEIGHT / 2 + POSITION_GROUND;
-                tiles[i*lengthX+j] = new Tiles(new Coords(x, y));
+                tiles[i * lengthX + j] = new Tiles(new Coords(x, y));
             }
         }
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
@@ -71,11 +71,9 @@ public class MapForGame extends GameObject {
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
-        System.out.println("drillAt");
         final int i = findTile(coords);
         if (i != -1) {
             if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(0), coords)) {
-                System.out.println("isAlived");
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tiles[i].getCenterPosition();
@@ -88,14 +86,14 @@ public class MapForGame extends GameObject {
         final int x = coords.x;
         final int y = coords.y;
         // сначала находим x
-        for(index = 0; index < lengthX - 1; index++) {
+        for (index = 0; index < lengthX - 1; index++) {
             boolean conditionX = x >= tiles[index].getCenterPosition().x && x < tiles[index + 1].getCenterPosition().x;
             if (conditionX) {
                break;
             }
         }
         // теперь y
-        for(int i = 0; i < lengthY - 1; i++) {
+        for (int i = 0; i < lengthY - 1; i++) {
             boolean conditionY = y >= tiles[i].getCenterPosition().y && y < tiles[i * lengthX + 1].getCenterPosition().y;
             if (conditionY) {
                 return index + lengthX * i;
@@ -112,7 +110,7 @@ public class MapForGame extends GameObject {
     }
 
     public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {
-//        int i = userPosition.indexOf(user);
+        // int i = userPosition.indexOf(user);
         switch (move.getKeyDown()) {
             case DOWN:
                 if ((userPosition.get(0).y + PLAYERS_SPEED) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
@@ -122,7 +120,7 @@ public class MapForGame extends GameObject {
                 }
                 break;
             case UP:
-                 // TODO: сделать прыжок
+                // TODO : сделать прыжок
                 break;
             case LEFT:
                 System.out.println(userPosition.get(0).x);
@@ -140,7 +138,7 @@ public class MapForGame extends GameObject {
                 }
                 break;
             case SPACE:
-                  // TODO: сделать игровое действие
+                // TODO : сделать игровое действие
                 break;
             case NOTHING:
                 break;

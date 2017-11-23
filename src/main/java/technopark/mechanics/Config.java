@@ -59,10 +59,10 @@ public class Config {
         int maxX = WORLD_WIDTH - COIN_WIDTH / 2 - minX;
         int minY = COIN_HEIGHT / 2 + POSITION_GROUND;
         int maxY = WORLD_HEIGHT - COIN_HEIGHT / 2 - minY;
-        for(int i = 0; i < COUNT_OF_BONUSES; i++) {
-            int xRatio = minX + (int) (Math.random() * maxX);
-            int yRatio = minY + (int) (Math.random() * maxY);
-            bonusPosition[i] = new Coords(xRatio, yRatio);
+        for (int i = 0; i < COUNT_OF_BONUSES; i++) {
+            int ratioX = minX + (int) (Math.random() * maxX);
+            int ratioY = minY + (int) (Math.random() * maxY);
+            bonusPosition[i] = new Coords(ratioX, ratioY);
         }
         normalizedBonusPosition(bonusPosition);
         BONUS_POSITION = bonusPosition;
@@ -72,7 +72,7 @@ public class Config {
         Arrays.sort(bonusPosition, (obj1, obj2) -> {
             if (obj1.y > obj2.y) {
                 return 1;
-            } else if(obj1.y == obj2.y){
+            } else if (obj1.y == obj2.y) {
 
                 if (obj1.x > obj2.x) {
                     return 1;

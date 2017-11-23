@@ -43,7 +43,7 @@ public class GameUser extends GameObject {
     public static class ServerPlayerSnap implements Snap<GameUser> {
         private Id<AccountDao> userId;
 
-        Map<String, Snap<? extends GamePart>> gameParts;
+        private Map<String, Snap<? extends GamePart>> gameParts;
 
         public Id<AccountDao> getUserId() {
             return userId;

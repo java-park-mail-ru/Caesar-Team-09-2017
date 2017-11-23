@@ -103,12 +103,19 @@ public class GameSocketHandler extends TextWebSocketHandler {
     }
 
     private void closeSessionSilently(@NotNull WebSocketSession session, @Nullable CloseStatus closeStatus) {
-        final CloseStatus status = closeStatus == null ? SERVER_ERROR : closeStatus;
+        final CloseStatus status;
+        if (closeStatus == null) {
+            status = SERVER_ERROR;
+        } else {
+            status = closeStatus;
+        }
+
         LOGGER.info("disconnect client silently");
         //noinspection OverlyBroadCatchBlock
         try {
             session.close(status);
         } catch (Exception ignore) {
+            ignore.toString();
         }
 
     }

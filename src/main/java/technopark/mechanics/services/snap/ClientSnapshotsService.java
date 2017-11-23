@@ -47,8 +47,8 @@ public class ClientSnapshotsService {
             if (playerSnaps.isEmpty()) {
                 continue;
             }
-//            playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
-//            playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
+            // playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
+            // playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
             processClick(playerSnaps.get(0), gameSession, player);
             processMove(playerSnaps.get(0), gameSession, player);
             final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);

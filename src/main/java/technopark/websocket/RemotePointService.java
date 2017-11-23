@@ -41,6 +41,7 @@ public class RemotePointService {
             try {
                 webSocketSession.close(closeStatus);
             } catch (IOException ignore) {
+                ignore.toString();
             }
         }
     }

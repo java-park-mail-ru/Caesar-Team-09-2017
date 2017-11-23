@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
 import technopark.mechanics.Config;
-import technopark.mechanics.models.Coords;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.responses.InitGameMultiPlayer;
@@ -50,7 +49,7 @@ public class GameInitService {
                             createInitMessageForSingle(gameSession, player.getAccountId()));
                 }
             } catch (IOException e) {
-//                TODO: Reentrance mechanism
+                // TODO : Reentrance mechanism
                 players.forEach(playerToCutOff -> remotePointService.cutDownConnection(playerToCutOff.getAccountId(),
                         CloseStatus.SERVER_ERROR));
                 LOGGER.error("Unnable to start a models", e);
@@ -89,7 +88,7 @@ public class GameInitService {
         initGameSinglePlayerMessage.setPositionGround(POSITION_GROUND);
         initGameSinglePlayerMessage.setBonusPosition(BONUS_POSITION);
         initGameSinglePlayerMessage.setUserId(gameSession.getFirst().getAccountId().getId());
-//        initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
+        // initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
         return initGameSinglePlayerMessage;
     }
 

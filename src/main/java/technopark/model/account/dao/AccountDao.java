@@ -25,6 +25,7 @@ public class AccountDao {
         this.username = username;
         this.password = password;
     }
+
     public AccountDao() {
 
     }

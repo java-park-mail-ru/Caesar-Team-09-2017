@@ -120,8 +120,8 @@ public class AccountDaoImpl implements AccountDaoInterface {
         } finally {
             return accountDao;
         }
-
     }
+
     private static AccountDao readItem(ResultSet rs, int rowNum) throws SQLException {
         AccountDao accountDao = new AccountDao();
 

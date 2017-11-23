@@ -58,6 +58,7 @@ public class GameTaskScheduler {
 
     private interface ScheduledTask {
         void operate();
+
         default void onError() { }
 
     }

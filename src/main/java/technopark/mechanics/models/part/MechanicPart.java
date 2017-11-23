@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.Config;
 import technopark.mechanics.MechanicsTimeService;
-import technopark.mechanics.models.Coords;
 import technopark.mechanics.models.Snap;
 
 import static technopark.mechanics.Config.START_ENERGY;
@@ -41,10 +40,9 @@ public class MechanicPart implements GamePart {
     }
 
     public boolean tryDrill() {
-//        if (isDrill) {
-//            return false;
-//        }
-        System.out.println("tryDrill");
+        // if (isDrill) {
+        //   return false;
+        //  }
         final long now = timeService.time();
         if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
             lastTimeDrilled = now;
@@ -55,9 +53,9 @@ public class MechanicPart implements GamePart {
     }
 
     public boolean tryMove() {
-//        if (isMove) {
-//            return false;
-//        }
+        // if (isMove) {
+        //   return false;
+        // }
         final long now = timeService.time();
         if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
             lastTimeMoved = now;

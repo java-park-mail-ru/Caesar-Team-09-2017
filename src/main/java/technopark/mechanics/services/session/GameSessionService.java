@@ -77,7 +77,13 @@ public class GameSessionService {
             usersMap.remove(gameSession.getSecond().getAccountId());
         }
         @SuppressWarnings("AvoidInlineConditionals")
-        final CloseStatus status = error ? CloseStatus.SERVER_ERROR : CloseStatus.NORMAL;
+        final CloseStatus status;
+        if (error) {
+            status = CloseStatus.SERVER_ERROR;
+        } else {
+            status = CloseStatus.NORMAL;
+        }
+
         if (exists) {
             remotePointService.cutDownConnection(gameSession.getFirst().getAccountId(), status);
             if (!singlePlay) {
@@ -89,8 +95,13 @@ public class GameSessionService {
             clientSnapshotsService.clearForUser(gameSession.getSecond().getAccountId());
         }
 
-        LOGGER.info("Game session " + gameSession.getSessionId() + (error ? " was terminated due to error. " : " was cleaned. ")
-                + gameSession.toString());
+        StringBuilder stringBuilder = new StringBuilder("Game session " + gameSession.getSessionId());
+        if (error) {
+            stringBuilder.append(" was terminated due to error. ");
+        } else {
+            stringBuilder.append(" was cleaned. ");
+        }
+        LOGGER.info(stringBuilder.toString());
     }
 
     public boolean checkHealthState(@NotNull GameSession gameSession) {

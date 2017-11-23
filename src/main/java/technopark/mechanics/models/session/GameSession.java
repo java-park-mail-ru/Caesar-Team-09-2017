@@ -140,12 +140,12 @@ public class GameSession {
     }
 
     public boolean tryFinishGame() {
-//        if (first.claimPart(MechanicPart.class).getEnergy() >= Config.SCORES_TO_WIN
-//                || second.claimPart(MechanicPart.class).getEnergy() >= Config.SCORES_TO_WIN) {
-//            gameSessionService.finishGame(this);
-//            isFinished = true;
-//            return true;
-//        }
+        // if (first.claimPart(MechanicPart.class).getEnergy() >= Config.SCORES_TO_WIN
+        //        || second.claimPart(MechanicPart.class).getEnergy() >= Config.SCORES_TO_WIN) {
+        //    gameSessionService.finishGame(this);
+        //    isFinished = true;
+        //    return true;
+        // }
         return false;
     }
 

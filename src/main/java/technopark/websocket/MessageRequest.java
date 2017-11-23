@@ -8,7 +8,7 @@ import technopark.mechanics.requests.ClientSnap;
 import technopark.mechanics.requests.JoinGame;
 import technopark.mechanics.requests.FinishGame;
 
-@JsonTypeInfo(use= JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "class")
 @JsonSubTypes({
         @Type(JoinGame.class),
         @Type(ClientSnap.class),
