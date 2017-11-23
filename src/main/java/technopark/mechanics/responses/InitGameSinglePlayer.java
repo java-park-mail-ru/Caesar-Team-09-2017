@@ -20,9 +20,18 @@ public class InitGameSinglePlayer {
         private int startEnergy;
         private int positionGround;
         private Coords[] bonusPosition;
+        private long userId;
 
         public Coords[] getBonusPosition() {
             return bonusPosition;
+        }
+
+        public long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(long userId) {
+            this.userId = userId;
         }
 
         public void setBonusPosition(Coords[] bonusPosition) {

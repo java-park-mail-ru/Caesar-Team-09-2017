@@ -2,7 +2,6 @@ package technopark.mechanics.requests;
 
 import org.jetbrains.annotations.NotNull;
 
-import technopark.mechanics.models.Bonus;
 import technopark.mechanics.models.Coords;
 import technopark.mechanics.models.Move;
 import technopark.websocket.MessageRequest;

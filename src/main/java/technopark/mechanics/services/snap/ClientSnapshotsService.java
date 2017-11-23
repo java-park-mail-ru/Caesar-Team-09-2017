@@ -47,9 +47,9 @@ public class ClientSnapshotsService {
             if (playerSnaps.isEmpty()) {
                 continue;
             }
-            System.out.println(playerSnaps.get(0).getMove());
-            playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
+//            playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
 //            playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
+            processClick(playerSnaps.get(0), gameSession, player);
             processMove(playerSnaps.get(0), gameSession, player);
             final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);
             processMouseMove(player, lastSnap.getMouse());
@@ -72,7 +72,6 @@ public class ClientSnapshotsService {
     // сделать действия по нажатию на клаву
     private void processMove(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
         final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
-        System.out.println("processMove");
         if (mechanicPart.tryMove()) {
             gameSession.getMapForGame().moveTo(snap.getMove(), gameUser.getAccountId());
         }

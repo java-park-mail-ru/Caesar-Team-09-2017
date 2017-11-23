@@ -67,12 +67,15 @@ public class MapForGame extends GameObject {
                 tiles[index].setIndexPositionBonus(i);
             }
         }
+        destroyedTiles = new Coords[1];
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
+        System.out.println("drillAt");
         final int i = findTile(coords);
         if (i != -1) {
             if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(0), coords)) {
+                System.out.println("isAlived");
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tiles[i].getCenterPosition();
@@ -110,7 +113,6 @@ public class MapForGame extends GameObject {
 
     public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {
 //        int i = userPosition.indexOf(user);
-        System.out.println("moveTo");
         switch (move.getKeyDown()) {
             case DOWN:
                 if ((userPosition.get(0).y + PLAYERS_SPEED) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
@@ -123,14 +125,12 @@ public class MapForGame extends GameObject {
                  // TODO: сделать прыжок
                 break;
             case LEFT:
-                System.out.println("LEFT");
                 System.out.println(userPosition.get(0).x);
                 if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) {
                     userPosition.get(0).x -= PLAYERS_SPEED;
                 } else {
                     userPosition.get(0).x = PLAYER_WIDTH;
                 }
-                System.out.println(userPosition.get(0).x);
                 break;
             case RIGHT:
                 if ((userPosition.get(0).x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {

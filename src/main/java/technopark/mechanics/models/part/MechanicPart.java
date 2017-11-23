@@ -44,9 +44,10 @@ public class MechanicPart implements GamePart {
 //        if (isDrill) {
 //            return false;
 //        }
+        System.out.println("tryDrill");
         final long now = timeService.time();
-        if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
-            lastTimeMoved = now;
+        if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
+            lastTimeDrilled = now;
             isDrill = true;
             return true;
         }
@@ -58,8 +59,6 @@ public class MechanicPart implements GamePart {
 //            return false;
 //        }
         final long now = timeService.time();
-        System.out.println(now);
-        System.out.println(lastTimeMoved + Config.MOVEMENT_COOLDOWN);
         if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
             lastTimeMoved = now;
             isMove = true;

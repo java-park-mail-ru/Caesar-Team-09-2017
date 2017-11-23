@@ -73,6 +73,10 @@ public class GameMechanicsImpl implements GameMechanics {
         this.gameTaskScheduler = gameTaskScheduler;
     }
 
+    @Override
+    public void finishGame(@NotNull long userId) {
+        remotePointService.cutDownConnection(new Id<AccountDao>(userId), new CloseStatus(1000));
+    }
     // действие срабатываемое по приему сообщения snap от клиента
     @Override
     public void addClientSnapshot(@NotNull Id<AccountDao> userId, @NotNull ClientSnap clientSnap) {

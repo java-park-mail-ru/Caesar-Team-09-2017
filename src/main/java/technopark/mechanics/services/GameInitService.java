@@ -88,6 +88,7 @@ public class GameInitService {
         initGameSinglePlayerMessage.setStartEnergy(START_ENERGY);
         initGameSinglePlayerMessage.setPositionGround(POSITION_GROUND);
         initGameSinglePlayerMessage.setBonusPosition(BONUS_POSITION);
+        initGameSinglePlayerMessage.setUserId(gameSession.getFirst().getAccountId().getId());
 //        initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
         return initGameSinglePlayerMessage;
     }
