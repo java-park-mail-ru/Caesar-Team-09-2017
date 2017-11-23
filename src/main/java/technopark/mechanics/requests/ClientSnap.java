@@ -1,6 +1,5 @@
 package technopark.mechanics.requests;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.models.Bonus;
@@ -11,25 +10,18 @@ import technopark.websocket.MessageRequest;
 @SuppressWarnings({"NullableProblems"})
 public class ClientSnap extends MessageRequest {
 
-    @NotNull
     private Coords mouse;
 
-    @NotNull
     private Move move;
-
-    @NotNull
-    private Bonus bonus;
 
     private boolean isDrill;
     private boolean isBonus;
     private long frameTime;
 
-    @NotNull
     public Coords getMouse() {
         return mouse;
     }
 
-    @JsonProperty("isDrill")
     public boolean isDrill() {
         return isDrill;
     }
@@ -65,4 +57,5 @@ public class ClientSnap extends MessageRequest {
     public void setMove(Move move) {
         this.move = move;
     }
+
 }

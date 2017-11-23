@@ -29,6 +29,7 @@ public class MechanicPart implements GamePart {
         energy = START_ENERGY;
         money = START_MONEY;
         isDrill = false;
+        isMove = false;
     }
 
     public void decrementEnergy() {
@@ -40,9 +41,9 @@ public class MechanicPart implements GamePart {
     }
 
     public boolean tryDrill() {
-        if (isDrill) {
-            return false;
-        }
+//        if (isDrill) {
+//            return false;
+//        }
         final long now = timeService.time();
         if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
             lastTimeMoved = now;
@@ -53,12 +54,14 @@ public class MechanicPart implements GamePart {
     }
 
     public boolean tryMove() {
-        if (isMove) {
-            return false;
-        }
+//        if (isMove) {
+//            return false;
+//        }
         final long now = timeService.time();
-        if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
-            lastTimeDrilled = now;
+        System.out.println(now);
+        System.out.println(lastTimeMoved + Config.MOVEMENT_COOLDOWN);
+        if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
+            lastTimeMoved = now;
             isMove = true;
             return true;
         }

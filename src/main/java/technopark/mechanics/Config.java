@@ -7,9 +7,9 @@ import java.util.Arrays;
 public class Config {
 
     public static final int PLAYERS_COUNT = 2;
-    public static final int PLAYERS_SPEED = 10;
+    public static final int PLAYERS_SPEED = 2;
     public static final int FREE_FALL = 10; // I apologize for being rude
-    public static final int COIN_COST = 15; // I apologize for being rude
+    public static final int COIN_COST = 15;
 
     public static final long DRILING_COOLDOWN = 150;
     public static final long MOVEMENT_COOLDOWN = 50;
@@ -47,8 +47,8 @@ public class Config {
     public static final int COUNT_OF_BONUSES = 20;
     public static final int COIN_WIDTH = 32;
     public static final int COIN_HEIGHT = 32;
-    public static final int GROUND_WIDTH = 8;
-    public static final int GROUND_HEIGHT = 8;
+    public static final int GROUND_WIDTH = 32;
+    public static final int GROUND_HEIGHT = 32;
     public static final int START_MONEY = 100;
     public static final int START_ENERGY = 100;
     public static final Coords[] BONUS_POSITION;
