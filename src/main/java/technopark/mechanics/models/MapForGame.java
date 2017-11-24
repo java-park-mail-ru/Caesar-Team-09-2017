@@ -26,6 +26,9 @@ public class MapForGame extends GameObject {
     private final List<Boolean> isJump;
 
     @NotNull
+    private final List<Integer> jumpFrameCount;
+
+    @NotNull
     private final Tiles[] tiles; // по слоям
 
     @NotNull
@@ -42,8 +45,11 @@ public class MapForGame extends GameObject {
         gameUserIds = new ArrayList<>();
         userPosition = new ArrayList<>();
         isJump = new ArrayList<>();
+        jumpFrameCount = new ArrayList<>();
         isJump.add(false);
         isJump.add(false);
+        jumpFrameCount.add(0);
+        jumpFrameCount.add(0);
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             gameUserIds.add(new GameUserId());
         }
@@ -126,6 +132,7 @@ public class MapForGame extends GameObject {
                 break;
             case UP:
                 isJump.add(0, true);
+                jumpFrameCount.add(0, 6);
                 break;
             case LEFT:
                 if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) { // не выходит ли за пределы карты
@@ -182,7 +189,22 @@ public class MapForGame extends GameObject {
 
     private void checkJump(@NotNull Id<AccountDao> user) {
         if (isJump.get(0) == Boolean.TRUE) {
-            userPosition.get(0).y -= FREE_FALL * 2;
+            switch (jumpFrameCount.get(0)) {
+                case 6:
+                case 5:
+                    userPosition.get(0).y -= FREE_FALL * 2;
+                    break;
+                case 4:
+                case 3:
+                    userPosition.get(0).y -= FREE_FALL * 2 - 1;
+                    break;
+                case 2:
+                case 1:
+                    userPosition.get(0).y -= FREE_FALL * 2 - 2;
+                    break;
+                case 0:
+                    isJump.add(0, false);
+            }
         }
     }
 
