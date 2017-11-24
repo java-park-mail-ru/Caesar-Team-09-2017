@@ -17,7 +17,7 @@ import static technopark.mechanics.Config.*;
 public class MapForGame extends GameObject {
 
     @NotNull
-    private final List<GameUserId> gameUserIds;
+    private final List<Id<AccountDao>> gameUserIds;
 
     @NotNull
     private final List<Coords> userPosition;
@@ -46,29 +46,35 @@ public class MapForGame extends GameObject {
         userPosition = new ArrayList<>();
         isJump = new ArrayList<>();
         jumpFrameCount = new ArrayList<>();
-        isJump.add(false);
+        destroyedTiles = new Coords[1];
+
         isJump.add(false);
         jumpFrameCount.add(0);
-        jumpFrameCount.add(0);
-        for (int i = 0; i < PLAYERS_COUNT; i++) {
-            gameUserIds.add(new GameUserId());
-        }
-        gameUserIds.get(0).setGameUserId(gameSession.getFirst().getAccountId());
+        gameUserIds.add((gameSession.getFirst().getAccountId()));
         userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
+
         if (!gameSession.isSinglePlay()) {
-            gameUserIds.get(1).setGameUserId(gameSession.getSecond().getAccountId());
+            gameUserIds.add((gameSession.getSecond().getAccountId()));
             userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
+            isJump.add(false);
+            jumpFrameCount.add(0);
         }
+
         lengthX = WORLD_WIDTH / GROUND_WIDTH;
         lengthY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT;
         tiles = new Tiles[lengthX * lengthY]; // x * y
+        initMap();
+    }
+
+    private void initMap() {
         for (int i = 0; i < lengthY; i++) {
             for (int j = 0; j < lengthX; j++) {
-                int x = j * GROUND_WIDTH + (GROUND_WIDTH / 2);
-                int y = i * GROUND_HEIGHT + (GROUND_HEIGHT / 2) + POSITION_GROUND;
+                int x = j * GROUND_WIDTH;
+                int y = i * GROUND_HEIGHT + POSITION_GROUND;
                 tiles[i * lengthX + j] = new Tiles(new Coords(x, y));
             }
         }
+
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
             int index = findTile(BONUS_POSITION[i]);
             if (index == -1) {
@@ -80,7 +86,6 @@ public class MapForGame extends GameObject {
                 tiles[index].setIndexPositionBonus(i);
             }
         }
-        destroyedTiles = new Coords[1];
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
@@ -203,6 +208,7 @@ public class MapForGame extends GameObject {
                     userPosition.get(0).y -= FREE_FALL * 2 - 2;
                     break;
                 case 0:
+                    userPosition.get(0).y -= FREE_FALL;
                     isJump.add(0, false);
             }
         }
