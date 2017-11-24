@@ -23,6 +23,9 @@ public class MapForGame extends GameObject {
     private final List<Coords> userPosition;
 
     @NotNull
+    private final List<Boolean> isJump;
+
+    @NotNull
     private final Tiles[] tiles; // по слоям
 
     @NotNull
@@ -38,6 +41,9 @@ public class MapForGame extends GameObject {
         this.gameSession = gameSession;
         gameUserIds = new ArrayList<>();
         userPosition = new ArrayList<>();
+        isJump = new ArrayList<>();
+        isJump.add(false);
+        isJump.add(false);
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             gameUserIds.add(new GameUserId());
         }
@@ -119,7 +125,7 @@ public class MapForGame extends GameObject {
             case DOWN:
                 break;
             case UP:
-                // TODO : сделать прыжок
+                isJump.add(0, true);
                 break;
             case LEFT:
                 if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) { // не выходит ли за пределы карты
@@ -175,7 +181,9 @@ public class MapForGame extends GameObject {
     }
 
     private void checkJump(@NotNull Id<AccountDao> user) {
-
+        if (isJump.get(0) == Boolean.TRUE) {
+            userPosition.get(0).y -= FREE_FALL * 2;
+        }
     }
 
     private void checkBonus(@NotNull Id<AccountDao> user) {
@@ -217,6 +225,7 @@ public class MapForGame extends GameObject {
         @NotNull
         public MapSnap(@NotNull MapForGame mapForGame) {
             this.destroyedTiles = mapForGame.destroyedTiles;
+            mapForGame.destroyedTiles = null;
             this.userPosition = mapForGame.userPosition;
             this.destroyedBonus = mapForGame.destroyedBonus;
         }
