@@ -122,9 +122,9 @@ public class MapForGame extends GameObject {
                 // TODO : сделать прыжок
                 break;
             case LEFT:
-                if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) {
+                if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) { // не выходит ли за пределы карты
                     userPosition.get(0).x -= PLAYERS_SPEED;
-                    if (!checkMove(userPosition.get(0))) {
+                    if (!checkMove(userPosition.get(0))) { // не собирается ли двинуться в место где есть тайл
                         userPosition.get(0).x += PLAYERS_SPEED;
                     }
                 } else {
