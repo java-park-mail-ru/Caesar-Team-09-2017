@@ -17,6 +17,8 @@ public class MechanicPart implements GamePart {
     private long lastTimeDrilled;
     private boolean isMove;
     private long lastTimeMoved;
+    private boolean isJump;
+    private long lastTimeJumped;
 
     @NotNull
     private final MechanicsTimeService timeService;
@@ -25,10 +27,12 @@ public class MechanicPart implements GamePart {
         this.timeService = timeService;
         lastTimeDrilled = -Config.DRILING_COOLDOWN;
         lastTimeMoved = -Config.MOVEMENT_COOLDOWN;
+        lastTimeJumped = -Config.JUMPING_COOLDOWN;
         energy = START_ENERGY;
         money = START_MONEY;
         isDrill = false;
         isMove = false;
+        isJump = false;
     }
 
     public void decrementEnergy() {
@@ -47,6 +51,16 @@ public class MechanicPart implements GamePart {
         if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
             lastTimeDrilled = now;
             isDrill = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean tryJump() {
+        final long now = timeService.time();
+        if (lastTimeJumped + Config.JUMPING_COOLDOWN <= now) {
+            lastTimeJumped = now;
+            isJump = true;
             return true;
         }
         return false;

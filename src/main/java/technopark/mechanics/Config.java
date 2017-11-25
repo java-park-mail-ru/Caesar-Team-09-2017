@@ -6,13 +6,13 @@ import java.util.Arrays;
 
 public class Config {
 
-    public static final int PLAYERS_COUNT = 2;
     public static final int PLAYERS_SPEED = 3;
     public static final int FREE_FALL = 3;
     public static final int COIN_COST = 15;
 
     public static final long DRILING_COOLDOWN = 150;
     public static final long MOVEMENT_COOLDOWN = 50;
+    public static final long JUMPING_COOLDOWN = 1500;
     public static final long START_SWITCH_DELAY = 5000;
     public static final long SWITCH_DELTA = 300;
     public static final long SWITCH_DELAY_MIN = 1500;
@@ -29,29 +29,27 @@ public class Config {
 
     @SuppressWarnings("FieldNamingConvention")
     public enum KeyDown {
-        UP,
-        DOWN,
         RIGHT,
         LEFT,
-        SPACE,
         NOTHING
     }
 
     public static final int WORLD_WIDTH = 1600;
     public static final int WORLD_HEIGHT = 2000;
-    public static final int POSITION_GROUND = 200;
     public static final int PLAYER_WIDTH = 32;
     public static final int PLAYER_HEIGHT = 32;
-    public static final int PLAYER_X = WORLD_WIDTH / 2;
-    public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT / 2;
     public static final int COUNT_OF_BONUSES = 20;
     public static final int COIN_WIDTH = 32;
     public static final int COIN_HEIGHT = 32;
     public static final int GROUND_WIDTH = 32;
     public static final int GROUND_HEIGHT = 32;
+    public static final int POSITION_GROUND = 6 * GROUND_HEIGHT;
+    public static final int PLAYER_X = WORLD_WIDTH / 2;
+    public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT / 2;
     public static final int START_MONEY = 100;
     public static final int START_ENERGY = 100;
     public static final Coords[] BONUS_POSITION;
+    public static final int RADIUS_RADAR = 200;
 
     static {
         Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];

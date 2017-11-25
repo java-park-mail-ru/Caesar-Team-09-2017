@@ -40,6 +40,8 @@ public class MapForGame extends GameObject {
     private final int lengthX;
     private final int lengthY;
 
+    private final int startPlayerY;
+
     public MapForGame(@NotNull GameSession gameSession) {
         this.gameSession = gameSession;
         gameUserIds = new ArrayList<>();
@@ -52,7 +54,7 @@ public class MapForGame extends GameObject {
         jumpFrameCount.add(0);
         gameUserIds.add((gameSession.getFirst().getAccountId()));
         userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
-
+        startPlayerY = PLAYER_Y;
         if (!gameSession.isSinglePlay()) {
             gameUserIds.add((gameSession.getSecond().getAccountId()));
             userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
@@ -89,11 +91,10 @@ public class MapForGame extends GameObject {
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
+        final int indexOfUser = gameUserIds.indexOf(user);
         final int i = findTile(coords);
         if (i != -1) {
-            System.out.println("i != -1");
-            if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(0), tiles[i].getCenterPosition())) {
-                System.out.println("checkDrillForPosition");
+            if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(indexOfUser), tiles[i].getCenterPosition())) {
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tiles[i].getCenterPosition();
@@ -103,8 +104,8 @@ public class MapForGame extends GameObject {
 
     private int findTile(@NotNull Coords coords) {
         int index;
-        final int x = coords.x + GROUND_WIDTH / 2;
-        final int y = coords.y + GROUND_HEIGHT / 2;
+        final int x = coords.x;
+        final int y = coords.y;
         // сначала находим x
         for (index = 0; index < lengthX - 1; index++) {
             boolean conditionX = x >= tiles[index].getCenterPosition().x && x < tiles[index + 1].getCenterPosition().x;
@@ -123,53 +124,43 @@ public class MapForGame extends GameObject {
     }
 
     private boolean checkDrillForPosition(Coords position, Coords checkedTile) {
-        System.out.println("isAlived");
-        if (Math.abs(checkedTile.y - position.y) <= 3 * GROUND_HEIGHT && Math.abs(checkedTile.x - position.x) <= 3 * GROUND_WIDTH) {
+        if (Math.abs(checkedTile.y - position.y) <= 2 * GROUND_HEIGHT && Math.abs(checkedTile.x - position.x) <= 2 * GROUND_WIDTH) {
             return true;
         }
         return false;
     }
 
     public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {
-        // int i = userPosition.indexOf(user);
+        final int indexOfUser = gameUserIds.indexOf(user);
+        Coords userPosition = this.userPosition.get(indexOfUser);
         switch (move.getKeyDown()) {
-            case DOWN:
-                break;
-            case UP:
-                isJump.add(0, true);
-                jumpFrameCount.add(0, 6);
-                break;
             case LEFT:
-                if ((userPosition.get(0).x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) { // не выходит ли за пределы карты
-                    userPosition.get(0).x -= PLAYERS_SPEED;
-                    if (!checkMove(userPosition.get(0))) { // не собирается ли двинуться в место где есть тайл
-                        userPosition.get(0).x += PLAYERS_SPEED;
+                if ((userPosition.x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) { // не выходит ли за пределы карты
+                    userPosition.x -= PLAYERS_SPEED;
+                    if (!checkMove(userPosition)) { // не собирается ли двинуться в место где есть тайл
+                        userPosition.x += PLAYERS_SPEED;
                     }
                 } else {
-                    userPosition.get(0).x = PLAYER_WIDTH;
+                    userPosition.x = PLAYER_WIDTH;
                 }
                 break;
             case RIGHT:
-                if ((userPosition.get(0).x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
-                    userPosition.get(0).x += PLAYERS_SPEED;
-                    if (!checkMove(userPosition.get(0))) {
-                        userPosition.get(0).x -= PLAYERS_SPEED;
+                if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
+                    userPosition.x += PLAYERS_SPEED;
+                    if (!checkMove(userPosition)) {
+                        userPosition.x -= PLAYERS_SPEED;
                     }
                 } else {
-                    userPosition.get(0).x = WORLD_WIDTH - PLAYER_WIDTH;
+                    userPosition.x = WORLD_WIDTH - PLAYER_WIDTH;
                 }
-                break;
-            case SPACE:
-                // TODO : сделать игровое действие
                 break;
             case NOTHING:
                 break;
             default:
                 break;
         }
-        checkGravity(user);
-        checkJump(user);
-        checkBonus(user);
+        this.userPosition.get(indexOfUser).x = userPosition.x;
+        this.userPosition.get(indexOfUser).y = userPosition.y;
     }
 
     private boolean checkMove(Coords newPosition) {
@@ -180,41 +171,48 @@ public class MapForGame extends GameObject {
         return true;
     }
 
-    private void checkGravity(@NotNull Id<AccountDao> user) {
-        Coords tileUnderPlayer = new Coords(userPosition.get(0).x, userPosition.get(0).y + GROUND_HEIGHT);
+    public void checkGravity(@NotNull Id<AccountDao> user) {
+        final int indexOfUser = gameUserIds.indexOf(user);
+        Coords tileUnderPlayer = new Coords(userPosition.get(indexOfUser).x, userPosition.get(indexOfUser).y + GROUND_HEIGHT / 2);
         final int i = findTile(tileUnderPlayer);
-        if (i != -1 && !tiles[i].isAlived()) {
-            if ((userPosition.get(0).y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
-                userPosition.get(0).y += FREE_FALL;
+        if ((userPosition.get(indexOfUser).y != startPlayerY && i == -1) || !tiles[i].isAlived()) {
+            if ((userPosition.get(indexOfUser).y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
+                userPosition.get(indexOfUser).y += FREE_FALL;
             } else {
-                userPosition.get(0).y = WORLD_HEIGHT - PLAYER_HEIGHT;
+                userPosition.get(indexOfUser).y = WORLD_HEIGHT - PLAYER_HEIGHT;
             }
         }
     }
 
-    private void checkJump(@NotNull Id<AccountDao> user) {
-        if (isJump.get(0) == Boolean.TRUE) {
-            switch (jumpFrameCount.get(0)) {
-                case 6:
-                case 5:
-                    userPosition.get(0).y -= FREE_FALL * 2;
-                    break;
-                case 4:
-                case 3:
-                    userPosition.get(0).y -= FREE_FALL * 2 - 1;
-                    break;
-                case 2:
-                case 1:
-                    userPosition.get(0).y -= FREE_FALL * 2 - 2;
-                    break;
-                case 0:
-                    userPosition.get(0).y -= FREE_FALL;
-                    isJump.add(0, false);
+    public void startJump(@NotNull Id<AccountDao> user) {
+        final int indexOfUser = gameUserIds.indexOf(user);
+        if (!isJump.get(indexOfUser)) {
+            isJump.add(indexOfUser, true);
+            jumpFrameCount.add(indexOfUser, 12);
+        }
+    }
+
+    public void checkJump(@NotNull Id<AccountDao> user) {
+        final int indexOfUser = gameUserIds.indexOf(user);
+        if (isJump.get(indexOfUser)) {
+            int stage = jumpFrameCount.get(indexOfUser);
+            if (stage <= 12 && stage >= 5) {
+                userPosition.get(indexOfUser).y -= FREE_FALL * 2;
+                jumpFrameCount.add(indexOfUser, --stage);
+            } else if (stage >= 3) {
+                userPosition.get(indexOfUser).y -= FREE_FALL * 2 - 1;
+                jumpFrameCount.add(indexOfUser, --stage);
+            } else if (stage >= 1) {
+                userPosition.get(indexOfUser).y -= FREE_FALL * 2 - 2;
+                jumpFrameCount.add(indexOfUser, --stage);
+            } else {
+                userPosition.get(indexOfUser).y -= FREE_FALL;
+                isJump.add(indexOfUser, false);
             }
         }
     }
 
-    private void checkBonus(@NotNull Id<AccountDao> user) {
+    public void checkBonus(@NotNull Id<AccountDao> user) {
         final int i = findTile(userPosition.get(0));
         if (i != -1 && tiles[i].isBonus()) {
             destroyedBonus = BONUS_POSITION[tiles[i].getIndexPositionBonus()];
@@ -252,8 +250,15 @@ public class MapForGame extends GameObject {
 
         @NotNull
         public MapSnap(@NotNull MapForGame mapForGame) {
-            this.destroyedTiles = mapForGame.destroyedTiles;
-            mapForGame.destroyedTiles = null;
+            if (mapForGame.destroyedTiles != null) {
+                this.destroyedTiles = new Coords[mapForGame.destroyedTiles.length];
+                this.destroyedTiles = mapForGame.destroyedTiles.clone();
+                for (int i = 0; i < mapForGame.destroyedTiles.length; i++) {
+                    mapForGame.destroyedTiles[i] = null;
+                }
+            } else {
+                this.destroyedTiles = null;
+            }
             this.userPosition = mapForGame.userPosition;
             this.destroyedBonus = mapForGame.destroyedBonus;
         }

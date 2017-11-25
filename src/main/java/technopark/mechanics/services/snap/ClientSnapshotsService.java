@@ -16,7 +16,6 @@ import technopark.mechanics.models.id.Id;
 
 import java.util.*;
 
-
 // Not thread safe! Per models mechanic service
 
 @Service
@@ -44,16 +43,31 @@ public class ClientSnapshotsService {
 
         for (GameUser player : players) {
             final List<ClientSnap> playerSnaps = getSnapForUser(player.getAccountId());
+            processFone(gameSession, player);
             if (playerSnaps.isEmpty()) {
                 continue;
             }
-            // playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
-            // playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
-            processClick(playerSnaps.get(0), gameSession, player);
-            processMove(playerSnaps.get(0), gameSession, player);
+
+             playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
+             playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
+             playerSnaps.stream().filter(ClientSnap::isJump).findFirst().ifPresent(snap -> processJump(snap, gameSession, player));
             final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);
             processMouseMove(player, lastSnap.getMouse());
-            processPlayerMove(player, lastSnap.getMove());
+            processPlayerMove(player, lastSnap.getMoveTo());
+        }
+    }
+
+    private void processFone(@NotNull GameSession gameSession, GameUser gameUser) {
+        Id<AccountDao> user = gameUser.getAccountId();
+        gameSession.getMapForGame().checkGravity(user);
+        gameSession.getMapForGame().checkJump(user);
+        gameSession.getMapForGame().checkBonus(user);
+    }
+
+    private void processJump(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
+        final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
+        if (mechanicPart.tryJump()) {
+            gameSession.getMapForGame().startJump(gameUser.getAccountId());
         }
     }
 
@@ -73,7 +87,7 @@ public class ClientSnapshotsService {
     private void processMove(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
         final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
         if (mechanicPart.tryMove()) {
-            gameSession.getMapForGame().moveTo(snap.getMove(), gameUser.getAccountId());
+            gameSession.getMapForGame().moveTo(snap.getMoveTo(), gameUser.getAccountId());
         }
     }
     // сохранить текущее состояние клавы
