@@ -4,9 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import technopark.mechanics.models.part.MechanicPart;
+import technopark.mechanics.models.part.PositionPart;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.responses.ServerSnap;
+import technopark.mechanics.responses.ServerSnapUser;
 import technopark.websocket.RemotePointService;
 
 
@@ -23,9 +25,24 @@ public class ServerSnapshotService {
 
     public void sendSnapshotsFor(@NotNull GameSession gameSession, long frameTime) {
         final ServerSnap snap = new ServerSnap();
+
         snap.setServerFrameTime(frameTime);
         snap.setMapSnap(gameSession.getMapForGame().getSnap());
-        snap.setMechanicPartSnap(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap());
+
+        final ServerSnapUser firstServerSnapUser = new ServerSnapUser();
+
+        firstServerSnapUser.setMechanicPartSnap(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap());
+        firstServerSnapUser.setPositionPartSnap(gameSession.getFirst().claimPart(PositionPart.class).takeSnap());
+        firstServerSnapUser.setUserId(gameSession.getFirst().getAccountId().getId());
+        snap.setFirstUser(firstServerSnapUser);
+        if (!gameSession.isSinglePlay()) {
+            final ServerSnapUser secondServerSnapUser = new ServerSnapUser();
+
+            secondServerSnapUser.setMechanicPartSnap(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap());
+            secondServerSnapUser.setPositionPartSnap(gameSession.getFirst().claimPart(PositionPart.class).takeSnap());
+            secondServerSnapUser.setUserId(gameSession.getFirst().getAccountId().getId());
+            snap.setFirstUser(secondServerSnapUser);
+        }
         //noinspection OverlyBroadCatchBlock
         try {
             for (GameUser player : gameSession.getPlayers()) {

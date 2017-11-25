@@ -11,8 +11,8 @@ public class Coords {
         this.y = y;
     }
 
-    public int x; // убрал final
-    public int y;
+    final public int x;
+    final public int y;
 
     @Override
     public String toString() {

@@ -75,6 +75,15 @@ public class GameSession {
     }
 
     @NotNull
+    public GameUser getUser(int indexOfUser) {
+        if (indexOfUser == 0) {
+            return first;
+        } else {
+            return second;
+        }
+    }
+
+    @NotNull
     public GameUser getFirst() {
         return first;
     }

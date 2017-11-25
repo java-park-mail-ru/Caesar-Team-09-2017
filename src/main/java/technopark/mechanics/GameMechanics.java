@@ -18,5 +18,5 @@ public interface GameMechanics {
 
     void reset();
 
-    void finishGame(@NotNull long userId);
+    void finishGame(@NotNull Id<AccountDao> userId);
 }

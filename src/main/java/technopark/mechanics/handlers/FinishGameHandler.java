@@ -31,7 +31,7 @@ public class FinishGameHandler extends MessageHandler<FinishGame.Request> {
 
     @Override
     public void handle(@NotNull FinishGame.Request message, @NotNull Id<AccountDao> forUser) {
-        gameMechanics.finishGame(message.getUserId());
+        gameMechanics.finishGame(forUser);
     }
 }
 

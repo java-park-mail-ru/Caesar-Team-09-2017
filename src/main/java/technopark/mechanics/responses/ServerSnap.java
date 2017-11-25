@@ -1,23 +1,38 @@
 package technopark.mechanics.responses;
 
+import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.models.MapForGame;
 import technopark.mechanics.models.part.MechanicPart;
+import technopark.mechanics.models.part.PositionPart;
 import technopark.websocket.MessageResponse;
 
 @SuppressWarnings({"NullableProblems"})
 public class ServerSnap extends MessageResponse {
 
+    @NotNull
     private long serverFrameTime;
-
-    private MechanicPart.MechanicPartSnap mechanicPartSnap;
+    @NotNull
     private MapForGame.MapSnap mapSnap;
 
-    public MechanicPart.MechanicPartSnap getMechanicPartSnap() {
-        return mechanicPartSnap;
+    @NotNull
+    private ServerSnapUser firstUser;
+
+    private ServerSnapUser secondUser;
+
+    public ServerSnapUser getFirstUser() {
+        return firstUser;
     }
 
-    public void setMechanicPartSnap(MechanicPart.MechanicPartSnap mechanicPartSnap) {
-        this.mechanicPartSnap = mechanicPartSnap;
+    public void setFirstUser(ServerSnapUser firstUser) {
+        this.firstUser = firstUser;
+    }
+
+    public ServerSnapUser getSecondUser() {
+        return secondUser;
+    }
+
+    public void setSecondUser(ServerSnapUser secondUser) {
+        this.secondUser = secondUser;
     }
 
     public MapForGame.MapSnap getMapSnap() {

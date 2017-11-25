@@ -74,9 +74,10 @@ public class GameMechanicsImpl implements GameMechanics {
     }
 
     @Override
-    public void finishGame(@NotNull long userId) {
+    public void finishGame(@NotNull Id<AccountDao> userId) {
         for (GameSession session : gameSessionService.getSessions()) {
-            if (session.getFirst().getAccountId().getId() == userId) {
+            if (session.getFirst().getAccountId().equals(userId)
+                    || session.getSecond().getAccountId().equals(userId)) {
                 gameSessionService.forceTerminate(session, false);
             }
         }

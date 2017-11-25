@@ -4,10 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.Snap;
-import technopark.mechanics.models.part.GamePart;
-import technopark.mechanics.models.part.MechanicPart;
-import technopark.mechanics.models.part.MousePart;
-import technopark.mechanics.models.part.MovePart;
+import technopark.mechanics.models.part.*;
 import technopark.model.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 
@@ -23,6 +20,7 @@ public class GameUser extends GameObject {
         addPart(MousePart.class, new MousePart());
         addPart(MechanicPart.class, new MechanicPart(timeService));
         addPart(MovePart.class, new MovePart());
+        addPart(PositionPart.class, new PositionPart());
     }
 
     @NotNull

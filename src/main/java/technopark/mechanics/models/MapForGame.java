@@ -3,6 +3,7 @@ package technopark.mechanics.models;
 import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.Config;
 import technopark.mechanics.models.part.MechanicPart;
+import technopark.mechanics.models.part.PositionPart;
 import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.player.GameUserId;
 import technopark.mechanics.models.session.GameSession;
@@ -18,9 +19,6 @@ public class MapForGame extends GameObject {
 
     @NotNull
     private final List<Id<AccountDao>> gameUserIds;
-
-    @NotNull
-    private final List<Coords> userPosition;
 
     @NotNull
     private final List<Boolean> isJump;
@@ -45,19 +43,17 @@ public class MapForGame extends GameObject {
     public MapForGame(@NotNull GameSession gameSession) {
         this.gameSession = gameSession;
         gameUserIds = new ArrayList<>();
-        userPosition = new ArrayList<>();
         isJump = new ArrayList<>();
         jumpFrameCount = new ArrayList<>();
         destroyedTiles = new Coords[1];
-
         isJump.add(false);
         jumpFrameCount.add(0);
         gameUserIds.add((gameSession.getFirst().getAccountId()));
-        userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
+        gameSession.getUser(0).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X, PLAYER_Y));
         startPlayerY = PLAYER_Y;
         if (!gameSession.isSinglePlay()) {
             gameUserIds.add((gameSession.getSecond().getAccountId()));
-            userPosition.add(new Coords(PLAYER_X, PLAYER_Y));
+            gameSession.getUser(1).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X, PLAYER_Y));
             isJump.add(false);
             jumpFrameCount.add(0);
         }
@@ -74,6 +70,7 @@ public class MapForGame extends GameObject {
                 int x = j * GROUND_WIDTH;
                 int y = i * GROUND_HEIGHT + POSITION_GROUND;
                 tiles[i * lengthX + j] = new Tiles(new Coords(x, y));
+                System.out.println(new Coords(x, y));
             }
         }
 
@@ -92,12 +89,14 @@ public class MapForGame extends GameObject {
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
+        Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
         final int i = findTile(coords);
         if (i != -1) {
-            if (tiles[i].isAlived() && checkDrillForPosition(userPosition.get(indexOfUser), tiles[i].getCenterPosition())) {
+            if (tiles[i].isAlived() && checkDrillForPosition(userPosition, tiles[i].getCenterPosition())) {
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tiles[i].getCenterPosition();
+                System.out.println("delete");
             }
         }
     }
@@ -108,15 +107,13 @@ public class MapForGame extends GameObject {
         final int y = coords.y;
         // сначала находим x
         for (index = 0; index < lengthX - 1; index++) {
-            boolean conditionX = x >= tiles[index].getCenterPosition().x && x < tiles[index + 1].getCenterPosition().x;
-            if (conditionX) {
+            if (x >= tiles[index].getCenterPosition().x && x < tiles[index + 1].getCenterPosition().x) {
                break;
             }
         }
         // теперь y
         for (int i = 0; i < lengthY - 1; i++) {
-            boolean conditionY = y >= tiles[i].getCenterPosition().y && y < tiles[i * lengthX + 1].getCenterPosition().y;
-            if (conditionY) {
+            if (y >= tiles[i].getCenterPosition().y && y < tiles[i * lengthX + 1].getCenterPosition().y) {
                 return index + lengthX * i;
             }
         }
@@ -132,26 +129,29 @@ public class MapForGame extends GameObject {
 
     public void moveTo(@NotNull Move move, @NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
-        Coords userPosition = this.userPosition.get(indexOfUser);
+        Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
+        Coords newUserPosition = null;
         switch (move.getKeyDown()) {
             case LEFT:
-                if ((userPosition.x - PLAYERS_SPEED) >= (0 + PLAYER_WIDTH)) { // не выходит ли за пределы карты
-                    userPosition.x -= PLAYERS_SPEED;
-                    if (!checkMove(userPosition)) { // не собирается ли двинуться в место где есть тайл
-                        userPosition.x += PLAYERS_SPEED;
+                if (userPosition.x - PLAYERS_SPEED >= PLAYER_WIDTH / 2) { // не выходит ли за пределы карты
+                    newUserPosition = new Coords(userPosition.x - PLAYERS_SPEED, userPosition.y);
+                    if (!checkMove(newUserPosition)) { // не собирается ли двинуться в место где есть тайл
+                        newUserPosition = null;
                     }
+
                 } else {
-                    userPosition.x = PLAYER_WIDTH;
+                    newUserPosition = new Coords(PLAYER_WIDTH / 2, userPosition.y);
                 }
                 break;
             case RIGHT:
-                if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
-                    userPosition.x += PLAYERS_SPEED;
+                if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH / 2)) {
+                    newUserPosition = new Coords(userPosition.x + PLAYERS_SPEED, userPosition.y);
                     if (!checkMove(userPosition)) {
-                        userPosition.x -= PLAYERS_SPEED;
+                        newUserPosition = null;
                     }
+
                 } else {
-                    userPosition.x = WORLD_WIDTH - PLAYER_WIDTH;
+                    newUserPosition = new Coords(WORLD_WIDTH - PLAYER_WIDTH / 2, userPosition.y);
                 }
                 break;
             case NOTHING:
@@ -159,8 +159,10 @@ public class MapForGame extends GameObject {
             default:
                 break;
         }
-        this.userPosition.get(indexOfUser).x = userPosition.x;
-        this.userPosition.get(indexOfUser).y = userPosition.y;
+
+        if (newUserPosition != null) {
+            gameSession.getUser(indexOfUser).claimPart(PositionPart.class).setPosition(newUserPosition);
+        }
     }
 
     private boolean checkMove(Coords newPosition) {
@@ -173,14 +175,20 @@ public class MapForGame extends GameObject {
 
     public void checkGravity(@NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
-        Coords tileUnderPlayer = new Coords(userPosition.get(indexOfUser).x, userPosition.get(indexOfUser).y + GROUND_HEIGHT / 2);
+        Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
+        Coords tileUnderPlayer = new Coords(userPosition.x, userPosition.y + GROUND_HEIGHT / 2);
+        Coords newUserPosition = null;
         final int i = findTile(tileUnderPlayer);
-        if ((userPosition.get(indexOfUser).y != startPlayerY && i == -1) || !tiles[i].isAlived()) {
-            if ((userPosition.get(indexOfUser).y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
-                userPosition.get(indexOfUser).y += FREE_FALL;
+        if ((userPosition.y != startPlayerY && i == -1) || !tiles[i].isAlived()) {
+            if ((userPosition.y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
+                newUserPosition = new Coords(userPosition.x, userPosition.y + FREE_FALL);
             } else {
-                userPosition.get(indexOfUser).y = WORLD_HEIGHT - PLAYER_HEIGHT;
+                newUserPosition = new Coords(userPosition.x, WORLD_HEIGHT - PLAYER_HEIGHT);
             }
+        }
+
+        if (newUserPosition != null) {
+            gameSession.getUser(indexOfUser).claimPart(PositionPart.class).setPosition(newUserPosition);
         }
     }
 
@@ -194,42 +202,47 @@ public class MapForGame extends GameObject {
 
     public void checkJump(@NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
+        Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
+        Coords newUserPosition = null;
+
         if (isJump.get(indexOfUser)) {
             int stage = jumpFrameCount.get(indexOfUser);
-            if (stage <= 12 && stage >= 5) {
-                userPosition.get(indexOfUser).y -= FREE_FALL * 2;
+            if (stage >= 5) {
+                newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2);
                 jumpFrameCount.add(indexOfUser, --stage);
             } else if (stage >= 3) {
-                userPosition.get(indexOfUser).y -= FREE_FALL * 2 - 1;
+                newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - 1);
                 jumpFrameCount.add(indexOfUser, --stage);
             } else if (stage >= 1) {
-                userPosition.get(indexOfUser).y -= FREE_FALL * 2 - 2;
+                newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - 2);
                 jumpFrameCount.add(indexOfUser, --stage);
             } else {
-                userPosition.get(indexOfUser).y -= FREE_FALL;
+                newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - FREE_FALL);
                 isJump.add(indexOfUser, false);
             }
+        }
+
+        if (newUserPosition != null) {
+            gameSession.getUser(indexOfUser).claimPart(PositionPart.class).setPosition(newUserPosition);
         }
     }
 
     public void checkBonus(@NotNull Id<AccountDao> user) {
-        final int i = findTile(userPosition.get(0));
+        final int indexOfUser = gameUserIds.indexOf(user);
+        Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
+        final int i = findTile(userPosition);
         if (i != -1 && tiles[i].isBonus()) {
             destroyedBonus = BONUS_POSITION[tiles[i].getIndexPositionBonus()];
             Config.Bonus bonus = tiles[i].getBonus();
             tiles[i].setIsBonus(false);
             switch (bonus) {
                 case COIN:
-                    gameSession.getFirst().claimPart(MechanicPart.class).changeMoney(COIN_COST);
+                    gameSession.getUser(indexOfUser).claimPart(MechanicPart.class).changeMoney(COIN_COST);
                     break;
                 default:
                     break;
             }
         }
-    }
-
-    public List<Coords> getUserPosition() {
-        return userPosition;
     }
 
     @Override
@@ -242,9 +255,6 @@ public class MapForGame extends GameObject {
     public static final class MapSnap implements Snap<MapForGame> {
 
         private Coords[] destroyedTiles;
-
-        @NotNull
-        private final List<Coords> userPosition;
 
         private Coords destroyedBonus;
 
@@ -259,16 +269,11 @@ public class MapForGame extends GameObject {
             } else {
                 this.destroyedTiles = null;
             }
-            this.userPosition = mapForGame.userPosition;
             this.destroyedBonus = mapForGame.destroyedBonus;
         }
 
         public Coords[] getDestroyedTiles() {
             return destroyedTiles;
-        }
-
-        public List<Coords> getUserPosition() {
-            return userPosition;
         }
 
         public Coords getDestroyedBonus() {

@@ -50,7 +50,7 @@ public class ClientSnapshotsService {
 
              playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
              playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
-             playerSnaps.stream().filter(ClientSnap::isJump).findFirst().ifPresent(snap -> processJump(snap, gameSession, player));
+             playerSnaps.stream().filter(ClientSnap::isJump).findFirst().ifPresent(snap -> processJump(gameSession, player));
             final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);
             processMouseMove(player, lastSnap.getMouse());
             processPlayerMove(player, lastSnap.getMoveTo());
@@ -64,7 +64,7 @@ public class ClientSnapshotsService {
         gameSession.getMapForGame().checkBonus(user);
     }
 
-    private void processJump(@NotNull ClientSnap snap, @NotNull GameSession gameSession, @NotNull GameUser gameUser) {
+    private void processJump(@NotNull GameSession gameSession, @NotNull GameUser gameUser) {
         final MechanicPart mechanicPart = gameUser.claimPart(MechanicPart.class);
         if (mechanicPart.tryJump()) {
             gameSession.getMapForGame().startJump(gameUser.getAccountId());
