@@ -61,17 +61,6 @@ public class GameInitService {
     private InitGameSinglePlayer.Response createInitMessageForSingle(@NotNull GameSession gameSession, @NotNull Id<AccountDao> userId) {
         final InitGameSinglePlayer.Response initGameSinglePlayerMessage = new InitGameSinglePlayer.Response();
 
-        final Map<Id<AccountDao>, GameUser.ServerPlayerSnap> playerSnaps = new HashMap<>();
-        final Map<Id<AccountDao>, String> names = new HashMap<>();
-        final Map<Id<AccountDao>, String> colors = new HashMap<>();
-
-        final GameUser player = gameSession.getPlayer();
-
-        playerSnaps.put(player.getAccountId(), player.getSnap());
-        names.put(player.getAccountId(), player.getAccountDao().getUsername());
-
-        colors.put(userId, Config.SELF_COLOR);
-
         initGameSinglePlayerMessage.setWorldWidth(WORLD_WIDTH);
         initGameSinglePlayerMessage.setWorldHeight(WORLD_HEIGHT);
         initGameSinglePlayerMessage.setPlayerX(PLAYER_X);
@@ -87,16 +76,35 @@ public class GameInitService {
         initGameSinglePlayerMessage.setStartEnergy(START_ENERGY);
         initGameSinglePlayerMessage.setPositionGround(POSITION_GROUND);
         initGameSinglePlayerMessage.setBonusPosition(BONUS_POSITION);
-        initGameSinglePlayerMessage.setUserId(gameSession.getFirst().getAccountId().getId());
+        initGameSinglePlayerMessage.setUserId(userId.getId());
         initGameSinglePlayerMessage.setRadiusRadar(RADIUS_RADAR);
-        // initGameSinglePlayerMessage.setBoard(gameSession.getMapForGame().getSnap());
+
         return initGameSinglePlayerMessage;
     }
 
     @SuppressWarnings("TooBroadScope")
     private InitGameMultiPlayer.Response createInitMessageForMulti(@NotNull GameSession gameSession, @NotNull Id<AccountDao> userId) {
-        final InitGameMultiPlayer.Response initGameSinglePlayerMessage = new InitGameMultiPlayer.Response();
+        final InitGameMultiPlayer.Response initGameMultiPlayerMessage = new InitGameMultiPlayer.Response();
 
-        return initGameSinglePlayerMessage;
+        initGameMultiPlayerMessage.setWorldWidth(WORLD_WIDTH);
+        initGameMultiPlayerMessage.setWorldHeight(WORLD_HEIGHT);
+        initGameMultiPlayerMessage.setPlayerX(PLAYER_X);
+        initGameMultiPlayerMessage.setPlayerY(PLAYER_Y);
+        initGameMultiPlayerMessage.setPlayerWidth(PLAYER_WIDTH);
+        initGameMultiPlayerMessage.setPlayerHeight(PLAYER_HEIGHT);
+        initGameMultiPlayerMessage.setCountOfBonuses(COUNT_OF_BONUSES);
+        initGameMultiPlayerMessage.setCoinWidth(COIN_WIDTH);
+        initGameMultiPlayerMessage.setCoinHeight(COIN_HEIGHT);
+        initGameMultiPlayerMessage.setGroundWidth(GROUND_WIDTH);
+        initGameMultiPlayerMessage.setGroundHeight(GROUND_HEIGHT);
+        initGameMultiPlayerMessage.setStartMoney(START_MONEY);
+        initGameMultiPlayerMessage.setStartEnergy(START_ENERGY);
+        initGameMultiPlayerMessage.setPositionGround(POSITION_GROUND);
+        initGameMultiPlayerMessage.setBonusPosition(BONUS_POSITION);
+        initGameMultiPlayerMessage.setUserId(userId.getId());
+        initGameMultiPlayerMessage.setRadiusRadar(RADIUS_RADAR);
+        initGameMultiPlayerMessage.setOtherUserId(gameSession.getEnemy(userId).getAccountId().getId());
+
+        return initGameMultiPlayerMessage;
     }
 }
