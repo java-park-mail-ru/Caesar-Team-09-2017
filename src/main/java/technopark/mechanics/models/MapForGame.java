@@ -165,6 +165,7 @@ public class MapForGame extends GameObject {
 
     private boolean checkMove(Coords newPosition) {
         int index = findTile(newPosition);
+
         if (index != -1 && tiles[index].isAlived()) {
             return false;
         }
@@ -177,6 +178,10 @@ public class MapForGame extends GameObject {
         Coords tileUnderPlayer = new Coords(userPosition.x, userPosition.y + GROUND_HEIGHT / 2);
         Coords newUserPosition = null;
         final int i = findTile(tileUnderPlayer);
+        System.out.println("userPosition");
+        System.out.println(userPosition);
+        System.out.println("tileUnderHim");
+        System.out.println(tiles[i].getCenterPosition());
         if ((userPosition.y != startPlayerY && i == -1) || !tiles[i].isAlived()) {
             if ((userPosition.y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y + FREE_FALL);
