@@ -70,7 +70,6 @@ public class MapForGame extends GameObject {
                 int x = j * GROUND_WIDTH;
                 int y = i * GROUND_HEIGHT + POSITION_GROUND;
                 tiles[i * lengthX + j] = new Tiles(new Coords(x, y));
-                System.out.println(new Coords(x, y));
             }
         }
 
@@ -96,7 +95,6 @@ public class MapForGame extends GameObject {
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles[0] = tiles[i].getCenterPosition();
-                System.out.println("delete");
             }
         }
     }
@@ -113,7 +111,7 @@ public class MapForGame extends GameObject {
         }
         // теперь y
         for (int i = 0; i < lengthY - 1; i++) {
-            if (y >= tiles[i].getCenterPosition().y && y < tiles[i * lengthX + 1].getCenterPosition().y) {
+            if (y >= tiles[i * lengthX].getCenterPosition().y && y < tiles[(i + 1) * lengthX].getCenterPosition().y) {
                 return index + lengthX * i;
             }
         }
