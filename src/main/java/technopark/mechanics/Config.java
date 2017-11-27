@@ -44,7 +44,7 @@ public class Config {
     public static final int GROUND_WIDTH = 32;
     public static final int GROUND_HEIGHT = 32;
     public static final int POSITION_GROUND = 6 * GROUND_HEIGHT;
-    public static final int PLAYER_X = WORLD_WIDTH / 2;
+    public static final int PLAYER_X = WORLD_WIDTH / 2 - PLAYER_WIDTH / 2;
     public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT / 2;
     public static final int START_MONEY = 100;
     public static final int START_ENERGY = 100;
