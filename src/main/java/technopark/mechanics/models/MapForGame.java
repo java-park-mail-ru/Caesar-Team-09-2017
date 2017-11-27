@@ -198,6 +198,17 @@ public class MapForGame extends GameObject {
         }
     }
 
+    private Coords jumpTo(int indexOfUser, int stage, Coords newUserPosition) {
+        if (!checkMove(newUserPosition)) {
+            newUserPosition = null;
+            isJump.add(indexOfUser, false);
+            jumpFrameCount.add(indexOfUser, 0);
+        } else {
+            jumpFrameCount.add(indexOfUser, --stage);
+        }
+        return newUserPosition;
+    }
+
     public void checkJump(@NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
         Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
@@ -207,15 +218,18 @@ public class MapForGame extends GameObject {
             int stage = jumpFrameCount.get(indexOfUser);
             if (stage >= 5) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2);
-                jumpFrameCount.add(indexOfUser, --stage);
+                newUserPosition = this.jumpTo(indexOfUser, stage, newUserPosition);
             } else if (stage >= 3) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - 1);
-                jumpFrameCount.add(indexOfUser, --stage);
+                newUserPosition = this.jumpTo(indexOfUser, stage, newUserPosition);
+
             } else if (stage >= 1) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - 2);
-                jumpFrameCount.add(indexOfUser, --stage);
+                newUserPosition = this.jumpTo(indexOfUser, stage, newUserPosition);
+
             } else {
                 newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - FREE_FALL);
+                newUserPosition = this.jumpTo(indexOfUser, stage, newUserPosition);
                 isJump.add(indexOfUser, false);
             }
         }
