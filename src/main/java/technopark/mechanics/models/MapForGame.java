@@ -7,7 +7,7 @@ import technopark.mechanics.models.part.PositionPart;
 import technopark.mechanics.models.player.GameObject;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.models.id.Id;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -147,7 +147,7 @@ public class MapForGame extends GameObject {
             case RIGHT:
                 if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
                     newUserPosition = new Coords(userPosition.x + PLAYERS_SPEED, userPosition.y);
-                    if (!checkMove(userPosition)) {
+                    if (!checkMove(new Coords(userPosition.x + PLAYERS_SPEED + PLAYER_WIDTH, userPosition.y))) {
                         newUserPosition = null;
                     }
 
@@ -177,10 +177,9 @@ public class MapForGame extends GameObject {
     public void checkGravity(@NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
         Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
-        Coords tileUnderPlayer = new Coords(userPosition.x, userPosition.y + GROUND_HEIGHT / 2);
         Coords newUserPosition = null;
-        final int i = findTile(tileUnderPlayer);
-        if ((userPosition.y != startPlayerY && i == -1) || !tiles[i].isAlived()) {
+        final int i = findTile(new Coords(userPosition.x + PLAYER_WIDTH / 2 + PLAYERS_SPEED, userPosition.y + PLAYER_HEIGHT));
+        if ((userPosition.y != startPlayerY && i == -1) || (!tiles[i].isAlived())) {
             if ((userPosition.y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y + FREE_FALL);
             } else {

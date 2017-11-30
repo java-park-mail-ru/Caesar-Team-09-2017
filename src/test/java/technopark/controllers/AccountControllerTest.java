@@ -1,4 +1,4 @@
-package technopark.model.account.AccountControllerTest;
+package technopark.controllers;
 
 import org.json.JSONObject;
 import org.junit.After;

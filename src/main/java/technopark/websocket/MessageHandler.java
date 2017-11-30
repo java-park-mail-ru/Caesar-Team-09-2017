@@ -2,7 +2,7 @@ package technopark.websocket;
 
 import org.jetbrains.annotations.NotNull;
 
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 
 public abstract class MessageHandler<T extends MessageRequest> {

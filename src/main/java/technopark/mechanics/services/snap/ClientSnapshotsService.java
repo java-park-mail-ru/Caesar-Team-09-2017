@@ -11,7 +11,7 @@ import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.part.MousePart;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.requests.ClientSnap;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 
 import java.util.*;

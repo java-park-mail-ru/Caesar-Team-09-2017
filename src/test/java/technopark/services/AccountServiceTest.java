@@ -1,6 +1,7 @@
-package technopark.model.account.AccountServiceTest;
+package technopark.services;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,9 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-import technopark.model.account.Account;
+import technopark.account.Account;
+import technopark.account.dao.AccountDao;
 import technopark.services.AccountService;
-import technopark.model.account.dao.AccountDao;
 
 import java.security.SecureRandom;
 import java.sql.SQLException;
@@ -80,7 +81,7 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountNotExist() throws ClassCastException {
-        assertEquals("NOT_FOUND", accountService.getAccountFromUsername("username5").getStatus());
+        Assert.assertEquals("NOT_FOUND", accountService.getAccountFromUsername("username5").getStatus());
     }
 
     @Test
@@ -114,7 +115,7 @@ public class AccountServiceTest {
         String password = getRandomString(SECURE_RANDOM, 10);
         String email = getRandomString(SECURE_RANDOM, 10) + "@mail.ru";
         String newUsername = getRandomString(SECURE_RANDOM, 10);
-        assertEquals("NOT_FOUND", accountService.renameAccount(
+        Assert.assertEquals("NOT_FOUND", accountService.renameAccount(
                 new Account(email, username, password), newUsername).getStatus());
 
     }
@@ -132,7 +133,7 @@ public class AccountServiceTest {
         accountService.createAccount(new Account(email2, username2, password2));
 
         String newUsername = getRandomString(SECURE_RANDOM, 10);
-        assertEquals("CONFLICT", accountService.renameAccount(
+        Assert.assertEquals("CONFLICT", accountService.renameAccount(
                 new Account(email1, newUsername, password2), username2).getStatus());
     }
 

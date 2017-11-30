@@ -5,7 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

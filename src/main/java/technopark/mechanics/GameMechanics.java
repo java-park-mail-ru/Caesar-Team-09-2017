@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.requests.JoinGame;
 import technopark.mechanics.models.id.Id;
 import technopark.mechanics.requests.ClientSnap;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 
 
 public interface GameMechanics {

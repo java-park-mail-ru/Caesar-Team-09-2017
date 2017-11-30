@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 
 import technopark.mechanics.GameMechanics;
 import technopark.mechanics.requests.JoinGame;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 import technopark.websocket.MessageHandler;
 import technopark.websocket.MessageHandlerContainer;

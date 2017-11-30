@@ -1,4 +1,4 @@
-package technopark.model.account;
+package technopark.account;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

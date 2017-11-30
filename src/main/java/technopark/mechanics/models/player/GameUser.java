@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.Snap;
 import technopark.mechanics.models.part.*;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 
 import java.util.HashMap;

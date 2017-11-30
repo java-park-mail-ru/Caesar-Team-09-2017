@@ -14,7 +14,7 @@ import technopark.mechanics.requests.JoinGame;
 import technopark.mechanics.services.snap.ClientSnapshotsService;
 import technopark.mechanics.services.session.GameSessionService;
 import technopark.mechanics.services.snap.ServerSnapshotService;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 import technopark.services.AccountService;
 import technopark.websocket.RemotePointService;
@@ -113,7 +113,6 @@ public class GameMechanicsImpl implements GameMechanics {
         final Set<AccountDao> matchedPlayers = new LinkedHashSet<>();
 
         while (waiters.size() >= 2 || waiters.size() >= 1 && matchedPlayers.size() >= 1) {
-            System.out.printf("waiters.size() " + waiters.size());
             final Id<AccountDao> candidate = waiters.poll();
             if (!insureCandidate(candidate)) {
                 continue;
@@ -121,7 +120,6 @@ public class GameMechanicsImpl implements GameMechanics {
 
             matchedPlayers.add(accountService.getAccountFromId(candidate.getId()));
             if (matchedPlayers.size() == 2) {
-                System.out.println("matchedPlayers.size() == 2");
                 final Iterator<AccountDao> iterator = matchedPlayers.iterator();
                 gameSessionService.startGame(iterator.next(), iterator.next());
                 matchedPlayers.clear();
@@ -131,7 +129,6 @@ public class GameMechanicsImpl implements GameMechanics {
         matchedPlayers.stream().map(AccountDao::getId).forEach(waiters::add);
 
         while (singlePlayers.size() >= 1) {
-            System.out.println("singlePlayers.size()");
             final Id<AccountDao> candidate = singlePlayers.poll();
             if (!insureCandidate(candidate)) {
                 continue;

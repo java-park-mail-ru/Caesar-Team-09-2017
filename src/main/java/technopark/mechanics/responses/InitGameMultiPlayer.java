@@ -1,14 +1,7 @@
 package technopark.mechanics.responses;
 
-import org.jetbrains.annotations.NotNull;
-
 import technopark.mechanics.models.Coords;
-import technopark.mechanics.models.player.GameUser;
-import technopark.model.account.dao.AccountDao;
-import technopark.mechanics.models.id.Id;
 import technopark.websocket.MessageResponse;
-
-import java.util.Map;
 
 public class InitGameMultiPlayer {
     public static final class Response extends MessageResponse {

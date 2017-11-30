@@ -1,6 +1,6 @@
 package technopark.services.dao;
 
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 
 import java.util.List;
 

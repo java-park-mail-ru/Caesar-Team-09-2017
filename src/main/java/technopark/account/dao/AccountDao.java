@@ -1,9 +1,9 @@
-package technopark.model.account.dao;
+package technopark.account.dao;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import technopark.model.account.Account;
+import technopark.account.Account;
 import technopark.mechanics.models.id.Id;
 
 public class AccountDao {

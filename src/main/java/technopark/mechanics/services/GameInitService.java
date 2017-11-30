@@ -6,13 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technopark.mechanics.Config;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.responses.InitGameMultiPlayer;
 import technopark.mechanics.responses.InitGameSinglePlayer;
 import technopark.mechanics.services.snap.ServerSnapshotService;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 import technopark.websocket.RemotePointService;
 

@@ -4,8 +4,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import technopark.model.account.Account;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.Account;
+import technopark.account.dao.AccountDao;
 import technopark.services.dao.AccountDaoImpl;
 
 

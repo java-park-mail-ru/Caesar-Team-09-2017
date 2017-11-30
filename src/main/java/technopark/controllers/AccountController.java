@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import technopark.model.account.Account;
-import technopark.model.account.dao.AccountDao;
+import technopark.account.Account;
+import technopark.account.dao.AccountDao;
 import technopark.error.Error;
 import technopark.services.AccountService;
 
