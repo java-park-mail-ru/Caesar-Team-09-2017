@@ -5,7 +5,6 @@ import technopark.mechanics.Config;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.part.PositionPart;
 import technopark.mechanics.models.player.GameObject;
-import technopark.mechanics.models.player.GameUserId;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.models.id.Id;
 import technopark.model.account.dao.AccountDao;
@@ -110,6 +109,10 @@ public class MapForGame extends GameObject {
             }
         }
         // теперь y
+        if (y == tiles[0].getCenterPosition().y - PLAYER_HEIGHT / 2) {
+            return index;
+        }
+
         for (int i = 0; i < lengthY - 1; i++) {
             if (y >= tiles[i * lengthX].getCenterPosition().y && y < tiles[(i + 1) * lengthX].getCenterPosition().y) {
                 return index + lengthX * i;
@@ -131,25 +134,25 @@ public class MapForGame extends GameObject {
         Coords newUserPosition = null;
         switch (move.getKeyDown()) {
             case LEFT:
-                if (userPosition.x - PLAYERS_SPEED >= PLAYER_WIDTH / 2) { // не выходит ли за пределы карты
+                if (userPosition.x - PLAYERS_SPEED >= 0) { // не выходит ли за пределы карты
                     newUserPosition = new Coords(userPosition.x - PLAYERS_SPEED, userPosition.y);
                     if (!checkMove(newUserPosition)) { // не собирается ли двинуться в место где есть тайл
                         newUserPosition = null;
                     }
 
                 } else {
-                    newUserPosition = new Coords(PLAYER_WIDTH / 2, userPosition.y);
+                    newUserPosition = new Coords(0, userPosition.y);
                 }
                 break;
             case RIGHT:
-                if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH / 2)) {
+                if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
                     newUserPosition = new Coords(userPosition.x + PLAYERS_SPEED, userPosition.y);
                     if (!checkMove(userPosition)) {
                         newUserPosition = null;
                     }
 
                 } else {
-                    newUserPosition = new Coords(WORLD_WIDTH - PLAYER_WIDTH / 2, userPosition.y);
+                    newUserPosition = new Coords(WORLD_WIDTH - PLAYER_WIDTH, userPosition.y);
                 }
                 break;
             case NOTHING:
@@ -165,8 +168,7 @@ public class MapForGame extends GameObject {
 
     private boolean checkMove(Coords newPosition) {
         int index = findTile(newPosition);
-
-        if (index != -1 && tiles[index].isAlived()) {
+        if (newPosition.y > startPlayerY && index != -1 && tiles[index].isAlived()) {
             return false;
         }
         return true;
@@ -178,10 +180,6 @@ public class MapForGame extends GameObject {
         Coords tileUnderPlayer = new Coords(userPosition.x, userPosition.y + GROUND_HEIGHT / 2);
         Coords newUserPosition = null;
         final int i = findTile(tileUnderPlayer);
-        System.out.println("userPosition");
-        System.out.println(userPosition);
-        System.out.println("tileUnderHim");
-        System.out.println(tiles[i].getCenterPosition());
         if ((userPosition.y != startPlayerY && i == -1) || !tiles[i].isAlived()) {
             if ((userPosition.y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y + FREE_FALL);
