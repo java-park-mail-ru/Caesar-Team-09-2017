@@ -61,23 +61,24 @@ public class GameMechanicsTest {
 
     @Test
     public void simpleDrilling() {
-        Id<AccountDao> id = new Id<>(user1.getIdLong());
-        final GameSession gameSession = startSingleGame(id);
+        final GameSession gameSession = startSingleGame(user1.getId());
+        int currentEnergy = gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy();
         gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
         gameMechanics.gmStep(100);
-        Assert.assertEquals(Config.START_ENERGY - 1, gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy());
+        Assert.assertEquals(currentEnergy - 1, gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy());
     }
 
     @Test
     public void firingTooFastTest() {
         final GameSession gameSession = startSingleGame(user1.getId());
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
+        int currentEnergy = gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy();
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
         gameMechanics.gmStep(50);
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
         gameMechanics.gmStep(50);
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
         gameMechanics.gmStep(50);
-        Assert.assertEquals(Config.START_ENERGY - 1, gameSession.getSecond().claimPart(MechanicPart.class).takeSnap().getEnergy());
+        Assert.assertEquals(currentEnergy - 1, gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy());
     }
 
     @Test

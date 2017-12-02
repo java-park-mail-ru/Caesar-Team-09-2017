@@ -86,6 +86,7 @@ public class MechanicPart implements GamePart {
         move.is = flag;
     }
 
+
     @Override
     public MechanicPartSnap takeSnap() {
         return new MechanicPartSnap(this);
