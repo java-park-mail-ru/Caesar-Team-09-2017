@@ -78,22 +78,15 @@ public class AccountControllerTest {
     @Test
     public void usernameOrEmailAlreadyExists() throws Exception {
         // signup two account
-        String[] username = { "Vera", "Varya"};
-        String[] email = { "Vera@mail.ru", "Varya@mail.ru"};
+        String username = "Vera";
+        String email = "Vera@mail.ru";
         // first account
         final JSONObject json = new JSONObject();
-        createJsonResponse(json, username[0], email[0], null);
-        signupWithoutChecks(json);
-        // second account
-        createJsonResponse(json, username[1], email[1], null);
+        createJsonResponse(json, username, email, null);
         signupWithoutChecks(json);
         // try to signup with first username
-        createJsonResponse(json, username[0], null, null);
+        createJsonResponse(json, username, null, null);
         MvcResult result = signupWithoutChecks(json);
-        assertEquals(409, result.getResponse().getStatus());
-        // try to signup with second email
-        createJsonResponse(json, null, email[1], null);
-        result = signupWithoutChecks(json);
         assertEquals(409, result.getResponse().getStatus());
     }
 

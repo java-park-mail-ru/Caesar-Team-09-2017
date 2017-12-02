@@ -7,7 +7,8 @@ public class InitGameMultiPlayer {
     public static final class Response extends MessageResponse {
         private int worldWidth;
         private int worldHeight;
-        private int playerX;
+        private int firstPlayerX;
+        private int secondPlayerX;
         private int playerY;
         private int playerWidth;
         private int playerHeight;
@@ -40,12 +41,20 @@ public class InitGameMultiPlayer {
             this.worldHeight = worldHeight;
         }
 
-        public int getPlayerX() {
-            return playerX;
+        public int getFirstPlayerX() {
+            return firstPlayerX;
         }
 
-        public void setPlayerX(int playerX) {
-            this.playerX = playerX;
+        public void setFirstPlayerX(int firstPlayerX) {
+            this.firstPlayerX = firstPlayerX;
+        }
+
+        public int getSecondPlayerX() {
+            return secondPlayerX;
+        }
+
+        public void setSecondPlayerX(int secondPlayerX) {
+            this.secondPlayerX = secondPlayerX;
         }
 
         public int getPlayerY() {

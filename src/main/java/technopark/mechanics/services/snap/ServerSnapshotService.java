@@ -38,10 +38,10 @@ public class ServerSnapshotService {
         if (!gameSession.isSinglePlay()) {
             final ServerSnapUser secondServerSnapUser = new ServerSnapUser();
 
-            secondServerSnapUser.setMechanicPartSnap(gameSession.getFirst().claimPart(MechanicPart.class).takeSnap());
-            secondServerSnapUser.setPositionPartSnap(gameSession.getFirst().claimPart(PositionPart.class).takeSnap());
-            secondServerSnapUser.setUserId(gameSession.getFirst().getAccountId().getId());
-            snap.setFirstUser(secondServerSnapUser);
+            secondServerSnapUser.setMechanicPartSnap(gameSession.getSecond().claimPart(MechanicPart.class).takeSnap());
+            secondServerSnapUser.setPositionPartSnap(gameSession.getSecond().claimPart(PositionPart.class).takeSnap());
+            secondServerSnapUser.setUserId(gameSession.getSecond().getAccountId().getId());
+            snap.setSecondUser(secondServerSnapUser);
         }
         //noinspection OverlyBroadCatchBlock
         try {

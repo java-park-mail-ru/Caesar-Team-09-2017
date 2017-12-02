@@ -96,7 +96,6 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
         if (joinGame.getTypeOfGame().equals("multi")) {
-            System.out.println("multi");
             waiters.add(userId);
             if (LOGGER.isDebugEnabled()) {
                 final AccountDao accountDao = accountService.getAccountFromId(userId.getId());

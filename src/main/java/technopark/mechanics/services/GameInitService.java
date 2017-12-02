@@ -62,7 +62,7 @@ public class GameInitService {
 
         initGameSinglePlayerMessage.setWorldWidth(WORLD_WIDTH);
         initGameSinglePlayerMessage.setWorldHeight(WORLD_HEIGHT);
-        initGameSinglePlayerMessage.setPlayerX(PLAYER_X);
+        initGameSinglePlayerMessage.setPlayerX(PLAYER_X[0]);
         initGameSinglePlayerMessage.setPlayerY(PLAYER_Y);
         initGameSinglePlayerMessage.setPlayerWidth(PLAYER_WIDTH);
         initGameSinglePlayerMessage.setPlayerHeight(PLAYER_HEIGHT);
@@ -87,7 +87,8 @@ public class GameInitService {
 
         initGameMultiPlayerMessage.setWorldWidth(WORLD_WIDTH);
         initGameMultiPlayerMessage.setWorldHeight(WORLD_HEIGHT);
-        initGameMultiPlayerMessage.setPlayerX(PLAYER_X);
+        initGameMultiPlayerMessage.setFirstPlayerX(PLAYER_X[0]);
+        initGameMultiPlayerMessage.setSecondPlayerX(PLAYER_X[1]);
         initGameMultiPlayerMessage.setPlayerY(PLAYER_Y);
         initGameMultiPlayerMessage.setPlayerWidth(PLAYER_WIDTH);
         initGameMultiPlayerMessage.setPlayerHeight(PLAYER_HEIGHT);

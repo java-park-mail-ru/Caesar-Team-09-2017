@@ -3,6 +3,7 @@ package technopark.mechanics;
 import technopark.mechanics.models.Coords;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class Config {
 
@@ -44,7 +45,7 @@ public class Config {
     public static final int GROUND_WIDTH = 32;
     public static final int GROUND_HEIGHT = 32;
     public static final int POSITION_GROUND = 6 * GROUND_HEIGHT;
-    public static final int PLAYER_X = GROUND_WIDTH * 8;
+    public static final int[] PLAYER_X = {GROUND_WIDTH * 8, WORLD_WIDTH - GROUND_WIDTH * 8};
     public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT;
     public static final int START_MONEY = 100;
     public static final int START_ENERGY = 100;
@@ -53,9 +54,9 @@ public class Config {
 
     static {
         Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
-        int minX = COIN_WIDTH / 2;
+        int minX = 0;
         int maxX = WORLD_WIDTH - COIN_WIDTH / 2 - minX;
-        int minY = COIN_HEIGHT / 2 + POSITION_GROUND;
+        int minY = POSITION_GROUND;
         int maxY = WORLD_HEIGHT - COIN_HEIGHT / 2 - minY;
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
             int ratioX = minX + (int) (Math.random() * maxX);
@@ -67,20 +68,23 @@ public class Config {
     }
 
     static void normalizedBonusPosition(Coords[] bonusPosition) {
-        Arrays.sort(bonusPosition, (obj1, obj2) -> {
-            if (obj1.y > obj2.y) {
-                return 1;
-            } else if (obj1.y == obj2.y) {
-
-                if (obj1.x > obj2.x) {
-                    return 1;
-                } else if (obj1.x < obj2.x) {
-                    return -1;
-                }
-                return 0;
-
-            }
-            return -1;
-        });
+//        Arrays.sort(bonusPosition, (obj1, obj2) -> {
+//            if (obj1.y > obj2.y) {
+//                return 1;
+//            } else if (obj1.y == obj2.y) {
+//
+//                if (obj1.x > obj2.x) {
+//                    return 1;
+//                } else if (obj1.x < obj2.x) {
+//                    return -1;
+//                }
+//                return 0;
+//
+//            }
+//            return -1;
+//        });
+        Arrays.sort(bonusPosition,
+                Comparator.comparing(Coords::getY)
+                        .thenComparing(Coords::getX));
     }
 }

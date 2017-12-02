@@ -22,6 +22,14 @@ public class Coords {
                 + '}';
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     @SuppressWarnings("NewMethodNamingConvention")
     @NotNull
     public static Coords of(int x, int y) {

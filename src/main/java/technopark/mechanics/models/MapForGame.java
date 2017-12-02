@@ -31,8 +31,8 @@ public class MapForGame extends GameObject {
     @NotNull
     private final GameSession gameSession;
 
-    private Coords[] destroyedTiles;
-    private Coords destroyedBonus;
+    private ArrayList<Coords> destroyedTiles;
+    private ArrayList<Coords> destroyedBonus;
 
     private final int lengthX;
     private final int lengthY;
@@ -44,15 +44,16 @@ public class MapForGame extends GameObject {
         gameUserIds = new ArrayList<>();
         isJump = new ArrayList<>();
         jumpFrameCount = new ArrayList<>();
-        destroyedTiles = new Coords[1];
+        destroyedTiles = new ArrayList<>();
+        destroyedBonus = new ArrayList<>();
         isJump.add(false);
         jumpFrameCount.add(0);
         gameUserIds.add((gameSession.getFirst().getAccountId()));
-        gameSession.getUser(0).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X, PLAYER_Y));
+        gameSession.getUser(0).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X[0], PLAYER_Y));
         startPlayerY = PLAYER_Y;
         if (!gameSession.isSinglePlay()) {
             gameUserIds.add((gameSession.getSecond().getAccountId()));
-            gameSession.getUser(1).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X, PLAYER_Y));
+            gameSession.getUser(1).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X[1], PLAYER_Y));
             isJump.add(false);
             jumpFrameCount.add(0);
         }
@@ -93,7 +94,7 @@ public class MapForGame extends GameObject {
             if (tiles[i].isAlived() && checkDrillForPosition(userPosition, tiles[i].getCenterPosition())) {
                 tiles[i].setAlived(false);
                 gameSession.getFirst().claimPart(MechanicPart.class).decrementEnergy();
-                destroyedTiles[0] = tiles[i].getCenterPosition();
+                destroyedTiles.add(tiles[i].getCenterPosition());
             }
         }
     }
@@ -246,7 +247,7 @@ public class MapForGame extends GameObject {
         Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
         final int i = findTile(userPosition);
         if (i != -1 && tiles[i].isBonus()) {
-            destroyedBonus = BONUS_POSITION[tiles[i].getIndexPositionBonus()];
+            destroyedBonus.add(BONUS_POSITION[tiles[i].getIndexPositionBonus()]);
             Config.Bonus bonus = tiles[i].getBonus();
             tiles[i].setIsBonus(false);
             switch (bonus) {
@@ -270,27 +271,30 @@ public class MapForGame extends GameObject {
 
         private Coords[] destroyedTiles;
 
-        private Coords destroyedBonus;
+        private Coords[] destroyedBonus;
 
         @NotNull
         public MapSnap(@NotNull MapForGame mapForGame) {
             if (mapForGame.destroyedTiles != null) {
-                this.destroyedTiles = new Coords[mapForGame.destroyedTiles.length];
-                this.destroyedTiles = mapForGame.destroyedTiles.clone();
-                for (int i = 0; i < mapForGame.destroyedTiles.length; i++) {
-                    mapForGame.destroyedTiles[i] = null;
-                }
+                this.destroyedTiles = mapForGame.destroyedTiles.toArray(new Coords[mapForGame.destroyedTiles.size()]);
+                mapForGame.destroyedTiles.clear();
             } else {
                 this.destroyedTiles = null;
             }
-            this.destroyedBonus = mapForGame.destroyedBonus;
+
+            if (mapForGame.destroyedBonus != null) {
+                this.destroyedBonus = mapForGame.destroyedBonus.toArray(new Coords[mapForGame.destroyedBonus.size()]);
+                mapForGame.destroyedBonus.clear();
+            } else {
+                this.destroyedBonus = null;
+            }
         }
 
         public Coords[] getDestroyedTiles() {
             return destroyedTiles;
         }
 
-        public Coords getDestroyedBonus() {
+        public Coords[] getDestroyedBonus() {
             return destroyedBonus;
         }
     }
