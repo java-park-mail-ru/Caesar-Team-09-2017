@@ -72,7 +72,7 @@ public class SnapSerializationTest {
         final GameUser.ServerPlayerSnap serverPlayerSnap = this.nogibator.getSnap();
         initGameSinglePlayerMessage.setWorldWidth(WORLD_WIDTH);
         initGameSinglePlayerMessage.setWorldHeight(WORLD_HEIGHT);
-        initGameSinglePlayerMessage.setPlayerX(PLAYER_X);
+        initGameSinglePlayerMessage.setPlayerX(PLAYER_X[0]);
         initGameSinglePlayerMessage.setPlayerY(PLAYER_Y);
         initGameSinglePlayerMessage.setPlayerWidth(PLAYER_WIDTH);
         initGameSinglePlayerMessage.setPlayerHeight(PLAYER_HEIGHT);
