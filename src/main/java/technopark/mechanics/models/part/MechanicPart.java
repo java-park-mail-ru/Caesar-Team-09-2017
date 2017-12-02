@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import technopark.mechanics.Config;
 import technopark.mechanics.MechanicsTimeService;
+import technopark.mechanics.models.Cooldown;
 import technopark.mechanics.models.Snap;
 
 import static technopark.mechanics.Config.START_ENERGY;
@@ -13,6 +14,9 @@ public class MechanicPart implements GamePart {
 
     private int energy;
     private int money;
+    private Cooldown drill;
+    private Cooldown move;
+    private Cooldown jump;
     private boolean isDrill;
     private long lastTimeDrilled;
     private boolean isMove;
@@ -33,6 +37,15 @@ public class MechanicPart implements GamePart {
         isDrill = false;
         isMove = false;
         isJump = false;
+        drill = new Cooldown();
+        move = new Cooldown();
+        jump = new Cooldown();
+        drill.is = false;
+        move.is = false;
+        jump.is = false;
+        drill.lastTime = -Config.DRILING_COOLDOWN;
+        move.lastTime = -Config.MOVEMENT_COOLDOWN;
+        jump.lastTime = -Config.JUMPING_COOLDOWN;
     }
 
     public void decrementEnergy() {
@@ -43,44 +56,34 @@ public class MechanicPart implements GamePart {
         this.money += value;
     }
 
-    public boolean tryDrill() {
-        // if (isDrill) {
-        //   return false;
-        //  }
+    private boolean cooldownService(Cooldown something, long sometingCooldown) {
         final long now = timeService.time();
-        if (lastTimeDrilled + Config.DRILING_COOLDOWN <= now) {
-            lastTimeDrilled = now;
-            isDrill = true;
+        if (something.lastTime + sometingCooldown <= now) {
+            something.lastTime = now;
+            something.is = true;
             return true;
         }
         return false;
     }
 
-    public boolean tryJump() {
-        final long now = timeService.time();
-        if (lastTimeJumped + Config.JUMPING_COOLDOWN <= now) {
-            lastTimeJumped = now;
-            isJump = true;
-            return true;
-        }
-        return false;
+    public boolean tryDrill() {
+        return cooldownService(drill, Config.DRILING_COOLDOWN);
     }
 
     public boolean tryMove() {
-        // if (isMove) {
-        //   return false;
-        // }
-        final long now = timeService.time();
-        if (lastTimeMoved + Config.MOVEMENT_COOLDOWN <= now) {
-            lastTimeMoved = now;
-            isMove = true;
-            return true;
-        }
-        return false;
+        return cooldownService(move, Config.MOVEMENT_COOLDOWN);
     }
 
-    public void setDrill(boolean drill) {
-        isDrill = drill;
+    public boolean tryJump() {
+        return cooldownService(jump, Config.JUMPING_COOLDOWN);
+    }
+
+    public void setDrill(boolean flag) {
+        drill.is = flag;
+    }
+
+    public void setMove(boolean flag) {
+        move.is = flag;
     }
 
     @Override

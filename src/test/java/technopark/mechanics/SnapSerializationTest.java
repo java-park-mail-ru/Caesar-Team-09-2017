@@ -65,7 +65,7 @@ public class SnapSerializationTest {
 
     @SuppressWarnings({"TooBroadScope", "OverlyBroadThrowsClause"})
     @Test
-    public void serverInitTest() throws IOException {
+    public void serverInitSingleTest() throws IOException {
         final InitGameSinglePlayer.Response initGameSinglePlayerMessage = new InitGameSinglePlayer.Response();
         final AccountDao pupkin = new AccountDao("pupkin@mail.ru", "pupkin", "123");
         final GameUser gameUser = new GameUser(pupkin, new MechanicsTimeService());
@@ -90,4 +90,5 @@ public class SnapSerializationTest {
         final String initGameJson = objectMapper.writeValueAsString(initGameSinglePlayerMessage);
         Assert.assertNotNull(initGameJson);
     }
+
 }

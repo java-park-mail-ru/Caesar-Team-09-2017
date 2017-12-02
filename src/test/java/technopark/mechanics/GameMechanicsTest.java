@@ -1,4 +1,4 @@
-/*package technopark.mechanics;
+package technopark.mechanics;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,37 +56,33 @@ public class GameMechanicsTest {
     public void setUp () {
         when(remotePointService.isConnected(any())).thenReturn(true);
         user1 = accountService.createAccount(new Account("user1@mail.ru", "user1", "123"));
-        user1.setId(1);
         user2 = accountService.createAccount(new Account("user2@mail.ru", "user2", "456"));
-        user2.setId(2);
     }
 
     @Test
     public void simpleDrilling() {
-        final GameSession gameSession = startGame(new Id<AccountDao>(user1.getIdLong()), new Id<AccountDao>(user2.getIdLong()));
-        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(40, true, Coords.of(0,0)));
+        Id<AccountDao> id = new Id<>(user1.getIdLong());
+        final GameSession gameSession = startSingleGame(id);
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
         gameMechanics.gmStep(100);
         Assert.assertEquals(Config.START_ENERGY - 1, gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy());
-        Assert.assertEquals(Config.START_ENERGY, gameSession.getSecond().claimPart(MechanicPart.class).takeSnap().getEnergy());
     }
 
     @Test
     public void firingTooFastTest() {
-
-        final GameSession gameSession = startGame(user1.getId(), user2.getId());
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
+        final GameSession gameSession = startSingleGame(user1.getId());
+        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
         gameMechanics.gmStep(50);
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
+        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
         gameMechanics.gmStep(50);
-        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
+        gameMechanics.addClientSnapshot(gameSession.getSecond().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y)));
         gameMechanics.gmStep(50);
         Assert.assertEquals(Config.START_ENERGY - 1, gameSession.getSecond().claimPart(MechanicPart.class).takeSnap().getEnergy());
     }
 
     @Test
     public void gameStartedTest () {
-        startGame(user1.getId(), user2.getId());
+        startSingleGame(user1.getId());
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -108,15 +104,14 @@ public class GameMechanicsTest {
     }
 
     @NotNull
-    private GameSession startGame(@NotNull Id<AccountDao> player1, @NotNull Id<AccountDao> player2) {
+    private GameSession startSingleGame(@NotNull Id<AccountDao> player1) {
+        System.out.println(player1.getId());
         JoinGame joinGame = new JoinGame();
-        joinGame.setTypeOfGame("multi");
+        joinGame.setTypeOfGame("single");
         gameMechanics.addUser(player1, joinGame);
-        gameMechanics.addUser(player2, joinGame);
         gameMechanics.gmStep(0);
         @Nullable final GameSession gameSession = gameSessionService.getSessionForUser(player1);
         Assert.assertNotNull("Game session should be started on closest tick, but it didn't", gameSession);
         return gameSession;
     }
 }
-*/

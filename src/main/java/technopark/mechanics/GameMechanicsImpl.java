@@ -179,7 +179,10 @@ public class GameMechanicsImpl implements GameMechanics {
                 LOGGER.error("Failed to send snapshots, terminating the session", ex);
                 sessionsToTerminate.add(session);
             }
-            session.getPlayers().forEach(user -> user.claimPart(MechanicPart.class).setDrill(false));
+            session.getPlayers().forEach(user -> {
+                user.claimPart(MechanicPart.class).setDrill(false);
+                user.claimPart(MechanicPart.class).setMove(false);
+            });
         }
 
         sessionsToTerminate.forEach(session -> gameSessionService.forceTerminate(session, true));
