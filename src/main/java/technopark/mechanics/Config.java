@@ -68,21 +68,6 @@ public class Config {
     }
 
     static void normalizedBonusPosition(Coords[] bonusPosition) {
-//        Arrays.sort(bonusPosition, (obj1, obj2) -> {
-//            if (obj1.y > obj2.y) {
-//                return 1;
-//            } else if (obj1.y == obj2.y) {
-//
-//                if (obj1.x > obj2.x) {
-//                    return 1;
-//                } else if (obj1.x < obj2.x) {
-//                    return -1;
-//                }
-//                return 0;
-//
-//            }
-//            return -1;
-//        });
         Arrays.sort(bonusPosition,
                 Comparator.comparing(Coords::getY)
                         .thenComparing(Coords::getX));

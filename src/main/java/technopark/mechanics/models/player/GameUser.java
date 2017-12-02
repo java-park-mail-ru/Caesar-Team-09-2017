@@ -34,7 +34,7 @@ public class GameUser extends GameObject {
     }
 
     @Override
-    public @NotNull ServerPlayerSnap getSnap() {
+    public ServerPlayerSnap getSnap() {
         return ServerPlayerSnap.snapPlayer(this);
     }
 

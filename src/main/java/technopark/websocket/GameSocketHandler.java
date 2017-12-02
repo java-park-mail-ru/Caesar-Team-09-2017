@@ -59,9 +59,9 @@ public class GameSocketHandler extends TextWebSocketHandler {
             return;
         }
         final String username = (String) webSocketSession.getAttributes().get("username");
-        final AccountDao accountDao;
+        final AccountDao accountDao = accountService.getAccountFromUsername(username);
         LOGGER.info("message from client");
-        if (username == null || (accountDao = accountService.getAccountFromUsername(username)) == null) {
+        if (username == null || accountDao.getStatus().equals("NOT_FOUND")) {
             closeSessionSilently(webSocketSession, ACCESS_DENIED);
             return;
         }
