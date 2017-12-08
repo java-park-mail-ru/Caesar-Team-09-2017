@@ -66,7 +66,7 @@ public class GameMechanicsTest {
     public void simpleDrilling() {
         final GameSession gameSession = startSingleGame(user1.getId());
         int currentEnergy = gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy();
-        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT), false));
         gameMechanics.gmStep(100);
         Assert.assertEquals(currentEnergy - 1, gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy());
     }
@@ -75,11 +75,11 @@ public class GameMechanicsTest {
     public void firingTooFastTest() {
         final GameSession gameSession = startSingleGame(user1.getId());
         int currentEnergy = gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy();
-        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT), false));
         gameMechanics.gmStep(50);
-        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT), false));
         gameMechanics.gmStep(50);
-        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,true, Coords.of(Config.PLAYER_X[0] + Config.PLAYER_WIDTH, Config.PLAYER_Y + Config.PLAYER_HEIGHT), false));
         gameMechanics.gmStep(50);
         Assert.assertEquals(currentEnergy - 1, gameSession.getFirst().claimPart(MechanicPart.class).takeSnap().getEnergy());
     }
@@ -93,7 +93,7 @@ public class GameMechanicsTest {
     public void simpleMoving() {
         final GameSession gameSession = startSingleGame(user1.getId());
         Coords currentPosition = gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition();
-        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,false, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,false, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT), false));
         gameMechanics.gmStep(100);
         Assert.assertEquals(currentPosition.x - PLAYERS_SPEED, gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition().x);
     }
@@ -110,8 +110,21 @@ public class GameMechanicsTest {
         Assert.assertEquals(startPosition.y + time * FREE_FALL, gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition().y);
     }
 
+    @Test
+    public void jump() {
+        final GameSession gameSession = startSingleGame(user1.getId());
+        Coords currentPosition = gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition();
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,false, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y), true));
+        final int time = 2;
+        for(int i = 0; i < time; i++) {
+            gameMechanics.gmStep(50);
+        }
+        final int y = currentPosition.y - FREE_FALL * 2 - FREE_FALL * 2 + time * FREE_FALL;
+        Assert.assertEquals(y, gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition().y);
+    }
+
     @SuppressWarnings("SameParameterValue")
-    private ClientSnap createClientSnap(long frameTime, boolean drilling, Coords mouse) {
+    private ClientSnap createClientSnap(long frameTime, boolean drilling, Coords mouse, boolean jump) {
         final ClientSnap clientSnap = new ClientSnap();
         clientSnap.setFrameTime(frameTime);
         clientSnap.setMouse(mouse);
@@ -123,6 +136,13 @@ public class GameMechanicsTest {
             clientSnap.setDrill(false);
             clientSnap.setMove(true);
             clientSnap.setMoveTo(new Move(Config.KeyDown.LEFT));
+        }
+
+        if (jump) {
+            clientSnap.setDrill(false);
+            clientSnap.setMove(false);
+            clientSnap.setMoveTo(new Move(Config.KeyDown.NOTHING));
+            clientSnap.setJump(true);
         }
 
         return clientSnap;
