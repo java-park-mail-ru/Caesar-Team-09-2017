@@ -196,18 +196,18 @@ public class MapForGame extends GameObject {
     public void startJump(@NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
         if (!isJump.get(indexOfUser)) {
-            isJump.add(indexOfUser, true);
-            jumpFrameCount.add(indexOfUser, 12);
+            isJump.set(indexOfUser, true);
+            jumpFrameCount.set(indexOfUser, 12);
         }
     }
 
     private Coords jumpTo(int indexOfUser, int stage, Coords newUserPosition) {
         if (!checkMove(newUserPosition)) {
             newUserPosition = null;
-            isJump.add(indexOfUser, false);
-            jumpFrameCount.add(indexOfUser, 0);
+            isJump.set(indexOfUser, false);
+            jumpFrameCount.set(indexOfUser, 0);
         } else {
-            jumpFrameCount.add(indexOfUser, --stage);
+            jumpFrameCount.set(indexOfUser, --stage);
         }
         return newUserPosition;
     }
@@ -233,7 +233,7 @@ public class MapForGame extends GameObject {
             } else {
                 newUserPosition = new Coords(userPosition.x, userPosition.y - FREE_FALL * 2 - FREE_FALL);
                 newUserPosition = this.jumpTo(indexOfUser, stage, newUserPosition);
-                isJump.add(indexOfUser, false);
+                isJump.set(indexOfUser, false);
             }
         }
 

@@ -13,7 +13,7 @@ public class Config {
 
     public static final long DRILING_COOLDOWN = 150;
     public static final long MOVEMENT_COOLDOWN = 50;
-    public static final long JUMPING_COOLDOWN = 1500;
+    public static final long JUMPING_COOLDOWN = 2000;
     public static final long START_SWITCH_DELAY = 5000;
     public static final long SWITCH_DELTA = 300;
     public static final long SWITCH_DELAY_MIN = 1500;
