@@ -137,7 +137,8 @@ public class MapForGame extends GameObject {
             case LEFT:
                 if (userPosition.x - PLAYERS_SPEED >= 0) { // не выходит ли за пределы карты
                     newUserPosition = new Coords(userPosition.x - PLAYERS_SPEED, userPosition.y);
-                    if (!checkMove(newUserPosition)) { // не собирается ли двинуться в место где есть тайл
+                    if (!checkMove(newUserPosition)
+                            || !checkMove(new Coords(userPosition.x, userPosition.y + PLAYER_HEIGHT - FREE_FALL))) {
                         newUserPosition = null;
                     }
 
@@ -148,7 +149,8 @@ public class MapForGame extends GameObject {
             case RIGHT:
                 if ((userPosition.x + PLAYERS_SPEED) <= (WORLD_WIDTH - PLAYER_WIDTH)) {
                     newUserPosition = new Coords(userPosition.x + PLAYERS_SPEED, userPosition.y);
-                    if (!checkMove(new Coords(userPosition.x + PLAYERS_SPEED + PLAYER_WIDTH, userPosition.y))) {
+                    if (!checkMove(new Coords(userPosition.x + PLAYER_WIDTH, userPosition.y))
+                            || !checkMove(new Coords(userPosition.x + PLAYER_WIDTH, userPosition.y + PLAYER_HEIGHT - FREE_FALL))) {
                         newUserPosition = null;
                     }
 
@@ -179,8 +181,15 @@ public class MapForGame extends GameObject {
         final int indexOfUser = gameUserIds.indexOf(user);
         Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
         Coords newUserPosition = null;
-        final int i = findTile(new Coords(userPosition.x + PLAYER_WIDTH / 2 + PLAYERS_SPEED, userPosition.y + PLAYER_HEIGHT));
-        if ((userPosition.y != startPlayerY && i == -1) || (!tiles[i].isAlived())) {
+        final int i = findTile(new Coords(userPosition.x, userPosition.y + PLAYER_HEIGHT));
+        boolean condition = checkMove(new Coords(userPosition.x, userPosition.y + PLAYER_HEIGHT));
+        if (condition) {
+            if (checkMove(new Coords(userPosition.x - PLAYER_WIDTH / 2, userPosition.y + PLAYER_HEIGHT))
+                    && !checkMove(new Coords(userPosition.x + PLAYER_WIDTH / 2, userPosition.y + PLAYER_HEIGHT))) {
+                condition = false;
+            }
+        }
+        if ((userPosition.y != startPlayerY && i == -1) || condition) {
             if ((userPosition.y + FREE_FALL) <= (WORLD_HEIGHT - PLAYER_HEIGHT)) {
                 newUserPosition = new Coords(userPosition.x, userPosition.y + FREE_FALL);
             } else {
@@ -202,7 +211,8 @@ public class MapForGame extends GameObject {
     }
 
     private Coords jumpTo(int indexOfUser, int stage, Coords newUserPosition) {
-        if (!checkMove(newUserPosition)) {
+        boolean condition = checkMove(newUserPosition);
+        if (!condition) {
             newUserPosition = null;
             isJump.set(indexOfUser, false);
             jumpFrameCount.set(indexOfUser, 0);
