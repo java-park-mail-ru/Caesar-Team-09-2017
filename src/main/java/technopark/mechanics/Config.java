@@ -55,13 +55,14 @@ public class Config {
     static {
         Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
         int minX = 0;
-        int maxX = WORLD_WIDTH - COIN_WIDTH / 2 - minX;
+        int maxX = WORLD_WIDTH / GROUND_WIDTH - 1;
         int minY = POSITION_GROUND;
-        int maxY = WORLD_HEIGHT - COIN_HEIGHT / 2 - minY;
+        int maxY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT - 1;
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
-            int ratioX = minX + (int) (Math.random() * maxX);
-            int ratioY = minY + (int) (Math.random() * maxY);
+            int ratioX = minX + (int) (Math.random() * maxX) * GROUND_WIDTH;
+            int ratioY = minY + (int) (Math.random() * maxY) * GROUND_HEIGHT;
             bonusPosition[i] = new Coords(ratioX, ratioY);
+            System.out.println(bonusPosition[i]);
         }
         normalizedBonusPosition(bonusPosition);
         BONUS_POSITION = bonusPosition;
