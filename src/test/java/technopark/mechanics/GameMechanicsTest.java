@@ -17,6 +17,7 @@ import technopark.mechanics.models.Coords;
 import technopark.mechanics.models.Move;
 import technopark.mechanics.models.id.Id;
 import technopark.mechanics.models.part.MechanicPart;
+import technopark.mechanics.models.part.PositionPart;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.requests.ClientSnap;
 import technopark.mechanics.requests.JoinGame;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static technopark.mechanics.Config.PLAYERS_SPEED;
 
 @SuppressWarnings({"MagicNumber", "NullableProblems", "SpringJavaAutowiredMembersInspection"})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -84,6 +86,15 @@ public class GameMechanicsTest {
     @Test
     public void gameStartedTest () {
         startSingleGame(user1.getId());
+    }
+
+    @Test
+    public void simpleMoving() {
+        final GameSession gameSession = startSingleGame(user1.getId());
+        Coords currentPosition = gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition();
+        gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,false, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
+        gameMechanics.gmStep(100);
+        Assert.assertEquals(currentPosition.x - PLAYERS_SPEED, gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition().x);
     }
 
     @SuppressWarnings("SameParameterValue")
