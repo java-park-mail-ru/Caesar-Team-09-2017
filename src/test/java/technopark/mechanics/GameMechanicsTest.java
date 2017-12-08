@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static technopark.mechanics.Config.FREE_FALL;
 import static technopark.mechanics.Config.PLAYERS_SPEED;
 
 @SuppressWarnings({"MagicNumber", "NullableProblems", "SpringJavaAutowiredMembersInspection"})
@@ -95,6 +96,18 @@ public class GameMechanicsTest {
         gameMechanics.addClientSnapshot(gameSession.getFirst().getAccountId(), createClientSnap(25,false, Coords.of(Config.PLAYER_X[0], Config.PLAYER_Y + Config.PLAYER_HEIGHT)));
         gameMechanics.gmStep(100);
         Assert.assertEquals(currentPosition.x - PLAYERS_SPEED, gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition().x);
+    }
+
+    @Test
+    public void gravity() {
+        final GameSession gameSession = startSingleGame(user1.getId());
+        Coords startPosition = new Coords(100, 100);
+        gameSession.getFirst().claimPart(PositionPart.class).setPosition(startPosition);
+        final int time = 20;
+        for(int i = 0; i < time; i++) {
+            gameMechanics.gmStep(50);
+        }
+        Assert.assertEquals(startPosition.y + time * FREE_FALL, gameSession.getFirst().claimPart(PositionPart.class).takeSnap().getPosition().y);
     }
 
     @SuppressWarnings("SameParameterValue")

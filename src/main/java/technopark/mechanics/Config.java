@@ -62,7 +62,6 @@ public class Config {
             int ratioX = minX + (int) (Math.random() * maxX) * GROUND_WIDTH;
             int ratioY = minY + (int) (Math.random() * maxY) * GROUND_HEIGHT;
             bonusPosition[i] = new Coords(ratioX, ratioY);
-            System.out.println(bonusPosition[i]);
         }
         normalizedBonusPosition(bonusPosition);
         BONUS_POSITION = bonusPosition;
