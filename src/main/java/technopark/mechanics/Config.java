@@ -62,7 +62,7 @@ public class Config {
                         .thenComparing(Coords::getX));
     }
 
-    static void changeBonusPosition() {
+    public static void changeBonusPosition() {
         Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
         int minX = 0;
         int maxX = WORLD_WIDTH / GROUND_WIDTH - 1;

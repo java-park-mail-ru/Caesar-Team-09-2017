@@ -110,7 +110,7 @@ public class MapForGame extends GameObject {
                break;
             }
         }
-    
+
         // теперь y
         if (y == tiles[0].getCenterPosition().y - PLAYER_HEIGHT) {
             return index;
