@@ -18,6 +18,8 @@ public class MechanicPart implements GamePart {
     private Cooldown move;
     private Cooldown jump;
 
+    private int drillPower;
+
     @NotNull
     private final MechanicsTimeService timeService;
 
@@ -34,6 +36,16 @@ public class MechanicPart implements GamePart {
         drill.lastTime = -Config.DRILING_COOLDOWN;
         move.lastTime = -Config.MOVEMENT_COOLDOWN;
         jump.lastTime = -Config.JUMPING_COOLDOWN;
+
+        drillPower = 2;
+    }
+
+    public int getDrillPower() {
+        return drillPower;
+    }
+
+    public void setDrillPower(int drillPower) {
+        this.drillPower = drillPower;
     }
 
     public void decrementEnergy() {
