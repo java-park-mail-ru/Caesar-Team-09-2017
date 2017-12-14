@@ -39,7 +39,7 @@ public class Config {
     public static final int WORLD_HEIGHT = 2000;
     public static final int PLAYER_WIDTH = 32;
     public static final int PLAYER_HEIGHT = 32;
-    public static final int COUNT_OF_BONUSES = 20;
+    public static final int COUNT_OF_BONUSES = 80;
     public static final int COIN_WIDTH = 32;
     public static final int COIN_HEIGHT = 32;
     public static final int GROUND_WIDTH = 32;
@@ -49,10 +49,20 @@ public class Config {
     public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT;
     public static final int START_MONEY = 100;
     public static final int START_ENERGY = 100;
-    public static final Coords[] BONUS_POSITION;
+    public static Coords[] BONUS_POSITION;
     public static final int RADIUS_RADAR = 200;
 
     static {
+        changeBonusPosition();
+    }
+
+    static void normalizedBonusPosition(Coords[] bonusPosition) {
+        Arrays.sort(bonusPosition,
+                Comparator.comparing(Coords::getY)
+                        .thenComparing(Coords::getX));
+    }
+
+    static void changeBonusPosition() {
         Coords[] bonusPosition = new Coords[COUNT_OF_BONUSES];
         int minX = 0;
         int maxX = WORLD_WIDTH / GROUND_WIDTH - 1;
@@ -65,11 +75,5 @@ public class Config {
         }
         normalizedBonusPosition(bonusPosition);
         BONUS_POSITION = bonusPosition;
-    }
-
-    static void normalizedBonusPosition(Coords[] bonusPosition) {
-        Arrays.sort(bonusPosition,
-                Comparator.comparing(Coords::getY)
-                        .thenComparing(Coords::getX));
     }
 }

@@ -17,26 +17,14 @@ public class MechanicPart implements GamePart {
     private Cooldown drill;
     private Cooldown move;
     private Cooldown jump;
-    private boolean isDrill;
-    private long lastTimeDrilled;
-    private boolean isMove;
-    private long lastTimeMoved;
-    private boolean isJump;
-    private long lastTimeJumped;
 
     @NotNull
     private final MechanicsTimeService timeService;
 
     public MechanicPart(@NotNull MechanicsTimeService timeService) {
         this.timeService = timeService;
-        lastTimeDrilled = -Config.DRILING_COOLDOWN;
-        lastTimeMoved = -Config.MOVEMENT_COOLDOWN;
-        lastTimeJumped = -Config.JUMPING_COOLDOWN;
         energy = START_ENERGY;
         money = START_MONEY;
-        isDrill = false;
-        isMove = false;
-        isJump = false;
         drill = new Cooldown();
         move = new Cooldown();
         jump = new Cooldown();
@@ -96,12 +84,10 @@ public class MechanicPart implements GamePart {
 
         private final int energy;
         private final int money;
-        private final boolean isDrill;
 
         public MechanicPartSnap(MechanicPart mechanicPart) {
             this.energy = mechanicPart.energy;
             this.money = mechanicPart.money;
-            this.isDrill = mechanicPart.isDrill;
         }
 
         public int getEnergy() {
