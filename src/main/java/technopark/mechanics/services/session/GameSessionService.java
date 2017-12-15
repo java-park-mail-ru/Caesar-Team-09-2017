@@ -21,7 +21,7 @@ import technopark.websocket.RemotePointService;
 import java.util.*;
 
 @Service
-public class GameSessionService {
+public class  GameSessionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameSessionService.class);
     @NotNull
     private final Map<Id<AccountDao>, GameSession> usersMap = new HashMap<>();

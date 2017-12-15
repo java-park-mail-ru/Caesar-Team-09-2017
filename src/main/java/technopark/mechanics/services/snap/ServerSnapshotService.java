@@ -8,7 +8,7 @@ import technopark.mechanics.models.part.PositionPart;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.responses.ServerSnap;
-import technopark.mechanics.responses.ServerSnapUser;
+import technopark.mechanics.models.ServerSnapUser;
 import technopark.websocket.RemotePointService;
 
 

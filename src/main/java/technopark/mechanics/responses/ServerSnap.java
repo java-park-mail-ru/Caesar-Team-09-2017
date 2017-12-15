@@ -2,6 +2,7 @@ package technopark.mechanics.responses;
 
 import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.models.MapForGame;
+import technopark.mechanics.models.ServerSnapUser;
 import technopark.websocket.MessageResponse;
 
 @SuppressWarnings({"NullableProblems"})

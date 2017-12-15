@@ -1,4 +1,4 @@
-package technopark.mechanics.responses;
+package technopark.mechanics.models;
 
 import org.jetbrains.annotations.NotNull;
 import technopark.mechanics.models.part.MechanicPart;

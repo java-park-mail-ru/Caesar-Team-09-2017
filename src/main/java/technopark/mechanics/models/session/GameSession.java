@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GameSession {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
     private boolean isFinished;
-
     private boolean singlePlay;
+
     @NotNull
     private final Id<GameSession> sessionId;
     @NotNull
