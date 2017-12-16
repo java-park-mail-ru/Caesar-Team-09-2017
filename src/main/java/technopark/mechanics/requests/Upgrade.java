@@ -5,33 +5,33 @@ import technopark.websocket.MessageRequest;
 
 public class Upgrade extends MessageRequest {
     @NotNull
-    private int drillDiff;
+    private boolean drill;
     @NotNull
-    private int energyDiff;
+    private boolean energy;
     @NotNull
-    private int radiusRadarDiff;
+    private boolean radiusRadar;
 
-    public int getDrillDiff() {
-        return drillDiff;
+    public boolean isDrill() {
+        return drill;
     }
 
-    public void setDrillDiff(int drillDiff) {
-        this.drillDiff = drillDiff;
+    public void setDrill(boolean drill) {
+        this.drill = drill;
     }
 
-    public int getEnergyDiff() {
-        return energyDiff;
+    public boolean isEnergy() {
+        return energy;
     }
 
-    public void setEnergyDiff(int energyDiff) {
-        this.energyDiff = energyDiff;
+    public void setEnergy(boolean energy) {
+        this.energy = energy;
     }
 
-    public int getRadiusRadarDiff() {
-        return radiusRadarDiff;
+    public boolean isRadiusRadar() {
+        return radiusRadar;
     }
 
-    public void setRadiusRadarDiff(int radiusRadarDiff) {
-        this.radiusRadarDiff = radiusRadarDiff;
+    public void setRadiusRadar(boolean radiusRadar) {
+        this.radiusRadar = radiusRadar;
     }
 }

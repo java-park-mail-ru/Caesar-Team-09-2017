@@ -190,21 +190,21 @@ public class  GameSessionService {
     private void update(@NotNull GameUser gameUser, technopark.mechanics.requests.Upgrade upgrade) {
         final technopark.mechanics.responses.Upgrade.Response upgradeResponse = new technopark.mechanics.responses.Upgrade.Response();
         int money = gameUser.claimPart(MechanicPart.class).takeSnap().getMoney();
-        if (upgrade.getEnergyDiff() != 0) {
+        if (upgrade.isEnergy()) {
             money -= 50;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrStartDayEnergy();
             }
         }
 
-        if (upgrade.getDrillDiff() != 0) {
+        if (upgrade.isDrill()) {
             money -= 20;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrDrillPower();
             }
         }
 
-        if (upgrade.getRadiusRadarDiff() != 0) {
+        if (upgrade.isRadiusRadar()) {
             money -= 10;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrRadiusRadar();
