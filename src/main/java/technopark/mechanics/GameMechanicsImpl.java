@@ -11,6 +11,7 @@ import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.models.session.GameTaskScheduler;
 import technopark.mechanics.requests.ClientSnap;
 import technopark.mechanics.requests.JoinGame;
+import technopark.mechanics.requests.Upgrade;
 import technopark.mechanics.services.snap.ClientSnapshotsService;
 import technopark.mechanics.services.session.GameSessionService;
 import technopark.mechanics.services.snap.ServerSnapshotService;
@@ -108,6 +109,46 @@ public class GameMechanicsImpl implements GameMechanics {
         }
     }
 
+    @Override
+    public void closeShop(@NotNull Id<AccountDao> userId) {
+        if (gameSessionService.isPlaying(userId)) {
+            return;
+        }
+        tasks.add(() -> {
+            for (GameSession session : gameSessionService.getSessions()) {
+                if (session.getFirst().getAccountId() == userId) {
+                    session.getFirst().setWantStopShopping(true);
+                }
+
+                if (!session.isSinglePlay()) {
+                    if (session.getSecond().getAccountId() == userId) {
+                        session.getSecond().setWantStopShopping(true);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void tryUpdate(@NotNull Id<AccountDao> userId, @NotNull Upgrade upgrade) {
+        if (gameSessionService.isPlaying(userId)) {
+            return;
+        }
+        tasks.add(() -> {
+            for (GameSession session : gameSessionService.getSessions()) {
+                if (session.getFirst().getAccountId() == userId) {
+                    gameSessionService.tryUpdate(session, userId, upgrade);
+                }
+
+                if (!session.isSinglePlay()) {
+                    if (session.getSecond().getAccountId() == userId) {
+                        gameSessionService.tryUpdate(session, userId, upgrade);
+                    }
+                }
+            }
+        });
+    }
+
     private void tryStartGames() {
         final Set<AccountDao> matchedPlayers = new LinkedHashSet<>();
 
@@ -173,7 +214,6 @@ public class GameMechanicsImpl implements GameMechanics {
                 continue;
             }
 
-
             try {
                 serverSnapshotService.sendSnapshotsFor(session, frameTime);
             } catch (RuntimeException ex) {
@@ -185,6 +225,8 @@ public class GameMechanicsImpl implements GameMechanics {
                 user.claimPart(MechanicPart.class).setDrill(false);
                 user.claimPart(MechanicPart.class).setMove(false);
             });
+
+            session.tryOpenCloseShop();
         }
 
         sessionsToTerminate.forEach(session -> gameSessionService.forceTerminate(session, true));

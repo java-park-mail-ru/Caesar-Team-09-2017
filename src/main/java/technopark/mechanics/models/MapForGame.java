@@ -112,10 +112,9 @@ public class MapForGame extends GameObject {
 
         final int drillPower = gameSession.getUser(indexOfUser).claimPart(MechanicPart.class).getDrillPower();
 
-        int index, x, y;
-        x = userPosition.x;
-        y = userPosition.y;
-        index = findTile(new Coords(x + incrX, y + incrY));
+        int x = userPosition.x;
+        int y = userPosition.y;
+        int index = findTile(new Coords(x + incrX, y + incrY));
         for (int i = 0; i < countOfDestroyedTiles && i < drillPower; i++) {
             if (tiles[index].isAlived()) {
                 tiles[index].setAlived(false);

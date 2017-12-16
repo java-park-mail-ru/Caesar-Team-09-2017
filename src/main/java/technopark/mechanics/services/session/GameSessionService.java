@@ -9,6 +9,7 @@ import org.springframework.web.socket.CloseStatus;
 
 import technopark.mechanics.Config;
 import technopark.mechanics.MechanicsTimeService;
+import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.models.session.GameTaskScheduler;
@@ -18,6 +19,10 @@ import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
 import technopark.websocket.RemotePointService;
 
+import technopark.mechanics.requests.FinishDay;
+import technopark.mechanics.responses.StartNewDay;
+
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -150,6 +155,77 @@ public class  GameSessionService {
             LOGGER.warn(String.format("Failed to send FinishGame message to user %s",
                     gameSession.getSecond().getAccountDao().getUsername()), ex);
         }*/
+    }
+
+    public void openShop(@NotNull Id<AccountDao> id) {
+        final FinishDay.Request finishDay = new FinishDay.Request();
+        try {
+            remotePointService.sendMessageToUser(id, finishDay);
+        } catch (IOException ex) {
+            LOGGER.warn(String.format("Failed to send FinishGame message to user %s", ex));
+        }
+    }
+
+    public void closeShop(@NotNull Id<AccountDao> id) {
+        final StartNewDay.Response startNewDay = new StartNewDay.Response();
+        try {
+            remotePointService.sendMessageToUser(id, startNewDay);
+        } catch (IOException ex) {
+            LOGGER.warn(String.format("Failed to send FinishGame message to user %s", ex));
+        }
+    }
+
+    public void tryUpdate(@NotNull GameSession gameSession, @NotNull Id<AccountDao> id, technopark.mechanics.requests.Upgrade upgrade) {
+        if (gameSession.getFirst().getAccountId() == id) {
+            this.update(gameSession.getFirst(), upgrade);
+        }
+
+        if (!gameSession.isSinglePlay()) {
+            if (gameSession.getSecond().getAccountId() == id) {
+                this.update(gameSession.getSecond(), upgrade);
+            }
+        }
+    }
+
+    private void update(@NotNull GameUser gameUser, technopark.mechanics.requests.Upgrade upgrade) {
+        final technopark.mechanics.responses.Upgrade.Response upgradeResponse = new technopark.mechanics.responses.Upgrade.Response();
+        int money = gameUser.claimPart(MechanicPart.class).takeSnap().getMoney();
+        if (upgrade.getEnergyDiff() != 0) {
+            money -= 50;
+            if (money >= 0) {
+                gameUser.claimPart(MechanicPart.class).incrStartDayEnergy();
+            }
+        }
+
+        if (upgrade.getDrillDiff() != 0) {
+            money -= 20;
+            if (money >= 0) {
+                gameUser.claimPart(MechanicPart.class).incrDrillPower();
+            }
+        }
+
+        if (upgrade.getRadiusRadarDiff() != 0) {
+            money -= 10;
+            if (money >= 0) {
+                gameUser.claimPart(MechanicPart.class).incrRadiusRadar();
+            }
+        }
+
+        if (money >= 0) {
+            gameUser.claimPart(MechanicPart.class).initNewDay(money);
+            upgradeResponse.setEnergy(gameUser.claimPart(MechanicPart.class).takeSnap().getEnergy());
+            upgradeResponse.setRadiusRadar(gameUser.claimPart(MechanicPart.class).takeSnap().getRadiusRadar());
+            upgradeResponse.setSuccessfully(true);
+        } else {
+            upgradeResponse.setSuccessfully(false);
+        }
+
+
+        try {
+            remotePointService.sendMessageToUser(gameUser.getAccountId(), upgradeResponse);
+        } catch (IOException ex) {
+            LOGGER.warn(String.format("Failed to send FinishGame message to user %s", ex));
+        }
     }
 
     private static final class SwapTask extends GameTaskScheduler.GameSessionTask {

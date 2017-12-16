@@ -10,7 +10,9 @@ import technopark.mechanics.responses.*;
 @JsonSubTypes({
         @Type(ServerSnap.class),
         @Type(InitGameSinglePlayer.Response.class),
-        @Type(InitGameMultiPlayer.Response.class)
+        @Type(InitGameMultiPlayer.Response.class),
+        @Type(Upgrade.Response.class),
+        @Type(StartNewDay.Response.class),
 })
 public abstract class MessageResponse extends Message {
 }

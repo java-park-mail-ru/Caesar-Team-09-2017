@@ -7,6 +7,7 @@ import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.Cooldown;
 import technopark.mechanics.models.Snap;
 
+import static technopark.mechanics.Config.RADIUS_RADAR;
 import static technopark.mechanics.Config.START_ENERGY;
 import static technopark.mechanics.Config.START_MONEY;
 
@@ -18,7 +19,9 @@ public class MechanicPart implements GamePart {
     private Cooldown move;
     private Cooldown jump;
 
+    private int startDayEnergy;
     private int drillPower;
+    private int radiusRadar;
 
     @NotNull
     private final MechanicsTimeService timeService;
@@ -27,6 +30,7 @@ public class MechanicPart implements GamePart {
         this.timeService = timeService;
         energy = START_ENERGY;
         money = START_MONEY;
+        radiusRadar = RADIUS_RADAR;
         drill = new Cooldown();
         move = new Cooldown();
         jump = new Cooldown();
@@ -37,7 +41,25 @@ public class MechanicPart implements GamePart {
         move.lastTime = -Config.MOVEMENT_COOLDOWN;
         jump.lastTime = -Config.JUMPING_COOLDOWN;
 
+        startDayEnergy = START_ENERGY;
         drillPower = 2;
+    }
+
+    public void incrStartDayEnergy() {
+        this.startDayEnergy += 20;
+    }
+
+    public void incrDrillPower() {
+        this.drillPower += 1;
+    }
+
+    public void incrRadiusRadar() {
+        this.radiusRadar += 100;
+    }
+
+    public void initNewDay(int money) {
+        energy = startDayEnergy;
+        this.money = money;
     }
 
     public int getDrillPower() {
@@ -96,10 +118,12 @@ public class MechanicPart implements GamePart {
 
         private final int energy;
         private final int money;
+        private final int radiusRadar;
 
         public MechanicPartSnap(MechanicPart mechanicPart) {
             this.energy = mechanicPart.energy;
             this.money = mechanicPart.money;
+            this.radiusRadar = mechanicPart.radiusRadar;
         }
 
         public int getEnergy() {
@@ -110,5 +134,8 @@ public class MechanicPart implements GamePart {
             return money;
         }
 
+        public int getRadiusRadar() {
+            return radiusRadar;
+        }
     }
 }

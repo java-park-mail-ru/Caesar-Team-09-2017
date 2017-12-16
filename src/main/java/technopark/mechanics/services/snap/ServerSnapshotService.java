@@ -46,7 +46,9 @@ public class ServerSnapshotService {
         //noinspection OverlyBroadCatchBlock
         try {
             for (GameUser player : gameSession.getPlayers()) {
-                remotePointService.sendMessageToUser(player.getAccountId(), snap);
+                if (!player.isShopping()) {
+                    remotePointService.sendMessageToUser(player.getAccountId(), snap);
+                }
             }
         } catch (IOException ex) {
             throw new RuntimeException("Failed  sending snapshot", ex);

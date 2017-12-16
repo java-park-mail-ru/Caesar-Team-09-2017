@@ -44,7 +44,7 @@ public class ClientSnapshotsService {
         for (GameUser player : players) {
             final List<ClientSnap> playerSnaps = getSnapForUser(player.getAccountId());
             processFone(gameSession, player);
-            if (playerSnaps.isEmpty()) {
+            if (playerSnaps.isEmpty() || player.isShopping()) {
                 continue;
             }
 

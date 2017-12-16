@@ -14,6 +14,10 @@ import java.util.Map;
 public class GameUser extends GameObject {
     @NotNull
     private final AccountDao accountDao;
+    @NotNull
+    private boolean isShopping;
+    @NotNull
+    private boolean wantStopShopping;
 
     public GameUser(@NotNull AccountDao accountDao, @NotNull MechanicsTimeService timeService) {
         this.accountDao = accountDao;
@@ -21,6 +25,24 @@ public class GameUser extends GameObject {
         addPart(MechanicPart.class, new MechanicPart(timeService));
         addPart(MovePart.class, new MovePart());
         addPart(PositionPart.class, new PositionPart());
+    }
+
+    @NotNull
+    public boolean isWantStopShopping() {
+        return wantStopShopping;
+    }
+
+    public void setWantStopShopping(boolean wantStopShopping) {
+        this.wantStopShopping = wantStopShopping;
+    }
+
+    @NotNull
+    public boolean isShopping() {
+        return isShopping;
+    }
+
+    public void setShopping(boolean shopping) {
+        isShopping = shopping;
     }
 
     @NotNull

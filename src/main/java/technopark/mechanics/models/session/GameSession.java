@@ -3,6 +3,7 @@ package technopark.mechanics.models.session;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
+import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.services.session.GameSessionService;
 import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.MapForGame;
@@ -17,7 +18,9 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GameSession {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
     private boolean isFinished;
-    private boolean singlePlay;
+    private boolean isSinglePlay;
+
+    private boolean isShoppingEnd;
 
     @NotNull
     private final Id<GameSession> sessionId;
@@ -39,11 +42,11 @@ public class GameSession {
         this.first = new GameUser(user1, mechanicsTimeService);
         if (user2 != null) {
             this.second =  new GameUser(user2, mechanicsTimeService);
-            this.singlePlay = false;
+            this.isSinglePlay = false;
 
         } else {
             this.second =  null;
-            this.singlePlay = true;
+            this.isSinglePlay = true;
         }
         this.isFinished = false;
 
@@ -115,11 +118,11 @@ public class GameSession {
     }
 
     public boolean isSinglePlay() {
-        return singlePlay;
+        return isSinglePlay;
     }
 
     public void setSinglePlay(boolean singlePlay) {
-        this.singlePlay = singlePlay;
+        this.isSinglePlay = singlePlay;
     }
 
     public boolean isFinished() {
@@ -156,6 +159,38 @@ public class GameSession {
         //    return true;
         // }
         return false;
+    }
+
+    public void tryOpenCloseShop() {
+        if (!first.isShopping() && first.claimPart(MechanicPart.class).takeSnap().getEnergy() == 0) {
+            first.setShopping(true);
+            gameSessionService.openShop(first.getAccountId());
+        }
+
+        if (!isSinglePlay) {
+            if (!second.isShopping() && second.claimPart(MechanicPart.class).takeSnap().getEnergy() == 0) {
+                second.setShopping(true);
+                gameSessionService.openShop(second.getAccountId());
+            }
+        }
+
+        if (isSinglePlay) {
+            if (first.isWantStopShopping()) {
+                first.setWantStopShopping(false);
+                first.setShopping(false);
+                gameSessionService.closeShop(first.getAccountId());
+            }
+        } else {
+            if (first.isWantStopShopping() && second.isWantStopShopping()) {
+                first.setWantStopShopping(false);
+                second.setWantStopShopping(false);
+                first.setShopping(false);
+                second.setShopping(false);
+                gameSessionService.closeShop(first.getAccountId());
+                gameSessionService.closeShop(second.getAccountId());
+            }
+        }
+
     }
 
     @NotNull

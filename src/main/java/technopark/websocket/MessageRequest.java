@@ -13,6 +13,7 @@ import technopark.mechanics.requests.*;
         @Type(FinishGame.Request.class),
         @Type(FinishDay.Request.class),
         @Type(StartNewDay.class),
+        @Type(Upgrade.class),
 })
 public abstract class MessageRequest extends Message {
 }

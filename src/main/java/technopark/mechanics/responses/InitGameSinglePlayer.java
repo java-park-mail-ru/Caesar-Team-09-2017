@@ -22,6 +22,15 @@ public class InitGameSinglePlayer {
         private Coords[] bonusPosition;
         private long userId;
         private int radiusRadar;
+        private int maxRadiusRadar;
+
+        public int getMaxRadiusRadar() {
+            return maxRadiusRadar;
+        }
+
+        public void setMaxRadiusRadar(int maxRadiusRadar) {
+            this.maxRadiusRadar = maxRadiusRadar;
+        }
 
         public int getRadiusRadar() {
             return radiusRadar;

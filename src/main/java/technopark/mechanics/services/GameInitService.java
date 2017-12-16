@@ -79,6 +79,7 @@ public class GameInitService {
         initGameSinglePlayerMessage.setBonusPosition(BONUS_POSITION);
         initGameSinglePlayerMessage.setUserId(userId.getId());
         initGameSinglePlayerMessage.setRadiusRadar(RADIUS_RADAR);
+        initGameSinglePlayerMessage.setMaxRadiusRadar(MAX_RADIUS_RADAR);
 
         return initGameSinglePlayerMessage;
     }
@@ -105,6 +106,7 @@ public class GameInitService {
         initGameMultiPlayerMessage.setBonusPosition(BONUS_POSITION);
         initGameMultiPlayerMessage.setUserId(userId.getId());
         initGameMultiPlayerMessage.setRadiusRadar(RADIUS_RADAR);
+        initGameMultiPlayerMessage.setMaxRadiusRadar(MAX_RADIUS_RADAR);
         initGameMultiPlayerMessage.setOtherUserId(gameSession.getEnemy(userId).getAccountId().getId());
 
         return initGameMultiPlayerMessage;

@@ -24,6 +24,15 @@ public class InitGameMultiPlayer {
         private int radiusRadar;
         private long userId;
         private long otherUserId;
+        private int maxRadiusRadar;
+
+        public int getMaxRadiusRadar() {
+            return maxRadiusRadar;
+        }
+
+        public void setMaxRadiusRadar(int maxRadiusRadar) {
+            this.maxRadiusRadar = maxRadiusRadar;
+        }
 
         public int getWorldWidth() {
             return worldWidth;

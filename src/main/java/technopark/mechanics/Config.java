@@ -5,6 +5,7 @@ import technopark.mechanics.models.Coords;
 import java.util.Arrays;
 import java.util.Comparator;
 
+@SuppressWarnings("FieldNamingConvention")
 public class Config {
 
     public static final int PLAYERS_SPEED = 4;
@@ -51,6 +52,7 @@ public class Config {
     public static final int START_ENERGY = 2;
     public static Coords[] BONUS_POSITION;
     public static final int RADIUS_RADAR = 600;
+    public static final int MAX_RADIUS_RADAR = 1600;
 
     static {
         changeBonusPosition();
