@@ -131,17 +131,19 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void tryUpdate(@NotNull Id<AccountDao> userId, @NotNull Upgrade upgrade) {
-        if (gameSessionService.isPlaying(userId)) {
+
+        if (!gameSessionService.isPlaying(userId)) {
             return;
         }
+
         tasks.add(() -> {
             for (GameSession session : gameSessionService.getSessions()) {
-                if (session.getFirst().getAccountId() == userId) {
+                if (session.getFirst().getAccountId().equals(userId)) {
                     gameSessionService.tryUpdate(session, userId, upgrade);
                 }
 
                 if (!session.isSinglePlay()) {
-                    if (session.getSecond().getAccountId() == userId) {
+                    if (session.getSecond().getAccountId().equals(userId)) {
                         gameSessionService.tryUpdate(session, userId, upgrade);
                     }
                 }

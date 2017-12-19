@@ -176,12 +176,13 @@ public class  GameSessionService {
     }
 
     public void tryUpdate(@NotNull GameSession gameSession, @NotNull Id<AccountDao> id, technopark.mechanics.requests.Upgrade upgrade) {
-        if (gameSession.getFirst().getAccountId() == id) {
+
+        if (gameSession.getFirst().getAccountId().equals(id)) {
             this.update(gameSession.getFirst(), upgrade);
         }
 
         if (!gameSession.isSinglePlay()) {
-            if (gameSession.getSecond().getAccountId() == id) {
+            if (gameSession.getSecond().getAccountId().equals(id)) {
                 this.update(gameSession.getSecond(), upgrade);
             }
         }
@@ -219,7 +220,6 @@ public class  GameSessionService {
         } else {
             upgradeResponse.setSuccessfully(false);
         }
-
 
         try {
             remotePointService.sendMessageToUser(gameUser.getAccountId(), upgradeResponse);
