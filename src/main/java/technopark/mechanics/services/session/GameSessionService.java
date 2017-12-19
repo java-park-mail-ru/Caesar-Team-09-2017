@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
 import technopark.mechanics.Config;
+import static technopark.mechanics.Config.*;
+
 import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.player.GameUser;
@@ -24,6 +26,8 @@ import technopark.mechanics.responses.StartNewDay;
 
 import java.io.IOException;
 import java.util.*;
+
+import static technopark.mechanics.Config.COST_UPGRADE_ENERGY;
 
 @Service
 public class  GameSessionService {
@@ -192,21 +196,21 @@ public class  GameSessionService {
         final technopark.mechanics.responses.Upgrade.Response upgradeResponse = new technopark.mechanics.responses.Upgrade.Response();
         int money = gameUser.claimPart(MechanicPart.class).takeSnap().getMoney();
         if (upgrade.isEnergy()) {
-            money -= 50;
+            money -= COST_UPGRADE_ENERGY;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrStartDayEnergy();
             }
         }
 
         if (upgrade.isDrill()) {
-            money -= 20;
+            money -= COST_UPGRADE_DRILL;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrDrillPower();
             }
         }
 
         if (upgrade.isRadiusRadar()) {
-            money -= 10;
+            money -= COST_UPGRADE_RADAR;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrRadiusRadar();
             }

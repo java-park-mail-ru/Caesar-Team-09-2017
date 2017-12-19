@@ -80,6 +80,9 @@ public class GameInitService {
         initGameSinglePlayerMessage.setUserId(userId.getId());
         initGameSinglePlayerMessage.setRadiusRadar(RADIUS_RADAR);
         initGameSinglePlayerMessage.setMaxRadiusRadar(MAX_RADIUS_RADAR);
+        initGameSinglePlayerMessage.setCostUpgradeEnergy(COST_UPGRADE_ENERGY);
+        initGameSinglePlayerMessage.setCostUpgradeDrill(COST_UPGRADE_DRILL);
+        initGameSinglePlayerMessage.setCostUpgradeRadar(COST_UPGRADE_RADAR);
 
         return initGameSinglePlayerMessage;
     }
@@ -108,6 +111,9 @@ public class GameInitService {
         initGameMultiPlayerMessage.setRadiusRadar(RADIUS_RADAR);
         initGameMultiPlayerMessage.setMaxRadiusRadar(MAX_RADIUS_RADAR);
         initGameMultiPlayerMessage.setOtherUserId(gameSession.getEnemy(userId).getAccountId().getId());
+        initGameMultiPlayerMessage.setCostUpgradeEnergy(COST_UPGRADE_ENERGY);
+        initGameMultiPlayerMessage.setCostUpgradeDrill(COST_UPGRADE_DRILL);
+        initGameMultiPlayerMessage.setCostUpgradeRadar(COST_UPGRADE_RADAR);
 
         return initGameMultiPlayerMessage;
     }

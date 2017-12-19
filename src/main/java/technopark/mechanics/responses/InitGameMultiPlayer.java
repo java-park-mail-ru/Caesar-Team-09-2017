@@ -25,6 +25,33 @@ public class InitGameMultiPlayer {
         private long userId;
         private long otherUserId;
         private int maxRadiusRadar;
+        private int costUpgradeEnergy;
+        private int costUpgradeDrill;
+        private int costUpgradeRadar;
+
+        public void setCostUpgradeDrill(int costUpgradeDrill) {
+            this.costUpgradeDrill = costUpgradeDrill;
+        }
+
+        public int getCostUpgradeRadar() {
+            return costUpgradeRadar;
+        }
+
+        public void setCostUpgradeRadar(int costUpgradeRadar) {
+            this.costUpgradeRadar = costUpgradeRadar;
+        }
+
+        public int getCostUpgradeEnergy() {
+            return costUpgradeEnergy;
+        }
+
+        public void setCostUpgradeEnergy(int costUpgradeEnergy) {
+            this.costUpgradeEnergy = costUpgradeEnergy;
+        }
+
+        public int getCostUpgradeDrill() {
+            return costUpgradeDrill;
+        }
 
         public int getMaxRadiusRadar() {
             return maxRadiusRadar;

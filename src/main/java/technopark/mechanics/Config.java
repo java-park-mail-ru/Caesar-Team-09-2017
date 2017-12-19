@@ -53,6 +53,9 @@ public class Config {
     public static Coords[] BONUS_POSITION;
     public static final int RADIUS_RADAR = 600;
     public static final int MAX_RADIUS_RADAR = 1600;
+    public static final int COST_UPGRADE_ENERGY = 50;
+    public static final int COST_UPGRADE_DRILL = 20;
+    public static final int COST_UPGRADE_RADAR = 10;
 
     static {
         changeBonusPosition();

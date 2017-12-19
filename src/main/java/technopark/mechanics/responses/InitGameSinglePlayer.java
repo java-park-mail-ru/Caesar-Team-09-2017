@@ -23,6 +23,33 @@ public class InitGameSinglePlayer {
         private long userId;
         private int radiusRadar;
         private int maxRadiusRadar;
+        private int costUpgradeEnergy;
+        private int costUpgradeDrill;
+        private int costUpgradeRadar;
+
+        public int getCostUpgradeEnergy() {
+            return costUpgradeEnergy;
+        }
+
+        public void setCostUpgradeEnergy(int costUpgradeEnergy) {
+            this.costUpgradeEnergy = costUpgradeEnergy;
+        }
+
+        public int getCostUpgradeDrill() {
+            return costUpgradeDrill;
+        }
+
+        public void setCostUpgradeDrill(int costUpgradeDrill) {
+            this.costUpgradeDrill = costUpgradeDrill;
+        }
+
+        public int getCostUpgradeRadar() {
+            return costUpgradeRadar;
+        }
+
+        public void setCostUpgradeRadar(int costUpgradeRadar) {
+            this.costUpgradeRadar = costUpgradeRadar;
+        }
 
         public int getMaxRadiusRadar() {
             return maxRadiusRadar;
