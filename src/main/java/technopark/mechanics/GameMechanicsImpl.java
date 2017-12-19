@@ -116,12 +116,12 @@ public class GameMechanicsImpl implements GameMechanics {
         }
         tasks.add(() -> {
             for (GameSession session : gameSessionService.getSessions()) {
-                if (session.getFirst().getAccountId() == userId) {
+                if (session.getFirst().getAccountId().equals(userId)) {
                     session.getFirst().setWantStopShopping(true);
                 }
 
                 if (!session.isSinglePlay()) {
-                    if (session.getSecond().getAccountId() == userId) {
+                    if (session.getSecond().getAccountId().equals(userId)) {
                         session.getSecond().setWantStopShopping(true);
                     }
                 }
