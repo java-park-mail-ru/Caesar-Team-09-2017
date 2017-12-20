@@ -61,7 +61,8 @@ public class MapForGame extends GameObject {
         lengthX = WORLD_WIDTH / GROUND_WIDTH;
         lengthY = (WORLD_HEIGHT - POSITION_GROUND) / GROUND_HEIGHT;
         tiles = new Tiles[lengthX * lengthY]; // x * y
-        initMap();
+        this.initMap();
+        this.initBonus();
     }
 
     private void initMap() {
@@ -72,7 +73,9 @@ public class MapForGame extends GameObject {
                 tiles[i * lengthX + j] = new Tiles(new Coords(x, y));
             }
         }
+    }
 
+    private void initBonus() {
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
             int index = findTile(BONUS_POSITION[i]);
             if (index == -1) {
@@ -292,6 +295,26 @@ public class MapForGame extends GameObject {
                     break;
             }
         }
+    }
+
+    public void newDay() {
+        isJump.set(0, false);
+        jumpFrameCount.set(0, 0);
+        gameSession.getUser(0).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X[0], PLAYER_Y));
+        if (!gameSession.isSinglePlay()) {
+            gameSession.getUser(1).claimPart(PositionPart.class).setPosition(new Coords(PLAYER_X[1], PLAYER_Y));
+            isJump.set(1, false);
+            jumpFrameCount.set(1, 0);
+        }
+
+        for (int i = 0; i < lengthY; i++) {
+            for (int j = 0; j < lengthX; j++) {
+                tiles[i * lengthX + j].setAlived(true);
+            }
+        }
+
+        Config.changeBonusPosition();
+        this.initBonus();
     }
 
     @Override

@@ -180,7 +180,8 @@ public class GameSession {
             if (first.isWantStopShopping()) {
                 first.setWantStopShopping(false);
                 first.setShopping(false);
-                gameSessionService.closeShop(first.getAccountId());
+                mapForGame.newDay();
+                gameSessionService.closeShop(first.getAccountId(), 0);
             }
         } else {
             if (first.isWantStopShopping() && second.isWantStopShopping()) {
@@ -188,8 +189,9 @@ public class GameSession {
                 second.setWantStopShopping(false);
                 first.setShopping(false);
                 second.setShopping(false);
-                gameSessionService.closeShop(first.getAccountId());
-                gameSessionService.closeShop(second.getAccountId());
+                mapForGame.newDay();
+                gameSessionService.closeShop(first.getAccountId(), 0);
+                gameSessionService.closeShop(second.getAccountId(), 1);
             }
         }
 

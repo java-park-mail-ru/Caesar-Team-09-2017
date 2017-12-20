@@ -168,8 +168,11 @@ public class  GameSessionService {
         }
     }
 
-    public void closeShop(@NotNull Id<AccountDao> id) {
+    public void closeShop(@NotNull Id<AccountDao> id, int numberOfPlayer) {
         final StartNewDay.Response startNewDay = new StartNewDay.Response();
+        startNewDay.setPlayerX(PLAYER_X[numberOfPlayer]);
+        startNewDay.setPlayerY(PLAYER_Y);
+
         try {
             remotePointService.sendMessageToUser(id, startNewDay);
         } catch (IOException ex) {
