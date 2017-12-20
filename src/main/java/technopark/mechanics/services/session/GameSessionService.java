@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technopark.mechanics.Config;
 import static technopark.mechanics.Config.*;
 
+import technopark.mechanics.Config;
 import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.models.player.GameUser;

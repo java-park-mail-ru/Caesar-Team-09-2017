@@ -116,7 +116,7 @@ public class MapForGame extends GameObject {
         int y = userPosition.y;
         int index = findTile(new Coords(x + incrX, y + incrY));
         for (int i = 0; i < countOfDestroyedTiles && i < drillPower; i++) {
-            if (tiles[index].isAlived()) {
+            if (tiles[index].isAlived() && gameSession.getUser(indexOfUser).claimPart(MechanicPart.class).takeSnap().getEnergy() > 0) {
                 tiles[index].setAlived(false);
                 gameSession.getUser(indexOfUser).claimPart(MechanicPart.class).decrementEnergy();
                 destroyedTiles.add(tiles[index].getCenterPosition());
