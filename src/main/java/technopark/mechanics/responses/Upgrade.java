@@ -6,7 +6,16 @@ public class Upgrade extends MessageResponse {
     public static final class Response extends MessageResponse {
         private int radiusRadar;
         private int energy;
+        private int money;
         private boolean successfully;
+
+        public int getMoney() {
+            return money;
+        }
+
+        public void setMoney(int money) {
+            this.money = money;
+        }
 
         public boolean isSuccessfully() {
             return successfully;

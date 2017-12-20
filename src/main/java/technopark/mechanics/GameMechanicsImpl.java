@@ -111,9 +111,10 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void closeShop(@NotNull Id<AccountDao> userId) {
-        if (gameSessionService.isPlaying(userId)) {
+        if (!gameSessionService.isPlaying(userId)) {
             return;
         }
+
         tasks.add(() -> {
             for (GameSession session : gameSessionService.getSessions()) {
                 if (session.getFirst().getAccountId().equals(userId)) {

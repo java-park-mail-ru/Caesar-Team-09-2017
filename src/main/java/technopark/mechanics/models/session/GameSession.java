@@ -164,12 +164,14 @@ public class GameSession {
     public void tryOpenCloseShop() {
         if (!first.isShopping() && first.claimPart(MechanicPart.class).takeSnap().getEnergy() == 0) {
             first.setShopping(true);
+            first.claimPart(MechanicPart.class).setEnergyLakiStartDay();
             gameSessionService.openShop(first.getAccountId());
         }
 
         if (!isSinglePlay) {
             if (!second.isShopping() && second.claimPart(MechanicPart.class).takeSnap().getEnergy() == 0) {
                 second.setShopping(true);
+                second.claimPart(MechanicPart.class).setEnergyLakiStartDay();
                 gameSessionService.openShop(second.getAccountId());
             }
         }

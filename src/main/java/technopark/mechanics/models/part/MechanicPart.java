@@ -7,9 +7,7 @@ import technopark.mechanics.MechanicsTimeService;
 import technopark.mechanics.models.Cooldown;
 import technopark.mechanics.models.Snap;
 
-import static technopark.mechanics.Config.RADIUS_RADAR;
-import static technopark.mechanics.Config.START_ENERGY;
-import static technopark.mechanics.Config.START_MONEY;
+import static technopark.mechanics.Config.*;
 
 public class MechanicPart implements GamePart {
 
@@ -28,7 +26,7 @@ public class MechanicPart implements GamePart {
 
     public MechanicPart(@NotNull MechanicsTimeService timeService) {
         this.timeService = timeService;
-        energy = START_ENERGY;
+        startDayEnergy = START_ENERGY;
         money = START_MONEY;
         radiusRadar = RADIUS_RADAR;
         drill = new Cooldown();
@@ -41,33 +39,32 @@ public class MechanicPart implements GamePart {
         move.lastTime = -Config.MOVEMENT_COOLDOWN;
         jump.lastTime = -Config.JUMPING_COOLDOWN;
 
-        startDayEnergy = START_ENERGY;
+        this.setEnergyLakiStartDay();
         drillPower = 2;
     }
 
     public void incrStartDayEnergy() {
         this.startDayEnergy += 20;
+        this.money -= COST_UPGRADE_ENERGY;
     }
 
     public void incrDrillPower() {
         this.drillPower += 1;
+        this.money -= COST_UPGRADE_DRILL;
     }
 
     public void incrRadiusRadar() {
         this.radiusRadar += 100;
+        this.money -= COST_UPGRADE_RADAR;
     }
 
-    public void initNewDay(int money) {
-        energy = startDayEnergy;
-        this.money = money;
+    public void setEnergyLakiStartDay() {
+        this.energy = this.startDayEnergy;
+        System.out.println(energy);
     }
 
     public int getDrillPower() {
         return drillPower;
-    }
-
-    public void setDrillPower(int drillPower) {
-        this.drillPower = drillPower;
     }
 
     public void decrementEnergy() {

@@ -27,8 +27,6 @@ import technopark.mechanics.responses.StartNewDay;
 import java.io.IOException;
 import java.util.*;
 
-import static technopark.mechanics.Config.COST_UPGRADE_ENERGY;
-
 @Service
 public class  GameSessionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameSessionService.class);
@@ -210,6 +208,7 @@ public class  GameSessionService {
         }
 
         if (upgrade.isRadiusRadar()) {
+            System.out.println("here");
             money -= COST_UPGRADE_RADAR;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrRadiusRadar();
@@ -217,9 +216,10 @@ public class  GameSessionService {
         }
 
         if (money >= 0) {
-            gameUser.claimPart(MechanicPart.class).initNewDay(money);
+            gameUser.claimPart(MechanicPart.class).setEnergyLakiStartDay();
             upgradeResponse.setEnergy(gameUser.claimPart(MechanicPart.class).takeSnap().getEnergy());
             upgradeResponse.setRadiusRadar(gameUser.claimPart(MechanicPart.class).takeSnap().getRadiusRadar());
+            upgradeResponse.setMoney(money);
             upgradeResponse.setSuccessfully(true);
         } else {
             upgradeResponse.setSuccessfully(false);
