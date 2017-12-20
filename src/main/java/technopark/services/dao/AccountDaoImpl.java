@@ -122,6 +122,17 @@ public class AccountDaoImpl implements AccountDaoInterface {
         }
     }
 
+    @Override
+    public void setScore(AccountDao accountDao, int score) {
+        try {
+            String sqlUpdate = "UPDATE FUser SET score = score + ? WHERE id = ?";
+            jdbcTemplate.update(sqlUpdate, score, accountDao.getId().getId());
+        } catch (EmptyResultDataAccessException e) {
+            ;
+        }
+
+    }
+
     private static AccountDao readItem(ResultSet rs, int rowNum) throws SQLException {
         AccountDao accountDao = new AccountDao();
 

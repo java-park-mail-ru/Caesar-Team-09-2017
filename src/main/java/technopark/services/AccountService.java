@@ -61,6 +61,10 @@ public class AccountService {
         return accountDao;
     }
 
+    public void setScore(AccountDao accountDao, int score) {
+        accountDaoimpl.setScore(accountDao, score);
+    }
+
     public  boolean checkPassword(String username, String password) {
         final String sql = "SELECT password from FUser "
                 + "WHERE LOWER(username COLLATE \"POSIX\") = LOWER(? COLLATE \"POSIX\")";

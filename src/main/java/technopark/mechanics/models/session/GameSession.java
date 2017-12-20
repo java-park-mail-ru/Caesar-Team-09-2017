@@ -20,8 +20,6 @@ public class GameSession {
     private boolean isFinished;
     private boolean isSinglePlay;
 
-    private boolean isShoppingEnd;
-
     @NotNull
     private final Id<GameSession> sessionId;
     @NotNull

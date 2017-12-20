@@ -211,7 +211,6 @@ public class  GameSessionService {
         }
 
         if (upgrade.isRadiusRadar()) {
-            System.out.println("here");
             money -= COST_UPGRADE_RADAR;
             if (money >= 0) {
                 gameUser.claimPart(MechanicPart.class).incrRadiusRadar();

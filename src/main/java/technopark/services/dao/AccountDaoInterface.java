@@ -13,5 +13,7 @@ public interface AccountDaoInterface {
 
     AccountDao getAccountId(long id);
 
+    void setScore(AccountDao accountDao, int score);
+
     List<AccountDao> getScoreAccount();
 }
