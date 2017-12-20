@@ -19,6 +19,7 @@ import technopark.mechanics.services.GameInitService;
 import technopark.mechanics.services.snap.ClientSnapshotsService;
 import technopark.account.dao.AccountDao;
 import technopark.mechanics.models.id.Id;
+import technopark.services.AccountService;
 import technopark.websocket.RemotePointService;
 
 import technopark.mechanics.requests.FinishDay;
@@ -50,16 +51,21 @@ public class  GameSessionService {
     @NotNull
     private final ClientSnapshotsService clientSnapshotsService;
 
+    @NotNull
+    private final AccountService accountService;
+
     public GameSessionService(@NotNull RemotePointService remotePointService,
                               @NotNull MechanicsTimeService timeService,
                               @NotNull GameInitService gameInitService,
                               @NotNull GameTaskScheduler gameTaskScheduler,
+                              @NotNull AccountService accountService,
                               @NotNull ClientSnapshotsService clientSnapshotsService) {
         this.remotePointService = remotePointService;
         this.timeService = timeService;
         this.gameInitService = gameInitService;
         this.gameTaskScheduler = gameTaskScheduler;
         this.clientSnapshotsService = clientSnapshotsService;
+        this.accountService = accountService;
     }
 
     public Set<GameSession> getSessions() {
@@ -196,23 +202,24 @@ public class  GameSessionService {
     private void update(@NotNull GameUser gameUser, technopark.mechanics.requests.Upgrade upgrade) {
         final technopark.mechanics.responses.Upgrade.Response upgradeResponse = new technopark.mechanics.responses.Upgrade.Response();
         int money = gameUser.claimPart(MechanicPart.class).takeSnap().getMoney();
+        final AccountDao accountDao = accountService.getAccountFromId(gameUser.getAccountId().getId());
+
         if (upgrade.isEnergy()) {
             money -= COST_UPGRADE_ENERGY;
             if (money >= 0) {
+                accountService.setScore(accountDao, COST_UPGRADE_ENERGY);
                 gameUser.claimPart(MechanicPart.class).incrStartDayEnergy();
             }
-        }
-
-        if (upgrade.isDrill()) {
+        } else if (upgrade.isDrill()) {
             money -= COST_UPGRADE_DRILL;
             if (money >= 0) {
+                accountService.setScore(accountDao, COST_UPGRADE_DRILL);
                 gameUser.claimPart(MechanicPart.class).incrDrillPower();
             }
-        }
-
-        if (upgrade.isRadiusRadar()) {
+        } else if (upgrade.isRadiusRadar()) {
             money -= COST_UPGRADE_RADAR;
             if (money >= 0) {
+                accountService.setScore(accountDao, COST_UPGRADE_RADAR);
                 gameUser.claimPart(MechanicPart.class).incrRadiusRadar();
             }
         }
