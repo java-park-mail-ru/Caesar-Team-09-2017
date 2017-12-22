@@ -49,7 +49,7 @@ public class Config {
     public static final int[] PLAYER_X = {GROUND_WIDTH * 8, WORLD_WIDTH - GROUND_WIDTH * 8};
     public static final int PLAYER_Y = POSITION_GROUND - PLAYER_HEIGHT;
     public static final int START_MONEY = 100;
-    public static final int START_ENERGY = 2;
+    public static final int START_ENERGY = 30;
     public static Coords[] BONUS_POSITION;
     public static final int RADIUS_RADAR = 600;
     public static final int MAX_RADIUS_RADAR = 1600;

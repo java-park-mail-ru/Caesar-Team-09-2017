@@ -128,7 +128,7 @@ public class AccountDaoImpl implements AccountDaoInterface {
             String sqlUpdate = "UPDATE FUser SET score = score + ? WHERE id = ?";
             jdbcTemplate.update(sqlUpdate, score, accountDao.getId().getId());
         } catch (EmptyResultDataAccessException e) {
-            ;
+            accountDao.setStatus("NOT_FOUND");
         }
 
     }
