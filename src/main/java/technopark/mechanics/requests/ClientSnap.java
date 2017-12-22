@@ -34,7 +34,7 @@ public class ClientSnap extends MessageRequest {
     }
 
     @JsonProperty("isBonus")
-    public void setBonus(boolean bonus) {
+    public void isBonus(boolean bonus) {
         isBonus = bonus;
     }
 
