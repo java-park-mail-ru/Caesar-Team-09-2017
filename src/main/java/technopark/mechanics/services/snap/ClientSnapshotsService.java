@@ -51,7 +51,7 @@ public class ClientSnapshotsService {
              playerSnaps.stream().filter(ClientSnap::isDrill).findFirst().ifPresent(snap -> processClick(snap, gameSession, player));
              playerSnaps.stream().filter(ClientSnap::isMove).findFirst().ifPresent(snap -> processMove(snap, gameSession, player));
              playerSnaps.stream().filter(ClientSnap::isJump).findFirst().ifPresent(snap -> processJump(gameSession, player));
-             playerSnaps.stream().filter(ClientSnap::isJump).findFirst().ifPresent(snap -> processBonus(snap, gameSession, player));
+             playerSnaps.stream().filter(ClientSnap::isBonus).findFirst().ifPresent(snap -> processBonus(snap, gameSession, player));
             final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);
             processMouseMove(player, lastSnap.getMouse());
             processPlayerMove(player, lastSnap.getMoveTo());
