@@ -103,21 +103,27 @@ public class MapForGame extends GameObject {
 
         int incrY = coords.y - userPosition.y;
         if (incrY != 0) {
-            incrY /= Math.abs(incrY);
-            incrY *= GROUND_HEIGHT;
+            incrY = incrY / GROUND_HEIGHT;
         }
 
         int incrX = coords.x - userPosition.x;
         if (incrX != 0) {
-            incrX /= Math.abs(incrX);
-            incrX *= GROUND_WIDTH;
+            incrX = incrX / GROUND_WIDTH;
         }
 
         final int drillPower = gameSession.getUser(indexOfUser).claimPart(MechanicPart.class).getDrillPower();
 
         int x = userPosition.x;
         int y = userPosition.y;
-        int index = findTile(new Coords(x + incrX, y + incrY));
+        if (incrX != 0) {
+            x += incrX > 0 ? GROUND_WIDTH : -GROUND_WIDTH;
+            incrX--;
+        }
+        if (incrY != 0) {
+            y += incrY > 0 ? GROUND_HEIGHT : -GROUND_HEIGHT;
+            incrY--;
+        }
+        int index = findTile(new Coords(x, y));
         for (int i = 0; i < countOfDestroyedTiles && i < drillPower; i++) {
             if (tiles[index].isAlived() && gameSession.getUser(indexOfUser).claimPart(MechanicPart.class).takeSnap().getEnergy() > 0) {
                 tiles[index].setAlived(false);
@@ -126,7 +132,15 @@ public class MapForGame extends GameObject {
             }
             x = tiles[index].getCenterPosition().x;
             y = tiles[index].getCenterPosition().y;
-            index = findTile(new Coords(x + incrX, y + incrY));
+            if (incrX != 0) {
+                x += incrX > 0 ? GROUND_WIDTH : -GROUND_WIDTH;
+                incrX--;
+            }
+            if (incrY != 0) {
+                y += incrY > 0 ? GROUND_HEIGHT : -GROUND_HEIGHT;
+                incrY--;
+            }
+            index = findTile(new Coords(x, y));
         }
     }
 
