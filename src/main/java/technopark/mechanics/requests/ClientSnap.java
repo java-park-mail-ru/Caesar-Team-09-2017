@@ -11,13 +11,32 @@ import technopark.websocket.MessageRequest;
 public class ClientSnap extends MessageRequest {
 
     private Coords mouse;
+    private Coords bonus;
     private Move moveTo;
 
     private boolean isDrill;
     private boolean isMove;
     private boolean isJump;
+    private boolean isBonus;
 
     private long frameTime;
+
+    public Coords getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Coords bonus) {
+        this.bonus = bonus;
+    }
+
+    public boolean isBonus() {
+        return isBonus;
+    }
+
+    @JsonProperty("isBonus")
+    public void setBonus(boolean bonus) {
+        isBonus = bonus;
+    }
 
     public boolean isJump() {
         return isJump;

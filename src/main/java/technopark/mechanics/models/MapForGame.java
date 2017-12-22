@@ -279,10 +279,9 @@ public class MapForGame extends GameObject {
         }
     }
 
-    public void checkBonus(@NotNull Id<AccountDao> user) {
+    public void checkBonus(@NotNull Coords bonusPosition, @NotNull Id<AccountDao> user) {
         final int indexOfUser = gameUserIds.indexOf(user);
-        Coords userPosition =  gameSession.getUser(indexOfUser).claimPart(PositionPart.class).getPosition();
-        final int i = findTile(userPosition);
+        final int i = findTile(bonusPosition);
         if (i != -1 && tiles[i].isBonus()) {
             destroyedBonus.add(BONUS_POSITION[tiles[i].getIndexPositionBonus()]);
             Config.Bonus bonus = tiles[i].getBonus();
