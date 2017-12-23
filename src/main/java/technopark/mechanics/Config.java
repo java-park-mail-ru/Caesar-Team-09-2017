@@ -40,7 +40,7 @@ public class Config {
     public static final int WORLD_HEIGHT = 2000;
     public static final int PLAYER_WIDTH = 32;
     public static final int PLAYER_HEIGHT = 32;
-    public static final int COUNT_OF_BONUSES = 80;
+    public static final int COUNT_OF_BONUSES = 100;
     public static final int COIN_WIDTH = 32;
     public static final int COIN_HEIGHT = 32;
     public static final int GROUND_WIDTH = 32;
