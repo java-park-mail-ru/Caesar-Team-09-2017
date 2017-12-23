@@ -10,7 +10,7 @@ public class Config {
 
     public static final int PLAYERS_SPEED = 4;
     public static final int FREE_FALL = 2;
-    public static final int COIN_COST = 15;
+    public static final int COIN_COST = 10;
 
     public static final long DRILING_COOLDOWN = 150;
     public static final long MOVEMENT_COOLDOWN = 50;
