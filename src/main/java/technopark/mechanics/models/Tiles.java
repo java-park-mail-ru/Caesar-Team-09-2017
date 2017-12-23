@@ -7,7 +7,6 @@ public class Tiles {
     private boolean isAlived;
     private boolean isBonus;
     private Config.Bonus bonus;
-    private int indexPositionBonus;
 
     public Tiles(Coords centerPosition) {
         this.centerPosition = centerPosition;
@@ -44,11 +43,7 @@ public class Tiles {
         this.bonus = bonus;
     }
 
-    public int getIndexPositionBonus() {
-        return indexPositionBonus;
-    }
-
-    public void setIndexPositionBonus(int indexPositionBonus) {
-        this.indexPositionBonus = indexPositionBonus;
+    public void setBonus(boolean bonus) {
+        isBonus = bonus;
     }
 }

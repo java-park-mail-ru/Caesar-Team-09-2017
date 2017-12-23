@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 
-import technopark.mechanics.Config;
 import technopark.mechanics.models.player.GameUser;
 import technopark.mechanics.models.session.GameSession;
 import technopark.mechanics.responses.InitGameMultiPlayer;
@@ -41,7 +40,6 @@ public class GameInitService {
         for (GameUser player : players) {
             //noinspection OverlyBroadCatchBlock
             try {
-                Config.changeBonusPosition();
                 if (!gameSession.isSinglePlay()) {
                     remotePointService.sendMessageToUser(player.getAccountId(),
                             createInitMessageForMulti(gameSession, player.getAccountId()));

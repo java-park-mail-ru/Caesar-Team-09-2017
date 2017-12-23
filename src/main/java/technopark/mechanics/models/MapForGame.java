@@ -79,12 +79,10 @@ public class MapForGame extends GameObject {
         for (int i = 0; i < COUNT_OF_BONUSES; i++) {
             int index = findTile(BONUS_POSITION[i]);
             if (index == -1) {
-                System.out.println("BONUS problems");
-                System.out.println(BONUS_POSITION[i]);
+                System.out.println("b");
             } else {
                 tiles[index].setIsBonus(true);
                 tiles[index].setBonus(Config.Bonus.COIN);
-                tiles[index].setIndexPositionBonus(i);
             }
         }
     }
@@ -297,7 +295,7 @@ public class MapForGame extends GameObject {
         final int indexOfUser = gameUserIds.indexOf(user);
         final int i = findTile(bonusPosition);
         if (i != -1 && tiles[i].isBonus()) {
-            destroyedBonus.add(BONUS_POSITION[tiles[i].getIndexPositionBonus()]);
+            destroyedBonus.add(bonusPosition);
             Config.Bonus bonus = tiles[i].getBonus();
             tiles[i].setIsBonus(false);
             switch (bonus) {
