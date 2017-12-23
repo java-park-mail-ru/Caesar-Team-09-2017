@@ -80,5 +80,6 @@ public class Config {
         }
         normalizedBonusPosition(bonusPosition);
         BONUS_POSITION = bonusPosition;
+        System.out.println("changeBonusPosition");
     }
 }

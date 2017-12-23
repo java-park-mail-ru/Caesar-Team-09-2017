@@ -85,6 +85,7 @@ public class MapForGame extends GameObject {
                 tiles[index].setBonus(Config.Bonus.COIN);
             }
         }
+        System.out.println("initBonus");
     }
 
     public void drillAt(@NotNull Coords coords, @NotNull Id<AccountDao> user) {
@@ -324,7 +325,6 @@ public class MapForGame extends GameObject {
             }
         }
 
-        Config.changeBonusPosition();
         this.initBonus();
     }
 

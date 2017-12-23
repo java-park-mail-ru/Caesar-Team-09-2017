@@ -3,6 +3,7 @@ package technopark.mechanics.models.session;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
+import technopark.mechanics.Config;
 import technopark.mechanics.models.part.MechanicPart;
 import technopark.mechanics.services.session.GameSessionService;
 import technopark.mechanics.MechanicsTimeService;
@@ -178,6 +179,7 @@ public class GameSession {
             if (first.isWantStopShopping()) {
                 first.setWantStopShopping(false);
                 first.setShopping(false);
+                Config.changeBonusPosition();
                 mapForGame.newDay();
                 gameSessionService.closeShop(first.getAccountId(), 0);
             }
@@ -187,6 +189,7 @@ public class GameSession {
                 second.setWantStopShopping(false);
                 first.setShopping(false);
                 second.setShopping(false);
+                Config.changeBonusPosition();
                 mapForGame.newDay();
                 gameSessionService.closeShop(first.getAccountId(), 0);
                 gameSessionService.closeShop(second.getAccountId(), 1);

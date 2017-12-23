@@ -178,6 +178,7 @@ public class  GameSessionService {
         final StartNewDay.Response startNewDay = new StartNewDay.Response();
         startNewDay.setPlayerX(PLAYER_X[numberOfPlayer]);
         startNewDay.setPlayerY(PLAYER_Y);
+        startNewDay.setBonusPosition(BONUS_POSITION);
 
         try {
             remotePointService.sendMessageToUser(id, startNewDay);
